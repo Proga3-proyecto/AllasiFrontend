@@ -1,0 +1,84 @@
+@inherits ComponentBase
+
+<header class="navbar-header">
+    <div class="top-bar">
+        <div class="contact-info">
+            <span class="contact-item"><i class="bi bi-envelope"></i> CONSULTASCLIENTES@LICORERIAALLASI.COM</span>
+            <span class="divider">|</span>
+            <span class="contact-item"><i class="bi bi-telephone"></i> (01) 123-4567</span>
+            <span class="divider">|</span>
+            <span class="contact-item"><i class="bi bi-geo-alt"></i> AV. UNIVERSITARIA 1801, SAN MIGUEL, LIMA</span>
+        </div>
+    </div>
+    
+    <div class="middle-bar">
+        <div class="mobile-toggle" @onclick="ToggleMenu">
+            <i class="bi @(isMenuOpen ? "bi-x" : "bi-list")"></i>
+        </div>
+        
+        <div class="logo-container">
+            <a href="/">
+                <img src="/assets/logo.png" alt="allasi licores" class="logo" />
+            </a>
+        </div>
+        
+        <div class="search-container">
+            <div class="search-input-wrapper">
+                <input type="text" class="search-input" placeholder="¿Qué buscas hoy?" />
+                <i class="bi bi-search search-icon"></i>
+            </div>
+        </div>
+        
+        <div class="user-actions">
+            <UserMenu IsLoggedIn="@IsLoggedIn" UserName="@UserName" />
+            
+            @if (!IsAdmin)
+            {
+                <a href="#" class="action-icon cart-icon-wrapper">
+                    <i class="bi bi-cart"></i>
+                    <span class="cart-badge">1</span>
+                </a>
+            }
+        </div>
+    </div>
+    
+    <nav class="bottom-bar @(isMenuOpen ? "open" : "")">
+        <div class="mobile-search-container">
+             <div class="search-input-wrapper">
+                <input type="text" class="search-input" placeholder="¿Qué buscas hoy?" />
+                <i class="bi bi-search search-icon"></i>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><NavLink href="/" Match="NavLinkMatch.All">INICIO</NavLink></li>
+            <li><NavLink href="/products/all">ALL</NavLink></li>
+            <li><NavLink href="/products/ron">RON</NavLink></li>
+            <li><NavLink href="/products/vodka">VODKA</NavLink></li>
+            <li><NavLink href="/products/whisky">WHISKY</NavLink></li>
+            <li><NavLink href="/products/gin">GIN</NavLink></li>
+            <li><NavLink href="/products/pisco">PISCO</NavLink></li>
+            <li><NavLink href="/products/vino">VINO</NavLink></li>
+            <li><NavLink href="/recetas">RECETAS</NavLink></li>
+        </ul>
+        
+        <div class="mobile-contact-info">
+            <div class="mobile-contact-item"><i class="bi bi-envelope"></i> CONSULTASCLIENTES@LICORERIAALLASI.COM</div>
+            <div class="mobile-contact-item"><i class="bi bi-telephone"></i> (01) 123-4567</div>
+            <div class="mobile-contact-item"><i class="bi bi-geo-alt"></i> AV. UNIVERSITARIA 1801, SAN MIGUEL, LIMA</div>
+        </div>
+    </nav>
+</header>
+
+@code {
+    private bool isMenuOpen = false;
+
+    // Variables de prueba para demostración. Deberían venir de un servicio de autenticación.
+    private bool IsLoggedIn = true;
+    private string UserName = "Juan Perez";
+    private bool IsAdmin = false;
+
+    private void ToggleMenu()
+    {
+        isMenuOpen = !isMenuOpen;
+    }
+}

@@ -1,0 +1,49 @@
+:root {
+    /* -------------------------
+     Colores de Marca (Brand)
+  ------------------------- */
+    --color-primary: #101c45; /* Azul marino oscuro (Header, botones, título principal, paginación activa) */
+    --color-primary-hover: #1c2e6b; /* Variación un poco más clara sugerida para el 'hover' de los botones */
+    /* -------------------------
+     Fondos (Backgrounds)
+  ------------------------- */
+    --color-bg-body: #f8f9fc; /* Gris azulado muy claro (Fondo general de la página) */
+    --color-bg-surface: #ffffff; /* Blanco puro (Fondo de la tarjeta de la tabla, barras de búsqueda) */
+    /* -------------------------
+     Textos (Typography)
+  ------------------------- */
+    --color-text-main: #101c45; /* Azul marino (Nombres de productos, stock, números) */
+    --color-text-muted: #7a859b; /* Gris azulado medio (Encabezados de las columnas: PRODUCTO, SKU, STOCK) */
+    --color-text-light: #6b7280; /* Gris medio (Texto del placeholder del buscador y barra superior) */
+    --color-text-white: #ffffff; /* Blanco (Texto sobre botones oscuros y header) */
+    /* -------------------------
+     Bordes y Divisores (Borders)
+  ------------------------- */
+    --color-border-light: #e5e7eb; /* Gris muy claro (Líneas separadoras entre las filas de la tabla y bordes de inputs) */
+    /* Separadores horizontales */
+    --color-divider: #aaafba;
+    --color-scrollbar: #858585;
+    
+    /* -------------------------
+     Nuevos Colores Navbar
+  ------------------------- */
+    --color-topbar-bg: #f5f6f8; /* Un color claro para la barra superior (blanco humo) */
+    --color-topbar-text: #101c45; /* Azul marino para el texto de topbar */
+    --color-navbar-border: #28376e; /* Color del borde entre secciones del header */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html, body {
+    background: var(--color-bg-body);
+    font-family: "Metrophobic", sans-serif;
+}
+
+body {
+    overflow-x: hidden;
+}

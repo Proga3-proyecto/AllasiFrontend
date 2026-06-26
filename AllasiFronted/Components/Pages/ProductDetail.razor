@@ -1,0 +1,80 @@
+@page "/producto/{id:int}"
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+@inject NavigationManager NavigationManager
+@inject ProductosRS ProductosService
+
+<PageTitle>Producto - Allasi Licores</PageTitle>
+
+<div class="product-detail-container">
+    @if (producto == null)
+    {
+        <p>Cargando producto...</p>
+    }
+    else
+    {
+        <div class="detail-grid">
+            <div class="image-gallery">
+                <div class="main-image-container">
+                    <button class="nav-btn prev-btn"><i class="bi bi-chevron-left"></i></button>
+                    <img src="@producto.ImagenUrl" alt="@producto.nombre" class="main-image" />
+                    <button class="nav-btn next-btn"><i class="bi bi-chevron-right"></i></button>
+                </div>
+                <div class="thumbnails">
+                    <div class="thumbnail active">
+                        <img src="@producto.ImagenUrl" alt="@producto.nombre" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-info">
+                <h1 class="product-title">@producto.nombre</h1>
+                <p class="product-price">S/. @producto.precio.ToString("0.00")</p>
+
+                <p class="product-description">
+                    @(string.IsNullOrEmpty(producto.descripcion) ? "Vino tinto chileno reconocido internacionalmente por su excelente relación calidad-precio. Presenta aromas a frutos rojos maduros y especias suaves con un final agradable y persistente." : producto.descripcion)
+                </p>
+
+                <div class="product-specs">
+                    <p><strong>Porcentaje de Alcohol:</strong> @producto.porcentajeAlcohol%</p>
+                    <p><strong>Volumen:</strong> @producto.volumenLitros Ltrs</p>
+                    <p><strong>Descuento disponible:</strong> @(producto.descuento > 0 ? $"{producto.descuento}%" : "Sin descuento")</p>
+                </div>
+
+                <div class="add-to-cart-section">
+                    <div class="quantity-selector">
+                        <button class="qty-btn" @onclick="DecreaseQuantity"><i class="bi bi-dash"></i></button>
+                        <input type="text" value="@quantity" readonly />
+                        <button class="qty-btn" @onclick="IncreaseQuantity"><i class="bi bi-plus"></i></button>
+                    </div>
+                    <button class="btn-add-cart">
+                        <i class="bi bi-cart"></i> Añadir al carrito
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private Producto? producto;
+    private int quantity = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        producto = await ProductosService.ObtenerPorIdAsync(id);
+    }
+
+    private void DecreaseQuantity()
+    {
+        if (quantity > 1) quantity--;
+    }
+
+    private void IncreaseQuantity()
+    {
+        quantity++;
+    }
+}

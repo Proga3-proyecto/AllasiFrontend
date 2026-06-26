@@ -1,0 +1,110 @@
+@page "/receta/{id:int}"
+@using Progra3_Frontend.Model
+@using AllasiFrontend.Components.Shared
+@using Progra3_Frontend.Services
+@inject NavigationManager NavigationManager
+@inject RecetasRS RecetasService
+
+<PageTitle>Receta - Allasi Licores</PageTitle>
+
+<div class="recipe-detail-container">
+    <button class="btn-back" @onclick="GoBack">
+        <i class="bi bi-arrow-left"></i> Regresar a recetas
+    </button>
+
+    @if (receta == null)
+    {
+        <p>Cargando receta...</p>
+    }
+    else
+    {
+        <div class="detail-grid">
+            <div class="image-section">
+                <img src="@(receta.imagenes.Any() ? receta.imagenes[0].url : "/assets/placeholder-bottle.png")" alt="@receta.nombre" class="recipe-image" />
+            </div>
+
+            <div class="recipe-info">
+                <h1 class="recipe-title">@receta.nombre</h1>
+                <p class="recipe-price">S/. @receta.precio.ToString("0.00")</p>
+
+                <p class="recipe-description">
+                    @(string.IsNullOrEmpty(receta.descripcion) ? "El cóctel bandera del Perú, equilibrado, cítrico y con su clásica espuma de clara de huevo." : receta.descripcion)
+                </p>
+
+                <div class="recipe-ingredients">
+                    <h3>Ingredientes:</h3>
+                    <ul>
+                        @if (receta.elementos != null && receta.elementos.Any())
+                        {
+                            foreach (var item in receta.elementos)
+                            {
+                                <li><strong>@item.cantidad L</strong> de @item.producto?.nombre</li>
+                            }
+                        }
+                        else
+                        {
+                            <!-- Mock Data if none -->
+                            <li><strong>0.06 oz</strong> de Bombay Sapphire</li>
+                            <li><strong>0.01 oz</strong> de Amaretto Disaronno</li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="recipe-actions">
+                    <button class="btn-primary" @onclick="GoToPreparation">Preparación</button>
+                    <button class="btn-outline">
+                        <i class="bi bi-cart"></i> Añadir al carrito
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="recipe-products-section">
+            <h2 class="section-title">PRODUCTOS EN ESTA RECETA</h2>
+            <div class="products-grid">
+                @if (receta.elementos != null && receta.elementos.Any())
+                {
+                    foreach (var elemento in receta.elementos.Take(4))
+                    {
+                        if (elemento.producto != null)
+                        {
+                            <ProductCard ProductoItem="@elemento.producto" />
+                        }
+                    }
+                }
+                else
+                {
+                    <!-- Mock products fallback if no elements exist -->
+                    <ProductCard 
+                        Rank="0"
+                        ProductoItem="@(new Producto { id = 1, nombre = "Bombay Sapphire", precio = 95.00, categorias = new List<Categoria> { new Categoria { nombre = "Gin" } } })" />
+                    <ProductCard 
+                        Rank="0"
+                        ProductoItem="@(new Producto { id = 2, nombre = "Amaretto Disaronno", precio = 85.00, categorias = new List<Categoria> { new Categoria { nombre = "Licor" } } })" />
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private Receta? receta;
+
+    protected override async Task OnInitializedAsync()
+    {
+        receta = await RecetasService.ObtenerPorIdAsync(id);
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/recetas");
+    }
+
+    private void GoToPreparation()
+    {
+        NavigationManager.NavigateTo($"/receta/{id}/preparacion");
+    }
+}

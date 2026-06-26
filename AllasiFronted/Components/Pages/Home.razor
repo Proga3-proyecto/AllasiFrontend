@@ -1,0 +1,41 @@
+@page "/"
+@using AllasiFrontend.Components.Shared
+@using Progra3_Frontend.Services
+@using Progra3_Frontend.Model
+@inject ProductosRS ProductosService
+
+<PageTitle>Inicio - Allasi Licores</PageTitle>
+
+<div class="home-container">
+    <BannerCarousel />
+
+    <div class="best-sellers-section">
+        <h2 class="section-title">LO MÁS VENDIDO</h2>
+        <div class="products-grid">
+            @if (productos != null && productos.Any())
+            {
+                int rank = 1;
+                foreach (var prod in productos.Take(4))
+                {
+                    <ProductCard Rank="@rank" ProductoItem="@prod" />
+                    rank++;
+                }
+            }
+            else
+            {
+                <p>Cargando productos...</p>
+            }
+        </div>
+    </div>
+
+    <Features />
+</div>
+
+@code {
+    private List<Producto>? productos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        productos = await ProductosService.ListarTodosAsync();
+    }
+}

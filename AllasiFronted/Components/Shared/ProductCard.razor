@@ -1,0 +1,75 @@
+@using Progra3_Frontend.Model
+@inject NavigationManager NavigationManager
+
+<div class="product-card" @onclick="NavigateToDetail" style="cursor: pointer;">
+    @if (Rank > 0)
+    {
+        <div class="product-rank">@Rank</div>
+    }
+    <div class="product-image">
+        <img src="@GetImageUrl()" alt="@GetTitle()" />
+    </div>
+    <div class="product-info">
+        <h3 class="product-title">@GetTitle()</h3>
+        @if (!string.IsNullOrEmpty(GetSubtitle()))
+        {
+            <p class="product-category">@GetSubtitle()</p>
+        }
+        <div class="product-bottom">
+            <span class="product-price">S/ @GetPrice().ToString("0.00")</span>
+            <button class="cart-button" title="Añadir al carrito" @onclick:stopPropagation><i class="bi bi-cart"></i></button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int Rank { get; set; }
+    [Parameter] public Producto? ProductoItem { get; set; }
+    [Parameter] public Receta? RecetaItem { get; set; }
+
+    private void NavigateToDetail()
+    {
+        if (ProductoItem != null)
+        {
+            NavigationManager.NavigateTo($"/producto/{ProductoItem.id}");
+        }
+        else if (RecetaItem != null)
+        {
+            NavigationManager.NavigateTo($"/receta/{RecetaItem.id}");
+        }
+    }
+
+    private string GetImageUrl()
+    {
+        if (ProductoItem != null && ProductoItem.imagenes != null && ProductoItem.imagenes.Any()) return ProductoItem.ImagenUrl;
+        if (RecetaItem != null && RecetaItem.imagenes != null && RecetaItem.imagenes.Any()) return RecetaItem.imagenes[0].url;
+        return "/assets/placeholder-bottle.png"; // Fallback image
+    }
+
+    private string GetTitle()
+    {
+        if (ProductoItem != null) return ProductoItem.nombre ?? "Producto Sin Nombre";
+        if (RecetaItem != null) return RecetaItem.nombre ?? "Receta Sin Nombre";
+        return "Producto";
+    }
+
+    private string GetSubtitle()
+    {
+        if (ProductoItem != null)
+        {
+            if (ProductoItem.marca != null && !string.IsNullOrWhiteSpace(ProductoItem.marca.nombre))
+                return ProductoItem.marca.nombre;
+            if (ProductoItem.categorias != null && ProductoItem.categorias.Any())
+                return ProductoItem.categorias[0].nombre ?? "Categoría";
+            return "Marca";
+        }
+        return ""; // No subtitle for recipes
+    }
+
+    private double GetPrice()
+    {
+        if (ProductoItem != null) return ProductoItem.precio;
+        if (RecetaItem != null) return RecetaItem.precio;
+        return 0.00;
+    }
+}

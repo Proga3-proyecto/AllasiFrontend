@@ -1,0 +1,77 @@
+@page "/receta/{id:int}/preparacion"
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+@inject NavigationManager NavigationManager
+@inject RecetasRS RecetasService
+
+<PageTitle>Preparación de Receta - Allasi Licores</PageTitle>
+
+<div class="preparation-container">
+    <button class="btn-back-detail" @onclick="GoBackToDetail">
+        <i class="bi bi-arrow-left"></i> Regresar al detalle
+    </button>
+
+    @if (receta == null)
+    {
+        <p>Cargando preparación...</p>
+    }
+    else
+    {
+        <h1 class="preparation-title">Preparación: @receta.nombre</h1>
+
+        <div class="preparation-grid">
+            <div class="left-column">
+                <div class="instructions-card">
+                    <h2>Instrucciones de Elaboración</h2>
+                    <div class="instructions-text">
+                        @(string.IsNullOrEmpty(receta.instrucciones) ? 
+                            "Agregar a la coctelera pisco, jarabe de goma, jugo de limón y clara de huevo. Añadir abundante hielo y agitar fuertemente por 15 segundos. Servir en un vaso helado en tres tiempos para controlar la espuma y decorar con 3 gotas de amargo de angostura." 
+                            : receta.instrucciones)
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="recipe-image-container">
+                    <img src="@(receta.imagenes.Any() ? receta.imagenes[0].url : "/assets/placeholder-bottle.png")" alt="@receta.nombre" />
+                </div>
+
+                <div class="ingredients-card">
+                    <h2>Ingredientes necesarios</h2>
+                    <ul class="ingredients-list">
+                        @if (receta.elementos != null && receta.elementos.Any())
+                        {
+                            foreach (var item in receta.elementos)
+                            {
+                                <li><strong>@item.cantidad L</strong> de @item.producto?.nombre</li>
+                            }
+                        }
+                        else
+                        {
+                            <!-- Mock Data if none -->
+                            <li><strong>0.06 oz</strong> de Bombay Sapphire</li>
+                            <li><strong>0.01 oz</strong> de Amaretto Disaronno</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private Receta? receta;
+
+    protected override async Task OnInitializedAsync()
+    {
+        receta = await RecetasService.ObtenerPorIdAsync(id);
+    }
+
+    private void GoBackToDetail()
+    {
+        NavigationManager.NavigateTo($"/receta/{id}");
+    }
+}

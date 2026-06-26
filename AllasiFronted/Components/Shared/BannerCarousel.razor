@@ -1,0 +1,70 @@
+@implements IDisposable
+
+<div class="banner-carousel">
+    <div class="banner-content">
+        <h1>LOS MEJORES LICORES,<br />PARA LOS MEJORES MOMENTOS.</h1>
+        <p>Descubre nuestra selección de licores premium<br />y encuentra tu favorito.</p>
+        <a href="/all" class="btn-ver-productos">Ver productos</a>
+    </div>
+    <div class="banner-image">
+        @foreach (var img in images)
+        {
+            <img src="@img" alt="Licores" class="carousel-img @(img == images[currentIndex] ? "active" : "")" />
+        }
+    </div>
+    
+@*     <button class="carousel-control prev" @onclick="PrevImage"><i class="bi bi-chevron-left"></i></button>
+    <button class="carousel-control next" @onclick="NextImage"><i class="bi bi-chevron-right"></i></button>
+     *@
+    <div class="carousel-indicators">
+        @for (int i = 0; i < images.Length; i++)
+        {
+            var index = i;
+            <span class="indicator @(i == currentIndex ? "active" : "")" @onclick="() => SetImage(index)"></span>
+        }
+    </div>
+</div>
+
+@code {
+    private int currentIndex = 0;
+    private string[] images = new[] 
+    { 
+        "/assets/banner/banner.png",
+        "/assets/banner/banner1.webp",
+        "/assets/banner/banner2.webp" 
+    };
+
+    private System.Threading.Timer timer;
+
+    protected override void OnInitialized()
+    {
+        timer = new System.Threading.Timer(_ => 
+        {
+            InvokeAsync(() => 
+            {
+                NextImage();
+                StateHasChanged();
+            });
+        }, null, 5000, 5000); // 5 segundos
+    }
+
+    private void NextImage()
+    {
+        currentIndex = (currentIndex + 1) % images.Length;
+    }
+
+    private void PrevImage()
+    {
+        currentIndex = (currentIndex - 1 + images.Length) % images.Length;
+    }
+
+    private void SetImage(int index)
+    {
+        currentIndex = index;
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+}
