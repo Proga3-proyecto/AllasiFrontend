@@ -1,101 +1,109 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\",
+  "WorkspaceRootPath": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\pages\\products.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\pages\\products.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\services\\catalogo\\productosrs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\services\\catalogo\\productosrs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\shared\\productcard.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\shared\\productcard.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\services\\catalogo\\recetasrs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\services\\catalogo\\recetasrs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\pages\\products.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\pages\\products.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\shared\\productcard.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\shared\\productcard.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\shared\\productcard.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\pages\\recipedetail.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\pages\\recipedetail.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\services\\carrito\\carritostateservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\services\\carrito\\carritostateservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\pages\\recipepreparation.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\pages\\recipepreparation.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\shared\\navbar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\shared\\navbar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\shared\\features.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\shared\\features.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\pages\\notfound.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\pages\\notfound.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\pages\\products.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\pages\\products.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\routes.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\routes.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\model\\catalogo\\producto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\model\\catalogo\\producto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\shared\\bannercarousel.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\shared\\bannercarousel.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\shared\\bannercarousel.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\shared\\bannercarousel.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\shared\\usermenu.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\shared\\usermenu.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\shared\\usermenu.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\shared\\usermenu.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\shared\\navbar.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\shared\\navbar.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
       "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\shared\\navbar.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\_imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\shared\\navbar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\shared\\navbar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\shared\\bannercarousel.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\shared\\bannercarousel.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\pages\\home.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\pages\\home.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\_imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\_imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\services\\catalogo\\productosrs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\services\\catalogo\\productosrs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\shared\\productcard.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\shared\\productcard.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\services\\catalogo\\recetasrs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\services\\catalogo\\recetasrs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\pages\\products.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\pages\\products.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\pages\\recipedetail.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\pages\\recipedetail.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\pages\\recipepreparation.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\pages\\recipepreparation.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\shared\\features.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\shared\\features.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\pages\\notfound.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\pages\\notfound.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\routes.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\routes.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\model\\catalogo\\producto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\model\\catalogo\\producto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\shared\\bannercarousel.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\shared\\bannercarousel.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\shared\\usermenu.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\shared\\usermenu.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\shared\\usermenu.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\shared\\usermenu.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\msi\\desktop\\progra3\\allasifronted\\allasifronted\\components\\layout\\mainlayout.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "AbsoluteMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|c:\\users\\frank\\desktop\\allasifrontend\\allasifronted\\components\\layout\\mainlayout.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
       "RelativeMoniker": "D:0:0:{148E2BD4-7FE6-3955-0425-6AE352CC5BAE}|AllasiFronted\\AllasiFrontend.csproj|solutionrelative:allasifronted\\components\\layout\\mainlayout.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     }
   ],
@@ -110,11 +118,11 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 8,
               "Title": "Home.razor",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Pages\\Home.razor",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Pages\\Home.razor",
               "RelativeDocumentMoniker": "AllasiFronted\\Components\\Pages\\Home.razor",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Pages\\Home.razor",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Pages\\Home.razor",
               "RelativeToolTip": "AllasiFronted\\Components\\Pages\\Home.razor",
               "ViewState": "AgIAAA8AAAAAAAAAAAAqwBYAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -123,174 +131,104 @@
               "EditorCaption": ""
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
-            },
-            {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "ProductosRS.cs",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Services\\catalogo\\ProductosRS.cs",
-              "RelativeDocumentMoniker": "AllasiFronted\\Services\\catalogo\\ProductosRS.cs",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Services\\catalogo\\ProductosRS.cs",
-              "RelativeToolTip": "AllasiFronted\\Services\\catalogo\\ProductosRS.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAxwAAAAAAAAAAAAAAAAA==",
+              "Title": "CarritoStateService.cs",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Services\\carrito\\CarritoStateService.cs",
+              "RelativeDocumentMoniker": "AllasiFronted\\Services\\carrito\\CarritoStateService.cs",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Services\\carrito\\CarritoStateService.cs",
+              "RelativeToolTip": "AllasiFronted\\Services\\carrito\\CarritoStateService.cs",
+              "ViewState": "AgIAAJsAAAAAAAAAAAA6wAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-26T14:23:40.605Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Products.razor.css",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Pages\\Products.razor.css",
-              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Pages\\Products.razor.css",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Pages\\Products.razor.css",
-              "RelativeToolTip": "AllasiFronted\\Components\\Pages\\Products.razor.css",
-              "ViewState": "AgIAAMgAAAAAAAAAAADwv98AAAAVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-06-26T13:51:14.216Z",
+              "WhenOpened": "2026-06-26T15:43:43.722Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "ProductCard.razor.css",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\ProductCard.razor.css",
-              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Shared\\ProductCard.razor.css",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\ProductCard.razor.css",
-              "RelativeToolTip": "AllasiFronted\\Components\\Shared\\ProductCard.razor.css",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAABgAAAARAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-06-26T13:50:50.746Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "RecetasRS.cs",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Services\\catalogo\\RecetasRS.cs",
-              "RelativeDocumentMoniker": "AllasiFronted\\Services\\catalogo\\RecetasRS.cs",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Services\\catalogo\\RecetasRS.cs",
-              "RelativeToolTip": "AllasiFronted\\Services\\catalogo\\RecetasRS.cs",
-              "ViewState": "AgIAABcAAAAAAAAAAAAiwC4AAAARAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-26T13:34:01.571Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
               "Title": "Products.razor",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Pages\\Products.razor",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Pages\\Products.razor",
               "RelativeDocumentMoniker": "AllasiFronted\\Components\\Pages\\Products.razor",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Pages\\Products.razor",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Pages\\Products.razor",
               "RelativeToolTip": "AllasiFronted\\Components\\Pages\\Products.razor",
-              "ViewState": "AgIAAJoAAAAAAAAAAAAkwLMAAAAYAAAAAAAAAA==",
+              "ViewState": "AgIAANwAAAAAAAAAAAAwwO0AAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-06-26T13:10:24.477Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "RecipePreparation.razor",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Pages\\RecipePreparation.razor",
-              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Pages\\RecipePreparation.razor",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Pages\\RecipePreparation.razor",
-              "RelativeToolTip": "AllasiFronted\\Components\\Pages\\RecipePreparation.razor",
-              "ViewState": "AgIAAB8AAAAAAAAAAAAUwDIAAAA2AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-26T13:21:29.737Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "RecipeDetail.razor",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Pages\\RecipeDetail.razor",
-              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Pages\\RecipeDetail.razor",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Pages\\RecipeDetail.razor",
-              "RelativeToolTip": "AllasiFronted\\Components\\Pages\\RecipeDetail.razor",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAABIAAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-26T13:21:44.754Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Navbar.razor",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\Navbar.razor",
-              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Shared\\Navbar.razor",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\Navbar.razor",
-              "RelativeToolTip": "AllasiFronted\\Components\\Shared\\Navbar.razor",
-              "ViewState": "AgIAAFEAAAAAAAAAAAAAADwAAAA/AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-26T11:37:46.317Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 10,
-              "Title": "Features.razor",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\Features.razor",
-              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Shared\\Features.razor",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\Features.razor",
-              "RelativeToolTip": "AllasiFronted\\Components\\Shared\\Features.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-26T13:32:40.199Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "Producto.cs",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Model\\catalogo\\Producto.cs",
-              "RelativeDocumentMoniker": "AllasiFronted\\Model\\catalogo\\Producto.cs",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Model\\catalogo\\Producto.cs",
-              "RelativeToolTip": "AllasiFronted\\Model\\catalogo\\Producto.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAA0wBAAAAAKAAAAAAAAAA==",
+              "Title": "ProductosRS.cs",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Services\\catalogo\\ProductosRS.cs",
+              "RelativeDocumentMoniker": "AllasiFronted\\Services\\catalogo\\ProductosRS.cs",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Services\\catalogo\\ProductosRS.cs",
+              "RelativeToolTip": "AllasiFronted\\Services\\catalogo\\ProductosRS.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAxwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-26T12:44:47.226Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-26T14:23:40.605Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
+              "Title": "BannerCarousel.razor",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\BannerCarousel.razor",
+              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Shared\\BannerCarousel.razor",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\BannerCarousel.razor",
+              "RelativeToolTip": "AllasiFronted\\Components\\Shared\\BannerCarousel.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-26T12:35:33.317Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Navbar.razor.css",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\Navbar.razor.css",
+              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Shared\\Navbar.razor.css",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\Navbar.razor.css",
+              "RelativeToolTip": "AllasiFronted\\Components\\Shared\\Navbar.razor.css",
+              "ViewState": "AgIAAKkAAAAAAAAAAAAwwKUAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-06-26T11:40:36.134Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
               "Title": "ProductCard.razor",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\ProductCard.razor",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\ProductCard.razor",
               "RelativeDocumentMoniker": "AllasiFronted\\Components\\Shared\\ProductCard.razor",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\ProductCard.razor",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\ProductCard.razor",
               "RelativeToolTip": "AllasiFronted\\Components\\Shared\\ProductCard.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAA6AAAAAAAAAA==",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAAAFcAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-06-26T12:34:41.516Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "NotFound.razor",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Pages\\NotFound.razor",
-              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Pages\\NotFound.razor",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Pages\\NotFound.razor",
-              "RelativeToolTip": "AllasiFronted\\Components\\Pages\\NotFound.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 9,
+              "Title": "_Imports.razor",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\_Imports.razor",
+              "RelativeDocumentMoniker": "AllasiFronted\\Components\\_Imports.razor",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\_Imports.razor",
+              "RelativeToolTip": "AllasiFronted\\Components\\_Imports.razor",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAgwAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-26T13:22:52.294Z",
+              "WhenOpened": "2026-06-26T11:40:47.026Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 2,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Program.cs",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Program.cs",
               "RelativeDocumentMoniker": "AllasiFronted\\Program.cs",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Program.cs",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Program.cs",
               "RelativeToolTip": "AllasiFronted\\Program.cs",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAqwBYAAAAUAAAAAAAAAA==",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAACEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-26T11:42:27.909Z",
               "EditorCaption": ""
@@ -298,49 +236,156 @@
             {
               "$type": "Document",
               "DocumentIndex": 15,
-              "Title": "BannerCarousel.razor",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\BannerCarousel.razor",
-              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Shared\\BannerCarousel.razor",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\BannerCarousel.razor",
-              "RelativeToolTip": "AllasiFronted\\Components\\Shared\\BannerCarousel.razor",
-              "ViewState": "AgIAABUAAAAAAAAAAAAkwCQAAAAjAAAAAAAAAA==",
+              "Title": "RecipePreparation.razor",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Pages\\RecipePreparation.razor",
+              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Pages\\RecipePreparation.razor",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Pages\\RecipePreparation.razor",
+              "RelativeToolTip": "AllasiFronted\\Components\\Pages\\RecipePreparation.razor",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAUwDIAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-26T12:35:33.317Z",
+              "WhenOpened": "2026-06-26T13:21:29.737Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Home.razor.css",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Pages\\Home.razor.css",
+              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Pages\\Home.razor.css",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Pages\\Home.razor.css",
+              "RelativeToolTip": "AllasiFronted\\Components\\Pages\\Home.razor.css",
+              "ViewState": "AgIAABkAAAAAAAAAAAAAwCUAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-06-26T15:13:20.857Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Navbar.razor",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\Navbar.razor",
+              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Shared\\Navbar.razor",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\Navbar.razor",
+              "RelativeToolTip": "AllasiFronted\\Components\\Shared\\Navbar.razor",
+              "ViewState": "AgIAABAAAAAAAAAAAAAAAEAAAAA/AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-26T11:37:46.317Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "RecetasRS.cs",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Services\\catalogo\\RecetasRS.cs",
+              "RelativeDocumentMoniker": "AllasiFronted\\Services\\catalogo\\RecetasRS.cs",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Services\\catalogo\\RecetasRS.cs",
+              "RelativeToolTip": "AllasiFronted\\Services\\catalogo\\RecetasRS.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAAiwC4AAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-26T13:34:01.571Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ProductCard.razor.css",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\ProductCard.razor.css",
+              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Shared\\ProductCard.razor.css",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\ProductCard.razor.css",
+              "RelativeToolTip": "AllasiFronted\\Components\\Shared\\ProductCard.razor.css",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAABgAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-06-26T13:50:50.746Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 13,
-              "Title": "Routes.razor",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Routes.razor",
-              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Routes.razor",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Routes.razor",
-              "RelativeToolTip": "AllasiFronted\\Components\\Routes.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "Products.razor.css",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Pages\\Products.razor.css",
+              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Pages\\Products.razor.css",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Pages\\Products.razor.css",
+              "RelativeToolTip": "AllasiFronted\\Components\\Pages\\Products.razor.css",
+              "ViewState": "AgIAAMgAAAAAAAAAAADwv98AAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-06-26T13:51:14.216Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "RecipeDetail.razor",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Pages\\RecipeDetail.razor",
+              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Pages\\RecipeDetail.razor",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Pages\\RecipeDetail.razor",
+              "RelativeToolTip": "AllasiFronted\\Components\\Pages\\RecipeDetail.razor",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABIAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-26T11:42:27.357Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-26T13:21:44.754Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 16,
-              "Title": "BannerCarousel.razor.css",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\BannerCarousel.razor.css",
-              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Shared\\BannerCarousel.razor.css",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\BannerCarousel.razor.css",
-              "RelativeToolTip": "AllasiFronted\\Components\\Shared\\BannerCarousel.razor.css",
-              "ViewState": "AgIAAEIAAAAAAAAAAAAAAF0AAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-06-26T12:38:15.572Z",
-              "EditorCaption": ""
+              "Title": "Features.razor",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\Features.razor",
+              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Shared\\Features.razor",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\Features.razor",
+              "RelativeToolTip": "AllasiFronted\\Components\\Shared\\Features.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-26T13:32:40.199Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Producto.cs",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Model\\catalogo\\Producto.cs",
+              "RelativeDocumentMoniker": "AllasiFronted\\Model\\catalogo\\Producto.cs",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Model\\catalogo\\Producto.cs",
+              "RelativeToolTip": "AllasiFronted\\Model\\catalogo\\Producto.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAA0wBAAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-26T12:44:47.226Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 17,
+              "Title": "NotFound.razor",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Pages\\NotFound.razor",
+              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Pages\\NotFound.razor",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Pages\\NotFound.razor",
+              "RelativeToolTip": "AllasiFronted\\Components\\Pages\\NotFound.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-26T13:22:52.294Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Routes.razor",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Routes.razor",
+              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Routes.razor",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Routes.razor",
+              "RelativeToolTip": "AllasiFronted\\Components\\Routes.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-26T11:42:27.357Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "BannerCarousel.razor.css",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\BannerCarousel.razor.css",
+              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Shared\\BannerCarousel.razor.css",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\BannerCarousel.razor.css",
+              "RelativeToolTip": "AllasiFronted\\Components\\Shared\\BannerCarousel.razor.css",
+              "ViewState": "AgIAAEIAAAAAAAAAAAAAAF0AAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-06-26T12:38:15.572Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
               "Title": "UserMenu.razor.css",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\UserMenu.razor.css",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\UserMenu.razor.css",
               "RelativeDocumentMoniker": "AllasiFronted\\Components\\Shared\\UserMenu.razor.css",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\UserMenu.razor.css",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\UserMenu.razor.css",
               "RelativeToolTip": "AllasiFronted\\Components\\Shared\\UserMenu.razor.css",
               "ViewState": "AgIAAFwAAAAAAAAAAAAswHIAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
@@ -348,11 +393,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 22,
               "Title": "UserMenu.razor",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\UserMenu.razor",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\UserMenu.razor",
               "RelativeDocumentMoniker": "AllasiFronted\\Components\\Shared\\UserMenu.razor",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\UserMenu.razor",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Shared\\UserMenu.razor",
               "RelativeToolTip": "AllasiFronted\\Components\\Shared\\UserMenu.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -360,35 +405,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "Navbar.razor.css",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\Navbar.razor.css",
-              "RelativeDocumentMoniker": "AllasiFronted\\Components\\Shared\\Navbar.razor.css",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Shared\\Navbar.razor.css",
-              "RelativeToolTip": "AllasiFronted\\Components\\Shared\\Navbar.razor.css",
-              "ViewState": "AgIAALkAAAAAAAAAAAAswNMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-06-26T11:40:36.134Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "_Imports.razor",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\_Imports.razor",
-              "RelativeDocumentMoniker": "AllasiFronted\\Components\\_Imports.razor",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\_Imports.razor",
-              "RelativeToolTip": "AllasiFronted\\Components\\_Imports.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-26T11:40:47.026Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 24,
               "Title": "MainLayout.razor",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Layout\\MainLayout.razor",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Layout\\MainLayout.razor",
               "RelativeDocumentMoniker": "AllasiFronted\\Components\\Layout\\MainLayout.razor",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Layout\\MainLayout.razor",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Layout\\MainLayout.razor",
               "RelativeToolTip": "AllasiFronted\\Components\\Layout\\MainLayout.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -396,11 +417,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 23,
               "Title": "App.razor",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\App.razor",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\App.razor",
               "RelativeDocumentMoniker": "AllasiFronted\\Components\\App.razor",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\App.razor",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\App.razor",
               "RelativeToolTip": "AllasiFronted\\Components\\App.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAA+AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -408,11 +429,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 25,
               "Title": "MainLayout.razor.css",
-              "DocumentMoniker": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Layout\\MainLayout.razor.css",
+              "DocumentMoniker": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Layout\\MainLayout.razor.css",
               "RelativeDocumentMoniker": "AllasiFronted\\Components\\Layout\\MainLayout.razor.css",
-              "ToolTip": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\Components\\Layout\\MainLayout.razor.css",
+              "ToolTip": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\Components\\Layout\\MainLayout.razor.css",
               "RelativeToolTip": "AllasiFronted\\Components\\Layout\\MainLayout.razor.css",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",

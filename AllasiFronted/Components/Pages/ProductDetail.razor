@@ -3,6 +3,7 @@
 @using Progra3_Frontend.Services
 @inject NavigationManager NavigationManager
 @inject ProductosRS ProductosService
+@inject CarritoStateService CarritoService
 
 <PageTitle>Producto - Allasi Licores</PageTitle>
 
@@ -47,7 +48,7 @@
                         <input type="text" value="@quantity" readonly />
                         <button class="qty-btn" @onclick="IncreaseQuantity"><i class="bi bi-plus"></i></button>
                     </div>
-                    <button class="btn-add-cart">
+                    <button class="btn-add-cart" @onclick="AddToCart">
                         <i class="bi bi-cart"></i> Añadir al carrito
                     </button>
                 </div>
@@ -76,5 +77,13 @@
     private void IncreaseQuantity()
     {
         quantity++;
+    }
+
+    private void AddToCart()
+    {
+        if (producto != null)
+        {
+            CarritoService.AgregarProducto(producto, quantity);
+        }
     }
 }

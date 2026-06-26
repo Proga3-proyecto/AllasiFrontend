@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AllasiFrontend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ed5aa5d1f43c2ce3fc18ac360638aa124cf11635")]
 [assembly: System.Reflection.AssemblyProductAttribute("AllasiFrontend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AllasiFrontend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

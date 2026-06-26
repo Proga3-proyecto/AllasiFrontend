@@ -21,7 +21,8 @@
 
 .products-grid[b-wa6xrr9v6a] {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    justify-content:center;
+    grid-template-columns: repeat(3, 300px);
     gap: 20px;
 }
 

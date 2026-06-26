@@ -4,6 +4,7 @@
 @using Progra3_Frontend.Services
 @inject NavigationManager NavigationManager
 @inject RecetasRS RecetasService
+@inject CarritoStateService CarritoService
 
 <PageTitle>Receta - Allasi Licores</PageTitle>
 
@@ -52,7 +53,7 @@
 
                 <div class="recipe-actions">
                     <button class="btn-primary" @onclick="GoToPreparation">Preparación</button>
-                    <button class="btn-outline">
+                    <button class="btn-outline" @onclick="AddToCart">
                         <i class="bi bi-cart"></i> Añadir al carrito
                     </button>
                 </div>
@@ -106,5 +107,13 @@
     private void GoToPreparation()
     {
         NavigationManager.NavigateTo($"/receta/{id}/preparacion");
+    }
+
+    private void AddToCart()
+    {
+        if (receta != null)
+        {
+            CarritoService.AgregarReceta(receta, 1);
+        }
     }
 }

@@ -1,4 +1,8 @@
 @inherits ComponentBase
+@implements IDisposable
+@inject NavigationManager NavigationManager
+@using Progra3_Frontend.Services
+@inject CarritoStateService CarritoService
 
 <header class="navbar-header">
     <div class="top-bar">
@@ -24,8 +28,8 @@
         
         <div class="search-container">
             <div class="search-input-wrapper">
-                <input type="text" class="search-input" placeholder="¿Qué buscas hoy?" />
-                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="¿Qué buscas hoy?" @bind="searchQuery" @bind:event="oninput" @onkeyup="HandleKeyUp" />
+                <i class="bi bi-search search-icon" @onclick="ExecuteSearch" style="cursor: pointer;"></i>
             </div>
         </div>
         
@@ -34,9 +38,9 @@
             
             @if (!IsAdmin)
             {
-                <a href="#" class="action-icon cart-icon-wrapper">
+                <a href="/cart" class="action-icon cart-icon-wrapper">
                     <i class="bi bi-cart"></i>
-                    <span class="cart-badge">1</span>
+                    <span class="cart-badge">@CarritoService.ObtenerCantidadTotal()</span>
                 </a>
             }
         </div>
@@ -45,8 +49,8 @@
     <nav class="bottom-bar @(isMenuOpen ? "open" : "")">
         <div class="mobile-search-container">
              <div class="search-input-wrapper">
-                <input type="text" class="search-input" placeholder="¿Qué buscas hoy?" />
-                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="¿Qué buscas hoy?" @bind="searchQuery" @bind:event="oninput" @onkeyup="HandleKeyUp" />
+                <i class="bi bi-search search-icon" @onclick="ExecuteSearch" style="cursor: pointer;"></i>
             </div>
         </div>
         <ul class="nav-links">
@@ -71,14 +75,124 @@
 
 @code {
     private bool isMenuOpen = false;
+    private string _searchQuery = string.Empty;
+    private string searchQuery
+    {
+        get => _searchQuery;
+        set
+        {
+            if (_searchQuery != value)
+            {
+                _searchQuery = value;
+                OnSearchQueryChanged();
+            }
+        }
+    }
+
+    private System.Threading.CancellationTokenSource? _searchCts;
 
     // Variables de prueba para demostración. Deberían venir de un servicio de autenticación.
     private bool IsLoggedIn = true;
     private string UserName = "Juan Perez";
     private bool IsAdmin = false;
 
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += OnLocationChanged;
+        CarritoService.OnChange += OnCartChanged;
+        UpdateSearchQueryFromUri(NavigationManager.Uri);
+    }
+
+    private void OnCartChanged()
+    {
+        StateHasChanged();
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        UpdateSearchQueryFromUri(e.Location);
+        StateHasChanged();
+    }
+
+    private void UpdateSearchQueryFromUri(string uri)
+    {
+        try
+        {
+            var absoluteUri = new Uri(uri);
+            var query = absoluteUri.Query;
+            if (string.IsNullOrEmpty(query))
+            {
+                _searchQuery = string.Empty;
+                return;
+            }
+
+            var match = System.Text.RegularExpressions.Regex.Match(query, @"[?&]search=([^&]*)");
+            if (match.Success)
+            {
+                _searchQuery = Uri.UnescapeDataString(match.Groups[1].Value);
+            }
+            else
+            {
+                _searchQuery = string.Empty;
+            }
+        }
+        catch
+        {
+            _searchQuery = string.Empty;
+        }
+    }
+
     private void ToggleMenu()
     {
         isMenuOpen = !isMenuOpen;
+    }
+
+    private async void OnSearchQueryChanged()
+    {
+        _searchCts?.Cancel();
+        _searchCts = new System.Threading.CancellationTokenSource();
+        var token = _searchCts.Token;
+
+        try
+        {
+            await Task.Delay(250, token);
+            if (!token.IsCancellationRequested)
+            {
+                ExecuteSearch();
+            }
+        }
+        catch (TaskCanceledException)
+        {
+            // Omitido
+        }
+    }
+
+    private void ExecuteSearch()
+    {
+        if (!string.IsNullOrWhiteSpace(_searchQuery))
+        {
+            NavigationManager.NavigateTo($"/products/all?search={Uri.EscapeDataString(_searchQuery)}");
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/products/all");
+        }
+    }
+
+    private void HandleKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            _searchCts?.Cancel();
+            ExecuteSearch();
+        }
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+        CarritoService.OnChange -= OnCartChanged;
+        _searchCts?.Cancel();
+        _searchCts?.Dispose();
     }
 }

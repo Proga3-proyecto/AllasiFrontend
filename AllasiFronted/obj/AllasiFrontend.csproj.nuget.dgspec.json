@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\AllasiFrontend.csproj": {}
+    "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\AllasiFrontend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\AllasiFrontend.csproj": {
+    "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\AllasiFrontend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\AllasiFrontend.csproj",
+        "projectUniqueName": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\AllasiFrontend.csproj",
         "projectName": "AllasiFrontend",
-        "projectPath": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\AllasiFrontend.csproj",
-        "packagesPath": "C:\\Users\\MSI\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\MSI\\Desktop\\progra3\\AllasiFronted\\AllasiFronted\\obj\\",
+        "projectPath": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\AllasiFrontend.csproj",
+        "packagesPath": "C:\\Users\\Frank\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Frank\\Desktop\\AllasiFrontend\\AllasiFronted\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\MSI\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Frank\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -45,7 +45,7 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net10.0": {
@@ -55,7 +55,7 @@
             "Microsoft.AspNetCore.App.Internal.Assets": {
               "suppressParent": "All",
               "target": "Package",
-              "version": "[10.0.8, )",
+              "version": "[10.0.9, )",
               "autoReferenced": true
             }
           },
@@ -78,7 +78,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.204/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

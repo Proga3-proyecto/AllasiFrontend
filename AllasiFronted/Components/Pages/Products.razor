@@ -7,19 +7,19 @@
 @inject ProductosRS ProductosService
 @inject RecetasRS RecetasService
 
-<PageTitle>@(isRecetasPage ? "Recetas" : "Productos") - Allasi Licores</PageTitle>
+<PageTitle>@(isRecetasPage ? "Recetas" : (!string.IsNullOrWhiteSpace(SearchQuery) ? "Búsqueda" : "Productos")) - Allasi Licores</PageTitle>
 
 <div class="products-page">
     <div class="category-banner">
         <div class="banner-content">
-            <h1 class="banner-title">@(isRecetasPage ? "RECETAS" : category?.ToUpper())</h1>
+            <h1 class="banner-title">@(isRecetasPage ? "RECETAS" : (!string.IsNullOrWhiteSpace(SearchQuery) ? "BÚSQUEDA" : category?.ToUpper()))</h1>
             <div class="banner-separator">
                 <span class="line"></span>
                 <i class="bi bi-cup-straw banner-icon"></i>
                 <span class="line"></span>
             </div>
             <p class="banner-subtitle">
-                @(isRecetasPage ? "Explora las mejores preparaciones para tus licores" : "Explora los mejores productos de esta categoría")
+                @(isRecetasPage ? "Explora las mejores preparaciones para tus licores" : (!string.IsNullOrWhiteSpace(SearchQuery) ? $"Resultados para \"{SearchQuery}\"" : "Explora los mejores productos de esta categoría"))
             </p>
         </div>
     </div>
@@ -57,7 +57,7 @@
                         </div>
                         @if (isBrandOpen)
                         {
-                            <div class="filter-section-content">
+                            <div class="filter-section-content brand-list-container">
                                 @foreach (var brand in availableBrands)
                                 {
                                     <div class="brand-option">
@@ -127,6 +127,10 @@
 @code {
     [Parameter]
     public string category { get; set; } = "GIN";
+
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "search")]
+    public string? SearchQuery { get; set; }
 
     private bool isPriceOpen = true;
     private bool isBrandOpen = false;
@@ -212,12 +216,22 @@
     private void ApplyFilters()
     {
         // No filtrar recetas por precio o marca
-        filteredRecetas = recetas.ToList();
+        filteredRecetas = recetas.Where(r => (
+            string.IsNullOrWhiteSpace(SearchQuery) || 
+            (r.nombre != null && r.nombre.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)) ||
+            (r.descripcion != null && r.descripcion.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)))
+            && (!minPrice.HasValue || r.precio >= minPrice.Value) &&
+            (!maxPrice.HasValue || r.precio <= maxPrice.Value)
+        ).ToList();
 
         filteredProductos = productos.Where(p => 
             (!minPrice.HasValue || p.precio >= minPrice.Value) &&
             (!maxPrice.HasValue || p.precio <= maxPrice.Value) &&
-            (selectedBrands.Count == 0 || (p.marca != null && selectedBrands.Contains(p.marca.nombre)))
+            (selectedBrands.Count == 0 || (p.marca != null && selectedBrands.Contains(p.marca.nombre))) &&
+            (string.IsNullOrWhiteSpace(SearchQuery) || 
+             (p.nombre != null && p.nombre.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)) ||
+             (p.descripcion != null && p.descripcion.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)) ||
+             (p.marca != null && p.marca.nombre != null && p.marca.nombre.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)))
         ).ToList();
         
         currentPage = 1; // Reset to first page when filtering

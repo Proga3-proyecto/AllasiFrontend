@@ -1,0 +1,245 @@
+@page "/cart"
+@implements IDisposable
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+@using AllasiFrontend.Components.Shared
+@inject CarritoStateService CarritoService
+@inject ProductosRS ProductosService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Carrito de Compras - Allasi Licores</PageTitle>
+
+<div class="cart-page">
+    <div class="category-banner">
+        <div class="banner-content">
+            <h1 class="banner-title">CARRITO DE COMPRAS</h1>
+            <div class="banner-separator">
+                <span class="line"></span>
+                <i class="bi bi-cart banner-icon"></i>
+                <span class="line"></span>
+            </div>
+            <p class="banner-subtitle">
+                ¡Estás a un paso de disfrutar tus licores favoritos!
+            </p>
+        </div>
+    </div>
+
+    <div class="cart-container">
+        @if (CarritoService.Productos.Count == 0 && CarritoService.Recetas.Count == 0)
+        {
+            <div class="empty-cart">
+                <i class="bi bi-cart-x empty-icon"></i>
+                <h2>Tu carrito está vacío</h2>
+                <p>Explora nuestras categorías y agrega tus licores favoritos.</p>
+                <a href="/products/all" class="btn-shop">Ver Productos</a>
+            </div>
+        }
+        else
+        {
+            <div class="cart-grid">
+                <div class="cart-items-section">
+                    <table class="cart-table">
+                        <thead>
+                            <tr>
+                                <th>RECETA / PRODUCTO</th>
+                                <th>PRECIO</th>
+                                <th>CANTIDAD</th>
+                                <th>SUBTOTAL</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in CarritoService.Recetas)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="item-info">
+                                            <div class="item-img-wrapper">
+                                                <img src="@(item.receta.imagenes != null && item.receta.imagenes.Any() ? item.receta.imagenes[0].url : "/assets/placeholder-bottle.png")" alt="@item.receta.nombre" class="item-img" />
+                                            </div>
+                                            <div class="item-details">
+                                                <h4 class="item-name">@item.receta.nombre</h4>
+                                                <p class="item-description">@item.receta.descripcion</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="item-price">S/ @item.receta.precioFinal.ToString("0.00")</span>
+                                    </td>
+                                    <td>
+                                        <div class="qty-selector">
+                                            <button class="qty-btn" @onclick="() => DecreaseRecetaQty(item)"><i class="bi bi-dash"></i></button>
+                                            <span class="qty-val">@item.cantidad</span>
+                                            <button class="qty-btn" @onclick="() => IncreaseRecetaQty(item)"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="item-subtotal">S/ @item.montoTotal.ToString("0.00")</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn-delete" @onclick="() => RemoveReceta(item.receta.id)">
+                                            <i class="bi bi-trash"></i> <span>Eliminar</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                            @foreach (var item in CarritoService.Productos)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="item-info">
+                                            <div class="item-img-wrapper">
+                                                <img src="@(item.producto.imagenes != null && item.producto.imagenes.Any() ? item.producto.ImagenUrl : "/assets/placeholder-bottle.png")" alt="@item.producto.nombre" class="item-img" />
+                                            </div>
+                                            <div class="item-details">
+                                                <h4 class="item-name">@item.producto.nombre</h4>
+                                                <p class="item-description">@(string.IsNullOrEmpty(item.producto.descripcion) ? item.producto.marca?.nombre ?? "Licores seleccionados" : item.producto.descripcion)</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="item-price">S/ @item.producto.precioFinal.ToString("0.00")</span>
+                                    </td>
+                                    <td>
+                                        <div class="qty-selector">
+                                            <button class="qty-btn" @onclick="() => DecreaseProductoQty(item)"><i class="bi bi-dash"></i></button>
+                                            <span class="qty-val">@item.cantidad</span>
+                                            <button class="qty-btn" @onclick="() => IncreaseProductoQty(item)"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="item-subtotal">S/ @item.montoTotal.ToString("0.00")</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn-delete" @onclick="() => RemoveProducto(item.producto.id)">
+                                            <i class="bi bi-trash"></i> <span>Eliminar</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="cart-summary-section">
+                    <div class="summary-card">
+                        <h3>RESUMEN PEDIDO</h3>
+                        <div class="summary-divider"></div>
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span>S/ @Subtotal.ToString("0.00")</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Envío</span>
+                            <span>S/ @Delivery.ToString("0.00")</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-row total-row">
+                            <span>TOTAL</span>
+                            <span>S/ @Total.ToString("0.00")</span>
+                        </div>
+                        <p class="taxes-label">Impuestos incluidos</p>
+                        <button class="btn-checkout" @onclick="Checkout">FINALIZAR COMPRA</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="related-section">
+        <div class="related-header">
+            <span class="line"></span>
+            <h2 class="section-title">TAMBIÉN TE PUEDE INTERESAR</h2>
+            <span class="line"></span>
+        </div>
+        <div class="products-grid-related">
+            @if (productosInteresantes != null && productosInteresantes.Any())
+            {
+                @foreach (var prod in productosInteresantes)
+                {
+                    <ProductCard ProductoItem="@prod" />
+                }
+            }
+            else
+            {
+                <p>Cargando recomendaciones...</p>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Producto> productosInteresantes = new();
+    private double Subtotal => CarritoService.ObtenerTotal();
+    private double Delivery => Subtotal > 0 ? 15.00 : 0.00;
+    private double Total => Subtotal + Delivery;
+
+    protected override async Task OnInitializedAsync()
+    {
+        CarritoService.OnChange += StateHasChanged;
+        await LoadRecommendationsAsync();
+    }
+
+    private async Task LoadRecommendationsAsync()
+    {
+        try
+        {
+            var todos = await ProductosService.ListarTodosAsync() ?? new List<Producto>();
+            // Tomar una selección de productos no repetidos
+            productosInteresantes = todos
+                .Where(p => !CarritoService.Productos.Any(cp => cp.producto.id == p.id))
+                .Take(7)
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar recomendaciones: {ex.Message}");
+        }
+    }
+
+    private void DecreaseRecetaQty(DetalleReceta item)
+    {
+        if (item.cantidad > 1)
+        {
+            CarritoService.ActualizarCantidadReceta(item.receta.id, item.cantidad - 1);
+        }
+    }
+
+    private void IncreaseRecetaQty(DetalleReceta item)
+    {
+        CarritoService.ActualizarCantidadReceta(item.receta.id, item.cantidad + 1);
+    }
+
+    private void DecreaseProductoQty(DetalleProducto item)
+    {
+        if (item.cantidad > 1)
+        {
+            CarritoService.ActualizarCantidadProducto(item.producto.id, item.cantidad - 1);
+        }
+    }
+
+    private void IncreaseProductoQty(DetalleProducto item)
+    {
+        CarritoService.ActualizarCantidadProducto(item.producto.id, item.cantidad + 1);
+    }
+
+    private void RemoveReceta(int id)
+    {
+        CarritoService.RemoverReceta(id);
+    }
+
+    private void RemoveProducto(int id)
+    {
+        CarritoService.RemoverProducto(id);
+    }
+
+    private void Checkout()
+    {
+        NavigationManager.NavigateTo("/checkout");
+    }
+
+    public void Dispose()
+    {
+        CarritoService.OnChange -= StateHasChanged;
+    }
+}

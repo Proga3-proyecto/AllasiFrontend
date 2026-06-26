@@ -10,6 +10,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<ProductosRS>();
 builder.Services.AddScoped<RecetasRS>();
+builder.Services.AddScoped<CarritoStateService>();
 
 var app = builder.Build();
 

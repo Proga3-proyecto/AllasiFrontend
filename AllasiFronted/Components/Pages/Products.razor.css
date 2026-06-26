@@ -292,3 +292,28 @@
     cursor: not-allowed;
     background-color: #f8f9fc;
 }
+
+.brand-list-container {
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+/* Custom scrollbar styling for brands list */
+.brand-list-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.brand-list-container::-webkit-scrollbar-track {
+    background: #f3f4f6;
+    border-radius: 4px;
+}
+
+.brand-list-container::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+}
+
+.brand-list-container::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary, #101c45);
+}
