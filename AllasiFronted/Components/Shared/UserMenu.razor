@@ -1,4 +1,4 @@
-<div class="user-menu-container">
+﻿<div class="user-menu-container">
     <button class="action-icon user-button" @onclick="ToggleMenu" @onfocusout="HideMenuDelayed">
         @if (IsLoggedIn && !string.IsNullOrEmpty(UserName))
         {
@@ -23,9 +23,18 @@
             @if (IsLoggedIn)
             {
                 <li>
-                    <a href="/settings" class="menu-item">
-                        <i class="bi bi-gear"></i> Settings
-                    </a>
+
+                    @if(isAdmin){
+                        <a href="/admin" class="menu-item">
+                            <i class="bi bi-gear"></i> Settings
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="/user" class="menu-item">
+                            <i class="bi bi-gear"></i> Settings
+                        </a>
+                    }
                 </li>
                 <li>
                     <button class="menu-item text-danger" style="background: none; border: none; width: 100%; text-align: left;" @onclick="PerformLogout">
@@ -41,6 +50,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthProvider
 @inject NavigationManager NavigationManager
+@inject CustomAuthenticationStateProvider AuthProvider
 
 @code {
     [Parameter]
@@ -48,6 +58,9 @@
 
     [Parameter]
     public string UserName { get; set; } = "";
+
+
+    public bool isAdmin = false;
 
     private bool isMenuOpen = false;
 
@@ -57,6 +70,13 @@
         isMenuOpen = !isMenuOpen;
     }
 
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthProvider.GetAuthenticationStateAsync();
+        if (state == null) return;
+        isAdmin = state.User.IsInRole("ADMIN") || state.User.IsInRole("admin");
+    }
     private async Task HideMenuDelayed()
     {
         await Task.Delay(200);
@@ -64,12 +84,13 @@
         StateHasChanged();
     }
 
-    private void PerformLogout()
+    private async Task PerformLogout()
     {
         if (AuthProvider is CustomAuthenticationStateProvider customProvider)
         {
-            customProvider.Logout();
+            await customProvider.Logout();
             NavigationManager.NavigateTo("/", forceLoad: true);
         }
     }
 }
+

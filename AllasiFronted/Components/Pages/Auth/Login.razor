@@ -1,4 +1,4 @@
-@page "/login"
+ï»¿@page "/login"
 @using Progra3_Frontend.Models
 @using Progra3_Frontend.Services
 @using Progra3_Frontend.Services.Auth
@@ -12,17 +12,17 @@
         <div class="form-header">
             <i class="bi bi-person-lock logo"></i>
             <h1 class="title">
-                INICIO DE SESIÓN
+                INICIO DE SESIï¿½N
             </h1>
             <h3 class="sub-title">
-                Introduzca su correo electrónico y contraseña:
+                Introduzca su correo electrï¿½nico y contraseï¿½a:
             </h3>
             <div class="hr"></div>
         </div>
 
         <form @onsubmit="OnSumit">
             <div class="form-input">
-                <label for="email">Correo electrónico</label>
+                <label for="email">Correo electrï¿½nico</label>
                 <div class="input-container">
                     <i class="bi bi-envelope"></i>
                     <input id="email"
@@ -33,7 +33,7 @@
             </div>
 
             <div class="form-input">
-                <label for="password">Contraseña</label>
+                <label for="password">Contraseï¿½a</label>
                 <div class="input-container">
                     <i class="bi bi-lock-fill"></i>
                     <input id="password"
@@ -54,7 +54,7 @@
             </div>
 
             <a href="/forgot-password" class="link">
-                <u>¿Olvidaste tu contraseña?</u>
+                <u>ï¿½Olvidaste tu contraseï¿½a?</u>
             </a>
             @if (!string.IsNullOrEmpty(error))
             {
@@ -67,7 +67,7 @@
         </form>
 
         <div class="footer-register">
-            <span class="label">¿Eres nuevo?</span>
+            <span class="label">ï¿½Eres nuevo?</span>
             <a href="/register" class="link"><u>Crear una cuenta</u></a>
         </div>
     </section>
@@ -102,7 +102,7 @@
 
         if (usuario.Exito)
         {
-            AuthProvider.Login(
+            await AuthProvider.Login(
                 usuario.Nombre,
                 usuario.Rol);
 
@@ -128,3 +128,4 @@
         }
     }
 }
+

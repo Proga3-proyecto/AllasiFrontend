@@ -1,4 +1,4 @@
-@page "/admin/update-product"
+﻿@page "/admin/update-product"
 @page "/admin/update-product/{Id:int}"
 @layout AdminLayout
 
@@ -219,7 +219,9 @@
 
     public class ImageItem
     {
-        public IBrowserFile File { get; set; } = default!;
+        public IBrowserFile? File { get; set; }
+        public bool IsExisting { get; set; } = false;
+        public int Id { get; set; }
         public string PreviewUrl { get; set; } = string.Empty;
         public bool IsPrincipal { get; set; } = false;
     }
@@ -263,6 +265,22 @@
 
                 productViewModel.marcaTemporal = productoOriginal.marca?.nombre ?? string.Empty;
                 productViewModel.categoriaTemporal = productoOriginal.categorias?.FirstOrDefault()?.nombre ?? string.Empty;
+
+                if (productoOriginal.imagenes != null && productoOriginal.imagenes.Any())
+                {
+                    imagenes.Clear();
+                    foreach (var img in productoOriginal.imagenes)
+                    {
+                        imagenes.Add(new ImageItem
+                        {
+                            PreviewUrl = img.url,
+                            IsPrincipal = img.principal,
+                            IsExisting = true,
+                            Id = img.id,
+                            File = null
+                        });
+                    }
+                }
             }
         }
         catch (Exception ex)
@@ -340,22 +358,23 @@
                 {
                     foreach (var img in imagenes)
                     {
+                        if (img.IsExisting) continue;
                         try
                         {
-                            using var stream = img.File.OpenReadStream(maxFileSize);
+                            using var stream = img.File!.OpenReadStream(maxFileSize);
 
                             if (img.IsPrincipal)
                             {
-                                await ProductosRS.SubirImagenPrincipalAsync(Id, stream, img.File.Name, img.File.ContentType);
+                                await ProductosRS.SubirImagenPrincipalAsync(Id, stream, img.File!.Name, img.File!.ContentType);
                             }
                             else
                             {
-                                await ProductosRS.SubirImagenAsync(Id, stream, img.File.Name, img.File.ContentType);
+                                await ProductosRS.SubirImagenAsync(Id, stream, img.File!.Name, img.File!.ContentType);
                             }
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine($"Error subiendo imagen {img.File.Name}: {ex.Message}");
+                            Console.WriteLine($"Error subiendo imagen {img.File!.Name}: {ex.Message}");
                         }
                     }
                 }
@@ -373,3 +392,6 @@
         }
     }
 }
+
+
+
