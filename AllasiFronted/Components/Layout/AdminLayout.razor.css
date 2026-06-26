@@ -23,3 +23,18 @@
     padding-top:20px;
     height:fit-content;
 }
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+    .admin-container {
+        flex-direction: column;
+        padding: 10px;
+        gap: 15px;
+    }
+    .sidebar {
+        width: 100%;
+    }
+    .admin-content {
+        padding: 15px;
+    }
+}

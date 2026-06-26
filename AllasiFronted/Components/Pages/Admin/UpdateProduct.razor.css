@@ -112,3 +112,44 @@
     display: block;
     font-weight: 500;
 }
+
+.asterisk {
+    color: #dc3545;
+    margin-left: 2px;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background-color: #f5f6f8;
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+}
+
+    .input-container:focus-within {
+        background-color: #ffffff;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 0.25rem rgba(16, 28, 69, 0.15);
+    }
+
+    .input-container input,
+    .input-container select,
+    .input-container textarea {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 14px;
+        font-family: "Metrophobic", sans-serif;
+        color: var(--color-text-main);
+        width: 100%;
+        resize: none;
+    }
+
+        .input-container input::placeholder,
+        .input-container textarea::placeholder {
+            color: var(--color-text-light);
+        }
