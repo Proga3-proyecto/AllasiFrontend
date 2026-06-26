@@ -18,26 +18,26 @@ namespace Progra3_Frontend.Services
 
         private void CargarCarritoHardcodeado()
         {
-            var recetaSour = new Receta
-            {
-                id = 999,
-                nombre = "Trilogía de Pisco Sour",
-                descripcion = "Disfruta tres variaciones clásicas del pisco sour: Clásico, Maracuyá y Hierbabuena.",
-                precio = 75.00,
-                precioFinal = 75.00,
-                imagenes = new List<Imagen>
-                {
-                    new Imagen { url = "/assets/trilogia_pisco_sour.jpg" }
-                }
-            };
+            //var recetaSour = new Receta
+            //{
+            //    id = 999,
+            //    nombre = "Trilogía de Pisco Sour",
+            //    descripcion = "Disfruta tres variaciones clásicas del pisco sour: Clásico, Maracuyá y Hierbabuena.",
+            //    precio = 75.00,
+            //    precioFinal = 75.00,
+            //    imagenes = new List<Imagen>
+            //    {
+            //        new Imagen { url = "/assets/trilogia_pisco_sour.jpg" }
+            //    }
+            //};
 
-            Recetas.Add(new DetalleReceta
-            {
-                id = 1,
-                receta = recetaSour,
-                cantidad = 1,
-                montoTotal = 75.00
-            });
+            //Recetas.Add(new DetalleReceta
+            //{
+            //    id = 1,
+            //    receta = recetaSour,
+            //    cantidad = 1,
+            //    montoTotal = 75.00
+            //});
         }
 
         public event Action? OnChange;
