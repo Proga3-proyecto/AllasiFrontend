@@ -1,0 +1,316 @@
+@page "/admin/order-details/{OrderId:int}"
+@using Microsoft.AspNetCore.Components.Authorization
+@layout AdminLayout
+
+@using Progra3_Frontend.Model
+@inject Progra3_Frontend.Services.PedidosRS PedidosRS
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<AuthorizeView Roles="ADMIN" Context="authContext">
+    <Authorized>
+        <div class="container-fluid mt-3" style="max-width: 1400px;">
+
+            <div class="mb-4">
+                <a href="/admin/order-list" class="back-link mb-3 d-inline-block text-decoration-none">
+                    <i class="bi bi-arrow-left me-1"></i> Volver a pedidos
+                </a>
+                <h2 class="fw-bold text-navy mb-0 main-title">Detalles del Pedido #@OrderId</h2>
+                <p class="text-muted mb-0" style="font-size: 0.95rem;">Panel de Administración</p>
+            </div>
+
+            @if (isLoading)
+            {
+                <div class="text-center mt-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Cargando detalles del pedido...</p>
+                </div>
+            }
+            else if (Order == null)
+            {
+                <div class="alert alert-danger shadow-sm mt-4">
+                    No se encontró el pedido solicitado o hubo un error al cargar la información.
+                </div>
+            }
+            else
+            {
+                <div class="details-container shadow-sm p-4 bg-white rounded">
+
+                    <div class="row gx-5 mb-5">
+
+                        <div class="col-md-4 info-column">
+                            <h6 class="fw-bold text-navy mb-4" style="font-size: 1.05rem;">Información del Cliente</h6>
+
+                            <div class="d-flex mb-3">
+                                <i class="bi bi-person info-icon mt-1 text-primary me-3"></i>
+                                <div>
+                                    <div class="info-label text-muted small">Cliente:</div>
+                                    <div class="info-value fw-medium">@(Order.cliente != null ? $"{Order.cliente.nombre} {Order.cliente.apellidoCompleto}" : "No asignado")</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex mb-3">
+                                <i class="bi bi-envelope info-icon mt-1 text-primary me-3"></i>
+                                <div>
+                                    <div class="info-label text-muted small">Correo:</div>
+                                    <div class="info-value">@(Order.cliente?.correo ?? "N/A")</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex mb-3">
+                                <i class="bi bi-telephone info-icon mt-1 text-primary me-3"></i>
+                                <div>
+                                    <div class="info-label text-muted small">Teléfono:</div>
+                                    <div class="info-value">@(Order.cliente?.telefono ?? "N/A")</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex">
+                                <i class="bi bi-geo-alt info-icon mt-1 text-primary me-3"></i>
+                                <div>
+                                    <div class="info-label text-muted small">Dirección de Envío:</div>
+                                    <div class="info-value">@(string.IsNullOrEmpty(Order.direccionDestino) ? "Por definir / Recojo" : Order.direccionDestino)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 info-column">
+                            <h6 class="fw-bold text-navy mb-4" style="font-size: 1.05rem;">Información del Pedido</h6>
+
+                            <div class="d-flex mb-3">
+                                <i class="bi bi-file-earmark-text info-icon mt-1 text-primary me-3"></i>
+                                <div>
+                                    <div class="info-label text-muted small">ID Pedido:</div>
+                                    <div class="info-value">@Order.id</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex mb-3">
+                                <i class="bi bi-calendar-event info-icon mt-1 text-primary me-3"></i>
+                                <div>
+                                    <div class="info-label text-muted small">Fecha de Registro:</div>
+                                    <div class="info-value">@(Order.fechaPedido?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex mb-3">
+                                <i class="bi bi-arrow-left-right info-icon mt-1 text-primary me-3"></i>
+                                <div>
+                                    <div class="info-label text-muted small">Estado Actual:</div>
+                                    <div class="info-value">
+                                        <span class="badge bg-@(GetStatusColor(Order.estado))">@Order.estado</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <h6 class="fw-bold text-navy mb-4" style="font-size: 1.05rem;">Resumen Financiero</h6>
+
+                            <div class="summary-row d-flex justify-content-between mb-2">
+                                <span class="info-label text-muted">Subtotal (Precio Base):</span>
+                                <span class="info-value">S/. @Order.precioTotal.ToString("F2")</span>
+                            </div>
+
+                            <div class="summary-row d-flex justify-content-between mb-2">
+                                <span class="info-label text-muted">Total Impuestos:</span>
+                                <span class="info-value">S/. @Order.totalImpuestos.ToString("F2")</span>
+                            </div>
+
+                            <div class="summary-row d-flex justify-content-between mb-2">
+                                <span class="info-label text-muted">Costo Delivery:</span>
+                                <span class="info-value">S/. @Order.precioDelivery.ToString("F2")</span>
+                            </div>
+
+                            <hr />
+
+                            <div class="summary-row summary-total d-flex justify-content-between align-items-center mt-3">
+                                <span class="fw-bold">Total Final:</span>
+                                <span class="fw-bold text-primary" style="font-size: 1.4rem;">S/. @Order.precioFinal.ToString("F2")</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div>
+                        <h6 class="fw-bold text-navy mb-3" style="font-size: 1.05rem;">Ítems Solicitados</h6>
+
+                        <div class="table-responsive">
+                            <table class="table custom-table table-borderless align-middle w-100 mb-0">
+                                <thead class="text-start border-bottom">
+                                    <tr>
+                                        <th scope="col" style="width: 12%;">Tipo</th>
+                                        <th scope="col" class="text-center" style="width: 13%;">Imagen</th>
+                                        <th scope="col" style="width: 35%;">Detalle del Ítem</th>
+                                        <th scope="col" class="text-center" style="width: 10%;">Cantidad</th>
+                                        <th scope="col" class="text-center" style="width: 15%;">Precio Unitario</th>
+                                        <th scope="col" class="text-center" style="width: 15%;">Total Línea</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-start">
+
+                                    @if ((Order.detallesProductos == null || !Order.detallesProductos.Any()) &&
+                                         (Order.detallesRecetas == null || !Order.detallesRecetas.Any()))
+                                    {
+                                        <tr>
+                                            <td colspan="6" class="text-center py-4 text-muted">El pedido no registra ítems en el detalle.</td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        @if (Order.detallesProductos != null)
+                                        {
+                                            @foreach (var prodDetalle in Order.detallesProductos)
+                                            {
+                                                <tr>
+                                                    <td><span class="badge bg-secondary px-2 py-1">Producto</span></td>
+                                                    <td class="text-center">
+                                                        <div class="product-img-container mx-auto">
+                                                            <img src="/assets/products/default.png" alt="Producto" class="img-fluid rounded" style="max-height: 50px;" />
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        @if (prodDetalle.productoSnapshot != null)
+                                                        {
+                                                            <div class="text-dark fw-medium">@prodDetalle.productoSnapshot.nombre</div>
+                                                            <div class="text-muted small">Marca: @prodDetalle.productoSnapshot.nombreMarca | Alc: @prodDetalle.productoSnapshot.porcentajeAlcohol%</div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted italic">Snapshot de producto no disponible (ID Detalle: @prodDetalle.id)</span>
+                                                        }
+                                                    </td>
+                                                    <td class="text-center text-dark fw-bold">@prodDetalle.cantidad</td>
+                                                    <td class="text-center text-dark">
+                                                        @if (prodDetalle.productoSnapshot != null)
+                                                        {
+                                                            <span>S/. @prodDetalle.productoSnapshot.precioFinalVenta.ToString("F2")</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>S/. 0.00</span>
+                                                        }
+                                                    </td>
+                                                    <td class="text-center text-dark fw-medium">
+                                                        @if (prodDetalle.productoSnapshot != null)
+                                                        {
+                                                            <span>S/. @((prodDetalle.cantidad * prodDetalle.productoSnapshot.precioFinalVenta).ToString("F2"))</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>S/. 0.00</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+
+                                        @if (Order.detallesRecetas != null)
+                                        {
+                                            @foreach (var recDetalle in Order.detallesRecetas)
+                                            {
+                                                <tr>
+                                                    <td><span class="badge bg-info text-dark px-2 py-1">Receta</span></td>
+                                                    <td class="text-center">
+                                                        <div class="product-img-container mx-auto">
+                                                            <img src="/assets/products/default.png" alt="Receta" class="img-fluid rounded" style="max-height: 50px;" />
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        @if (recDetalle.recetaSnapshot != null)
+                                                        {
+                                                            <div class="text-dark fw-medium">@recDetalle.recetaSnapshot.nombre</div>
+                                                            <div class="text-muted small text-truncate" style="max-width: 300px;">@recDetalle.recetaSnapshot.descripcion</div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted italic">Snapshot de receta no disponible (ID Detalle: @recDetalle.id)</span>
+                                                        }
+                                                    </td>
+                                                    <td class="text-center text-dark fw-bold">@recDetalle.cantidad</td>
+                                                    <td class="text-center text-dark">
+                                                        @if (recDetalle.recetaSnapshot != null)
+                                                        {
+                                                            <span>S/. @recDetalle.recetaSnapshot.precioFinalHistorico.ToString("F2")</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>S/. 0.00</span>
+                                                        }
+                                                    </td>
+                                                    <td class="text-center text-dark fw-medium">
+                                                        @if (recDetalle.recetaSnapshot != null)
+                                                        {
+                                                            <span>S/. @((recDetalle.cantidad * recDetalle.recetaSnapshot.precioFinalHistorico).ToString("F2"))</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>S/. 0.00</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            }
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        <div class="container mt-5">
+            <h2>
+                Acceso denegado
+            </h2>
+            <p>
+                No tienes permisos para acceder a esta página.
+            </p>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public int OrderId { get; set; }
+
+    private Pedido? Order { get; set; }
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            isLoading = true;
+            // Se realiza la petición real a tu backend
+            Order = await PedidosRS.ObtenerPorIdAsync(OrderId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al intentar recuperar la orden #{OrderId}: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private string GetStatusColor(EstadoPedido status)
+    {
+        return status switch
+        {
+            EstadoPedido.PENDIENTE => "warning text-dark",
+            EstadoPedido.EN_PREPARACION => "info text-dark",
+            EstadoPedido.EN_CAMINO => "primary",
+            EstadoPedido.ENTREGADO => "success",
+            EstadoPedido.CANCELADO => "danger",
+            EstadoPedido.RECHAZADO => "dark",
+            _ => "secondary"
+        };
+    }
+}

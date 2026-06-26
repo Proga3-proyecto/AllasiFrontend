@@ -1,0 +1,67 @@
+﻿/* --- COLORES PRINCIPALES --- */
+.text-navy {
+    color: var(--color-primary, #021947);
+}
+
+.navy-bg {
+    background-color: var(--color-primary, #021947);
+    color: white;
+    transition: background-color 0.2s;
+}
+
+    .navy-bg:hover {
+        background-color: color-mix(in srgb, var(--color-primary, #021947), black 15%);
+        color: white;
+    }
+
+/* --- CONTENEDOR PRINCIPAL --- */
+.profile-page-container {
+    max-width: 800px; /* Límite para mantener un diseño equilibrado */
+    margin: 0 auto;
+    padding-top: 0.5rem;
+    padding-bottom: 1.5rem;
+}
+
+/* --- TARJETA DEL PERFIL --- */
+.profile-form-card {
+    background-color: white;
+    border-radius: 8px; /* Menos redondeado, más moderno */
+    border: 1px solid #e2e8f0;
+    padding: 24px; /* Relleno interior ajustado */
+}
+
+/* --- GRILLA DEL FORMULARIO --- */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px; /* Espacio más ajustado entre campos (antes 20px) */
+}
+
+/* Ajuste responsive para pantallas pequeñas */
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- BOTONES --- */
+.boton-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* --- FOOTER INFORMATIVO SEGURO --- */
+.security-footer-text {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.72rem; /* Tamaño minimizado (12px) */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-shield-icon-img {
+    width: 14px; /* Ícono reducido a escala */
+    height: 14px;
+    margin-right: 0.3rem;
+}

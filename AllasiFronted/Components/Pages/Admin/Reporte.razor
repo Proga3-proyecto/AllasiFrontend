@@ -1,0 +1,156 @@
+@page "/admin/report-list"
+@layout AdminLayout
+
+@inject NavigationManager Navigation
+
+<div class="report-list-page container-fluid mt-3 mb-4">
+
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-navy main-title">
+            Reportes
+        </h2>
+
+        <p class="text-muted mb-0">
+            Selecciona el tipo de reporte que deseas consultar.
+        </p>
+    </div>
+
+    <div class="reports-grid">
+
+        <button type="button"
+                class="report-card"
+                @onclick='() => Navigation.NavigateTo("/admin/report-product")'>
+
+            <div class="report-image report-image-product">
+
+                <svg viewBox="0 0 240 170"
+                     role="img"
+                     aria-label="Reporte por producto">
+
+                    <rect x="26" y="25"
+                          width="188" height="120"
+                          rx="14"
+                          class="svg-panel" />
+
+                    <rect x="49" y="48"
+                          width="51" height="70"
+                          rx="8"
+                          class="svg-box" />
+
+                    <path d="M49 66 L74.5 48 L100 66"
+                          class="svg-line" />
+
+                    <rect x="122" y="92"
+                          width="15" height="26"
+                          rx="3"
+                          class="svg-bar" />
+
+                    <rect x="145" y="73"
+                          width="15" height="45"
+                          rx="3"
+                          class="svg-bar" />
+
+                    <rect x="168" y="54"
+                          width="15" height="64"
+                          rx="3"
+                          class="svg-bar" />
+
+                    <path d="M119 126 H188"
+                          class="svg-axis" />
+                </svg>
+
+            </div>
+
+            <div class="report-card-content">
+
+                <div class="report-icon">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+
+                <div class="report-card-text">
+                    <h3>Reporte por Producto</h3>
+
+                    <p>
+                        Consulta información y resultados relacionados
+                        con los productos.
+                    </p>
+                </div>
+
+                <div class="report-arrow">
+                    <i class="bi bi-arrow-right"></i>
+                </div>
+
+            </div>
+
+        </button>
+
+        <button type="button"
+                class="report-card"
+                @onclick='() => Navigation.NavigateTo("/admin/report-client")'>
+
+            <div class="report-image report-image-client">
+
+                <svg viewBox="0 0 240 170"
+                     role="img"
+                     aria-label="Reporte por cliente">
+
+                    <rect x="26" y="25"
+                          width="188" height="120"
+                          rx="14"
+                          class="svg-panel" />
+
+                    <circle cx="83" cy="70"
+                            r="24"
+                            class="svg-person" />
+
+                    <path d="M48 125
+                    C53 98, 113 98, 118 125"
+                          class="svg-person" />
+
+                    <circle cx="157" cy="61"
+                            r="12"
+                            class="svg-person-secondary" />
+
+                    <path d="M136 94
+                    C139 78, 175 78, 178 94"
+                          class="svg-person-secondary" />
+
+                    <rect x="137" y="108"
+                          width="44" height="9"
+                          rx="4.5"
+                          class="svg-line-fill" />
+
+                    <rect x="137" y="124"
+                          width="29" height="7"
+                          rx="3.5"
+                          class="svg-line-soft" />
+                </svg>
+
+            </div>
+
+            <div class="report-card-content">
+
+                <div class="report-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+
+                <div class="report-card-text">
+                    <h3>Reporte por Cliente</h3>
+
+                    <p>
+                        Revisa información y resultados asociados
+                        con los clientes.
+                    </p>
+                </div>
+
+                <div class="report-arrow">
+                    <i class="bi bi-arrow-right"></i>
+                </div>
+
+            </div>
+
+        </button>
+
+    </div>
+
+</div>

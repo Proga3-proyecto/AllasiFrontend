@@ -1,0 +1,36 @@
+﻿
+
+::deep .sidebar-item {
+    display: flex; /* Cambiado a flex para alinear icono y texto horizontalmente */
+    align-items: center; /* Centra verticalmente la imagen con el texto */
+    padding: 12px;
+    border-bottom: 1px solid #e5e5e5;
+    text-decoration: none;
+    color: black;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-size:14px;
+}
+
+    ::deep .sidebar-item:hover {
+        background-color: #f3f3f3;
+    }
+
+/* Estilo específico para las 4 imágenes de los botones */
+.sidebar-icon-img {
+    width: 18px;
+    height: 18px;
+    margin-right: 0.75rem; /* Espaciado entre la imagen y el texto */
+    object-fit: contain;
+}
+
+.sidebar-icon-bi {
+    font-size: 14px; /* Tamaño del icono */
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
+}
+
+::deep .cerrar {
+    color: red;
+}

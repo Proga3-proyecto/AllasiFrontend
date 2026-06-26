@@ -1,0 +1,44 @@
+@page "/user"
+@using AllasiFrontend.Components.Shared.ui
+@layout UserLayout
+
+<div class="profile-page-container">
+
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-navy mb-1" style="font-size: 1.35rem;">Mi perfil</h2>
+        <p class="text-muted mb-2" style="font-size: 0.85rem;">Administra tu información personal y de contacto.</p>
+    </div>
+
+    <div class="profile-form-card shadow-sm">
+
+        <h3 class="fw-bold text-navy mb-3 pb-2" style="font-size: 1rem; border-bottom: 1px solid #e2e8f0;">Información personal</h3>
+
+        <div class="grid mb-4">
+            <Input Label="Nombre completo" value="Juan Carlos Pérez Rodriguez" disabled />
+            <Input Label="DNI" value="12345678" disabled />
+            <Input Label="Fecha de nacimiento" value="1988-05-15" disabled type="date" />
+            <Input Label="Fecha de creación de cuenta" value="2023-03-20" disabled type="date" />
+        </div>
+
+        <h3 class="fw-bold text-navy mb-3 pb-2" style="font-size: 1rem; border-bottom: 1px solid #e2e8f0;">Información de contacto</h3>
+
+        <div class="grid mb-4">
+            <Input Label="Número de teléfono" value="912 345 678" type="text" />
+            <Input Label="Dirección de entrega"
+                   value="Av. Universitaria 1801, San Miguel, Lima, Perú"
+                   type="text"
+                   TextArea
+                   rows="2" />
+        </div>
+
+        <div class="boton-container pt-3 mt-2" style="border-top: 1px solid rgba(170,170,170,0.15);">
+            <Button Text="Guardar cambios" Class="navy-bg px-4 py-2" style="border-radius: 6px; font-weight: 500; font-size: 0.85rem;" />
+        </div>
+
+    </div>
+
+    <p class="security-footer-text mt-4">
+        <img src="assets/icons/escudo.png" alt="Seguro" class="footer-shield-icon-img" /> Tu información está segura con nosotros y no será compartida con terceros.
+    </p>
+
+</div>

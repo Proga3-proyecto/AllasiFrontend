@@ -1,0 +1,152 @@
+@page "/register"
+@using System.ComponentModel.DataAnnotations
+@inject NavigationManager Navigation
+
+<div class="container">
+    <section>
+        <div class="form-header">
+            <h1 class="title">
+                CREAR CUENTA
+            </h1>
+            <h3 class="sub-title">
+                Completa tus datos para crear tu cuenta.
+            </h3>
+            <div class="hr"></div>
+        </div>
+
+        <EditForm Model="usuario" OnValidSubmit="CrearCuenta" class="form-body">
+            <DataAnnotationsValidator />
+            <div class="register-container">
+                <div class="left-column">
+                    <div class="form-input">
+                        <label>Nombre(s)</label>
+                        <div class="input-container">
+                            <i class="bi bi-person"></i>
+                            <InputText @bind-Value="usuario.Nombres" placeholder="Ingresa tu nombre" />
+                        </div>
+                        <ValidationMessage For="@(() => usuario.Nombres)" />
+                    </div>
+
+                    <div class="double-row">
+                        <div class="form-input">
+                            <label>Apellido Paterno</label>
+                            <div class="input-container">
+                                <i class="bi bi-person"></i>
+                                <InputText @bind-Value="usuario.ApellidoPaterno" placeholder="Apellido paterno" />
+                            </div>
+                            <ValidationMessage For="@(() => usuario.ApellidoPaterno)" />
+                        </div>
+
+                        <div class="form-input">
+                            <label>Apellido Materno</label>
+                            <div class="input-container">
+                                <i class="bi bi-person"></i>
+                                <InputText @bind-Value="usuario.ApellidoMaterno" placeholder="Apellido materno" />
+                            </div>
+                            <ValidationMessage For="@(() => usuario.ApellidoMaterno)" />
+                        </div>
+                    </div>
+
+                    <div class="form-input">
+                        <label>Correo electrónico</label>
+                        <div class="input-container">
+                            <i class="bi bi-envelope"></i>
+                            <InputText @bind-Value="usuario.Email" placeholder="ejemplo@correo.com" />
+                        </div>
+                        <ValidationMessage For="@(() => usuario.Email)" />
+                    </div>
+
+                    <div class="form-input">
+                        <label>Contraseña</label>
+                        <div class="input-container">
+                            <i class="bi bi-lock-fill"></i>
+                            <InputText @bind-Value="usuario.Password" type="password" placeholder="Crea una contraseña" />
+                        </div>
+                        <ValidationMessage For="@(() => usuario.Password)" />
+                    </div>
+
+                    <div class="form-input">
+                        <label>Repetir Contraseña</label>
+                        <div class="input-container">
+                            <i class="bi bi-lock-fill"></i>
+                            <InputText @bind-Value="usuario.ConfirmPassword" type="password" placeholder="Repite tu contraseña" />
+                        </div>
+                        <ValidationMessage For="@(() => usuario.ConfirmPassword)" />
+                    </div>
+                </div>
+
+                <div class="right-column">
+                    <div class="form-input">
+                        <label>DNI</label>
+                        <div class="input-container">
+                            <i class="bi bi-person-vcard"></i>
+                            <InputText @bind-Value="usuario.Dni" placeholder="Ingresa tu DNI" />
+                        </div>
+                        <ValidationMessage For="@(() => usuario.Dni)" />
+                    </div>
+
+                    <div class="form-input">
+                        <label>Fecha de Nacimiento</label>
+                        <div class="input-container">
+                            <i class="bi bi-calendar3"></i>
+                            <InputDate @bind-Value="usuario.FechaNacimiento" />
+                        </div>
+                        <ValidationMessage For="@(() => usuario.FechaNacimiento)" />
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="register-button">
+                Crear Cuenta
+            </button>
+
+            <div class="footer-link">
+                <span class="label">¿Ya tienes cuenta?</span>
+                <a href="/login" class="link"><u>Iniciar sesión</u></a>
+            </div>
+        </EditForm>
+    </section>
+</div>
+
+@code {
+    private RegistroUsuario usuario = new();
+
+    private async Task CrearCuenta()
+    {
+        // Aquí irá tu BL o API
+        Navigation.NavigateTo("/login");
+        await Task.CompletedTask;
+    }
+
+    public class RegistroUsuario
+    {
+        [Required(ErrorMessage = "El nombre es obligatorio")]
+        [MinLength(2)]
+        public string Nombres { get; set; } = "";
+
+        [Required(ErrorMessage = "El apellido paterno es obligatorio")]
+        public string ApellidoPaterno { get; set; } = "";
+
+        [Required(ErrorMessage = "El apellido materno es obligatorio")]
+        public string ApellidoMaterno { get; set; } = "";
+
+        [Required(ErrorMessage = "El DNI es obligatorio")]
+        [RegularExpression(@"^\d{8}$", ErrorMessage = "El DNI debe contener exactamente 8 dígitos")]
+        public string Dni { get; set; } = "";
+
+        [Required(ErrorMessage = "El correo es obligatorio")]
+        [EmailAddress(ErrorMessage = "Correo inválido")]
+        public string Email { get; set; } = "";
+
+        [Required(ErrorMessage = "Debe ingresar una contraseña")]
+        [MinLength(8, ErrorMessage = "La contraseña debe tener mínimo 8 caracteres")]
+        public string Password { get; set; } = "";
+
+        [Required(ErrorMessage = "Debe repetir la contraseña")]
+        [Compare(nameof(Password), ErrorMessage = "Las contraseñas no coinciden")]
+        public string ConfirmPassword { get; set; } = "";
+
+        [Required(ErrorMessage = "Seleccione una fecha")]
+        public DateTime? FechaNacimiento { get; set; }
+    }
+}

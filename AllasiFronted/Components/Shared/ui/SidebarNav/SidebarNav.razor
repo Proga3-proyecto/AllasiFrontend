@@ -1,0 +1,21 @@
+<nav>
+
+    @foreach (var item in Items)
+    {
+        <NavLink class="@($"sidebar-item {item.Class}")"
+                 href="@item.Href">
+
+            <i class="@item.Icon sidebar-icon-bi"></i>
+
+            <span>@item.Text</span>
+
+        </NavLink>
+    }
+
+</nav>
+
+@code {
+
+    [Parameter]
+    public List<NavItem> Items { get; set; } = [];
+}

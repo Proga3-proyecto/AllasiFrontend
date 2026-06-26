@@ -1,0 +1,130 @@
+﻿.container {
+    display: flex;
+    height: 100vh; /* Mejorado para centrar verticalmente en toda la pantalla */
+    justify-content: center;
+    align-items: center;
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* Reducido de 40px para un diseño más compacto */
+}
+
+.logo {
+    font-size: 40px; /* Reducido de 60px */
+    color: var(--color-primary);
+}
+
+.title {
+    font-size: 28px; /* Reducido de 45px */
+    font-weight: 800;
+    color: var(--color-primary);
+    margin: 0;
+}
+
+.sub-title {
+    font-size: 16px; /* Reducido de 22px */
+    color: var(--color-primary);
+    margin: 0;
+    text-align: center;
+}
+
+.form-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.hr {
+    width: 40px;
+    height: 3px; /* Ligeramente más delgado */
+    border-radius: 2px;
+    background: var(--color-primary);
+    margin-top: 5px;
+}
+
+/* MARGEN AÑADIDO Y TAMAÑO REDUCIDO */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Reducido de 20px */
+    width: 22em; /* Reducido de 28em para hacerlo más estrecho */
+    margin: 25px 0; /* Agrega margen arriba y abajo del formulario */
+}
+
+.form-input {
+    color: var(--color-primary);
+    font-weight: 600;
+    font-size: 14px; /* Ajuste para letras más pequeñas */
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border: 1px solid rgb(170,170,170);
+    border-radius: 4px;
+    margin-top: 5px; /* Pequeño espacio entre el label y el input */
+}
+
+    .input-container input {
+        outline: none;
+        border: none;
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .input-container i {
+        font-size: 18px; /* Reducido de 25px */
+        color: var(--color-primary);
+    }
+
+button {
+    width: 100%;
+    height: 40px; /* Reducido de 50px */
+    outline: none;
+    border: none;
+    border-radius: 4px;
+    background: var(--color-primary);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.link {
+    color: var(--color-primary);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+    .link:link,
+    .link:visited,
+    .link:hover,
+    .link:active {
+        color: color-mix(in srgb, var(--color-primary), #fff 20%);
+    }
+
+.footer-register {
+    font-size: 14px;
+}
+
+.label {
+    color: var(--color-primary);
+    font-weight: 600;
+    margin-right: 5px;
+}
+}
+.input-container input {
+    outline: none;
+    border: none;
+    width: 100%;
+    height: 100%; /* Hace que ocupe todo el alto del contenedor */
+    flex: 1; /* Permite que el input se expanda ocupando el espacio sobrante en el flexbox */
+    background-color: transparent; /* Vuelve el fondo del input transparente */
+    font-size: 14px;
+    color: var(--color-primary); /* Asegura que el texto ingresado mantenga el color del tema */
+}

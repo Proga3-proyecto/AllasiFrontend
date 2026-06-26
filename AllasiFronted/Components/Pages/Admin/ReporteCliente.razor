@@ -1,0 +1,263 @@
+@page "/admin/report-client"
+@layout AdminLayout
+
+@inject NavigationManager Navigation
+
+<div class="client-report-page container-fluid mt-3 mb-4">
+
+    <div class="report-header">
+
+        <div class="d-flex align-items-center gap-2">
+
+            <button type="button"
+                    class="btn navy-bg"
+                    @onclick='() => Navigation.NavigateTo("/admin/report-list")'>
+
+                <i class="bi bi-arrow-left me-1"></i>
+                Regresar
+            </button>
+
+            <button type="button"
+                    class="btn navy-bg">
+
+                <i class="bi bi-download me-1"></i>
+                Exportar
+            </button>
+
+        </div>
+
+        <div>
+            <h2 class="report-title text-navy">
+                Reporte por Cliente
+            </h2>
+
+            <p class="report-subtitle">
+                Consulta el documento y la cantidad comprada por cada cliente.
+            </p>
+        </div>
+
+
+    </div>
+
+    <div class="filter-panel"
+         style="grid-template-columns: 1fr 1fr;">
+
+        <div class="filter-group">
+
+            <label>Ordenar por</label>
+
+            <div class="input-container">
+                <i class="bi bi-filter"></i>
+
+                <select @bind="CriterioOrden">
+
+                    <option value="cantidad">
+                        Cantidad comprada
+                    </option>
+
+                    <option value="nombre">
+                        Nombre del cliente
+                    </option>
+
+                </select>
+            </div>
+
+        </div>
+
+        <div class="filter-group">
+
+            <label>Tipo de orden</label>
+
+            <div class="input-container">
+                <i class="bi bi-sort-down"></i>
+
+                <select @bind="TipoOrden">
+
+                    <option value="descendente">
+                        Mayor a menor
+                    </option>
+
+                    <option value="ascendente">
+                        Menor a mayor
+                    </option>
+
+                </select>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="table-container">
+
+        <div class="table-responsive">
+
+            <table class="table custom-table table-borderless align-middle w-100">
+
+                <thead>
+                    <tr>
+
+                        <th class="text-start">
+                            CLIENTE
+                        </th>
+
+                        <th class="text-center">
+                            DNI O RUC
+                        </th>
+
+                        <th class="text-center">
+                            CANTIDAD COMPRADA
+                        </th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var cliente in ClientesOrdenados)
+                    {
+                        <tr>
+
+                            <td class="text-start">
+
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <div class="summary-icon"
+                                         style="width: 36px;
+                                        height: 36px;">
+
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
+
+                                    <span class="fw-bold text-navy">
+                                        @cliente.Nombre
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+                            <td class="text-center text-nowrap">
+
+                                <span class="fw-bold text-dark">
+                                    @cliente.Documento
+                                </span>
+
+                            </td>
+
+                            <td class="text-center text-nowrap">
+
+                                <span class="fw-bold text-navy">
+                                    @cliente.CantidadComprada
+                                </span>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+@code {
+    private string CriterioOrden { get; set; } = "cantidad";
+
+    private string TipoOrden { get; set; } = "descendente";
+
+    private List<ClienteReporte> Clientes { get; set; } =
+    [
+        new()
+        {
+            Nombre = "Carlos Mendoza Ruiz",
+            Documento = "74251863",
+            CantidadComprada = 36
+        },
+        new()
+        {
+            Nombre = "María Fernanda López",
+            Documento = "70649215",
+            CantidadComprada = 58
+        },
+        new()
+        {
+            Nombre = "Distribuidora San Miguel S.A.C.",
+            Documento = "20604578129",
+            CantidadComprada = 142
+        },
+        new()
+        {
+            Nombre = "José Antonio Ramírez",
+            Documento = "46821579",
+            CantidadComprada = 24
+        },
+        new()
+        {
+            Nombre = "Comercial Los Andes E.I.R.L.",
+            Documento = "20587346125",
+            CantidadComprada = 96
+        },
+        new()
+        {
+            Nombre = "Andrea Salazar Torres",
+            Documento = "73186420",
+            CantidadComprada = 47
+        },
+        new()
+        {
+            Nombre = "Bodega La Estrella S.A.C.",
+            Documento = "20617893452",
+            CantidadComprada = 119
+        },
+        new()
+        {
+            Nombre = "Luis Alberto Chávez",
+            Documento = "45271968",
+            CantidadComprada = 31
+        },
+        new()
+        {
+            Nombre = "Eventos del Pacífico S.A.C.",
+            Documento = "20596472831",
+            CantidadComprada = 83
+        },
+        new()
+        {
+            Nombre = "Valeria Paredes Gómez",
+            Documento = "76842159",
+            CantidadComprada = 41
+        }
+    ];
+
+    private IEnumerable<ClienteReporte> ClientesOrdenados
+    {
+        get
+        {
+            if (CriterioOrden == "nombre")
+            {
+                return TipoOrden == "ascendente"
+                    ? Clientes.OrderBy(cliente => cliente.Nombre)
+                    : Clientes.OrderByDescending(cliente => cliente.Nombre);
+            }
+
+            return TipoOrden == "ascendente"
+                ? Clientes.OrderBy(cliente => cliente.CantidadComprada)
+                : Clientes.OrderByDescending(cliente => cliente.CantidadComprada);
+        }
+    }
+
+    private class ClienteReporte
+    {
+        public string Nombre { get; set; } = string.Empty;
+
+        public string Documento { get; set; } = string.Empty;
+
+        public int CantidadComprada { get; set; }
+    }
+}

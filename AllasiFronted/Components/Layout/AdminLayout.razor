@@ -1,0 +1,73 @@
+@using AllasiFrontend.Components.Shared.ui.SidebarNav
+@layout MainLayout
+@inherits LayoutComponentBase
+
+<div class="admin-container">
+
+    <div class="sidebar">
+        <SidebarNav Items="items" />
+    </div>
+
+    <div class="admin-content">
+        @Body
+    </div>
+
+</div>
+
+@code {
+
+    List<NavItem> items =
+    [
+        new()
+        {
+            Href="/admin/user-list",
+            Icon="bi bi-people",
+            Text="Usuarios"
+        },
+        new()
+        {
+            Href="/admin/product-list",
+            Icon="bi bi-box-seam",
+            Text="Productos"
+        },
+
+        // AGREGAGO
+
+
+        new()
+        {
+            Href = "/admin/recipe-list",
+            Icon = "bi bi-journal-richtext",
+            Text = "Recetas"
+        },
+        //
+
+
+        new()
+        {
+            Href="/admin/order-list",
+            Icon="bi bi-box-seam",
+            Text="Ordenes"
+        },
+
+        //AGREGAR REPORTE
+
+        new()
+        {
+        Href = "/admin/report-list",
+        Icon = "bi bi-bar-chart-line",
+        Text = "Reportes"
+        },
+
+        ///
+
+        new()
+        {
+            Href="/",
+            Icon="bi bi-box-arrow-left",
+            Text="Cerrar sesión",
+            Class="cerrar"
+        }
+ 
+    ];
+}

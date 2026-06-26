@@ -2,6 +2,7 @@
 @implements IDisposable
 @inject NavigationManager NavigationManager
 @using Progra3_Frontend.Services
+@using Microsoft.AspNetCore.Components.Authorization
 @inject CarritoStateService CarritoService
 
 <header class="navbar-header">
@@ -91,16 +92,45 @@
 
     private System.Threading.CancellationTokenSource? _searchCts;
 
-    // Variables de prueba para demostración. Deberían venir de un servicio de autenticación.
-    private bool IsLoggedIn = true;
-    private string UserName = "Juan Perez";
+    private bool IsLoggedIn = false;
+    private string UserName = "";
     private bool IsAdmin = false;
 
-    protected override void OnInitialized()
+    [Inject] private AuthenticationStateProvider AuthProvider { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
     {
         NavigationManager.LocationChanged += OnLocationChanged;
         CarritoService.OnChange += OnCartChanged;
         UpdateSearchQueryFromUri(NavigationManager.Uri);
+
+        AuthProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+        var state = await AuthProvider.GetAuthenticationStateAsync();
+        UpdateAuthState(state);
+    }
+
+    private void UpdateAuthState(AuthenticationState state)
+    {
+        var user = state.User;
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            IsLoggedIn = true;
+            UserName = user.Identity.Name ?? "";
+            IsAdmin = user.IsInRole("ADMIN") || user.IsInRole("Admin") || user.IsInRole("admin");
+        }
+        else
+        {
+            IsLoggedIn = false;
+            UserName = "";
+            IsAdmin = false;
+        }
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        var state = await task;
+        UpdateAuthState(state);
+        await InvokeAsync(StateHasChanged);
     }
 
     private void OnCartChanged()
@@ -192,6 +222,10 @@
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
         CarritoService.OnChange -= OnCartChanged;
+        if (AuthProvider != null)
+        {
+            AuthProvider.AuthenticationStateChanged -= OnAuthenticationStateChanged;
+        }
         _searchCts?.Cancel();
         _searchCts?.Dispose();
     }

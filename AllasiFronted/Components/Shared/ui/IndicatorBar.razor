@@ -1,0 +1,17 @@
+<div class="security-indicator-container">
+    <span class="security-text" style="color: @(Color)">@Label: @State</span>
+    <div class="security-progress-bg">
+        <div class="security-progress-bar" style="width: @(Percent)%; background-color: @(Color);"></div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Color { get; set; } = "red";
+    [Parameter]
+    public string State { get; set; } = "";
+    [Parameter]
+    public int Percent { get; set; } = 0;
+    [Parameter]
+    public string Label { get; set; } = "";
+}

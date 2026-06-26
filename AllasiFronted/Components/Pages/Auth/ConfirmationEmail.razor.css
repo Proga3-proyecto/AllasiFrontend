@@ -1,0 +1,150 @@
+﻿.container {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 0 15px;
+}
+
+.form-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.success-icon-container {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--color-primary), white 85%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.success-icon {
+    font-size: 40px;
+    color: var(--color-primary);
+}
+
+.title {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--color-primary);
+    text-align: center;
+    margin: 0;
+}
+
+.sub-title {
+    font-size: 16px;
+    color: var(--color-primary);
+    text-align: center;
+    line-height: 1.5;
+    margin: 0;
+    width: 22em; /* Mantiene el subtítulo alineado al tamaño del bloque inferior */
+}
+
+.hr {
+    width: 40px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--color-primary);
+    margin-top: 5px;
+}
+
+/* ESTE ES EL EQUIVALENTE AL FORMULARIO DEL LOGIN */
+.form-body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 22em; /* Mismo tamaño que el Login */
+    margin: 25px 0; /* Mismos márgenes que el Login */
+}
+
+.message-container {
+    text-align: center;
+    color: #666;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+    .message-container p {
+        margin: 0;
+    }
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Mismo espacio entre inputs del login */
+    width: 100%;
+    margin-top: 5px;
+}
+
+.button-link {
+    width: 100%;
+    height: 40px;
+    background: var(--color-primary);
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease-in-out;
+}
+
+    .button-link:hover {
+        opacity: 0.9;
+    }
+
+.button-secondary {
+    background: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+}
+
+    .button-secondary:hover {
+        background: color-mix(in srgb, var(--color-primary), white 90%);
+        opacity: 1;
+    }
+
+/* Ajustes Responsive */
+@media (max-width: 600px) {
+    section {
+        width: 100%;
+    }
+
+    .form-body, .sub-title {a
+        width: 100%; /* Permite que se adapte a celulares */
+    }
+
+    .title {
+        font-size: 24px;
+    }
+
+    .sub-title {
+        font-size: 15px;
+    }
+
+    .success-icon {
+        font-size: 35px;
+    }
+
+    .success-icon-container {
+        width: 70px;
+        height: 70px;
+    }
+}

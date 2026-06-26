@@ -1,0 +1,100 @@
+﻿/* --- COLORES PRINCIPALES --- */
+.text-navy {
+    color: var(--color-primary);
+}
+
+.navy-bg {
+    background-color: var(--color-primary);
+    color: white;
+    transition: background-color 0.2s;
+}
+
+    .navy-bg:hover {
+        background-color: color-mix(in srgb, var(--color-primary), black 15%);
+        color: white;
+    }
+
+/* --- CONTENEDOR PRINCIPAL (TAMAÑO EXTRA COMPACTO) --- */
+.form-container {
+    background: transparent;
+    padding: 0;
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+/* --- ETIQUETAS Y VALIDACIÓN --- */
+.form-label-custom {
+    font-weight: 600;
+    color: var(--color-primary);
+    font-size: 0.75rem; /* Etiquetas más pequeñas (12px) */
+    margin-bottom: 2px; /* Más pegado al input */
+    display: block;
+}
+
+.asterisk {
+    color: #dc3545;
+    margin-left: 2px;
+}
+
+.validation-text {
+    color: #dc3545;
+    font-size: 0.70rem; /* Texto de error minimizado */
+    margin-top: 3px;
+    display: block;
+    font-weight: 500;
+}
+
+/* --- DISEÑO DE INPUT MODERNO Y EXTRA SUAVE --- */
+.input-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px; /* Reducción igual al buscador de ProductList */
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+}
+
+    .input-container:focus-within {
+        background-color: #ffffff;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary), white 85%);
+    }
+
+    .input-container input,
+    .input-container select {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 13px; /* Tamaño de letra compacto en todo el sistema */
+        color: #1e293b;
+        width: 100%;
+    }
+
+        .input-container input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 0.6;
+            transition: 0.2s;
+        }
+
+            .input-container input[type="date"]::-webkit-calendar-picker-indicator:hover {
+                opacity: 1;
+            }
+
+        .input-container input::placeholder {
+            color: #94a3b8;
+        }
+
+    /* Estado inactivo del icono */
+    .input-container i {
+        color: #64748b;
+        font-size: 14px; /* Iconos más chicos a juego con los inputs */
+        transition: color 0.2s ease;
+    }
+
+    /* El icono "se enciende" al hacer clic */
+    .input-container:focus-within i {
+        color: var(--color-primary);
+    }

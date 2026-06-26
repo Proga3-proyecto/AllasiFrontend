@@ -1,0 +1,281 @@
+﻿/* =========================================================
+   ReportProduct.razor.css
+   Estilos aislados para el reporte por producto.
+   Usa como contenedor principal:
+   <div class="product-report-page container-fluid mt-3 mb-4">
+   ========================================================= */
+
+.product-report-page {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+    .product-report-page .text-navy {
+        color: var(--color-primary);
+    }
+
+    .product-report-page .report-title {
+        margin-bottom: 4px;
+        font-size: 1.35rem;
+        font-weight: 700;
+    }
+
+    .product-report-page .report-subtitle {
+        margin-bottom: 0;
+        color: #64748b;
+        font-size: 0.84rem;
+    }
+
+    /* --- CABECERA --- */
+    .product-report-page .report-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .product-report-page .report-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* --- BOTONES --- */
+    .product-report-page .navy-bg {
+        padding: 6px 14px;
+        background-color: var(--color-primary);
+        color: #ffffff;
+        border: 1px solid var(--color-primary);
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        transition: filter 0.2s ease, transform 0.2s ease;
+    }
+
+        .product-report-page .navy-bg:hover {
+            color: #ffffff;
+            filter: brightness(0.9);
+            transform: translateY(-1px);
+        }
+
+    .product-report-page .btn-outline-custom {
+        padding: 6px 14px;
+        background-color: transparent;
+        color: var(--color-primary);
+        border: 1px solid var(--color-primary);
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+        .product-report-page .btn-outline-custom:hover {
+            background-color: #eff6ff;
+            color: var(--color-primary);
+            transform: translateY(-1px);
+        }
+
+    /* --- FILTROS --- */
+    .product-report-page .filter-panel {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 18px;
+        padding: 14px;
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 9px;
+    }
+
+    .product-report-page .filter-group label {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--color-primary);
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .product-report-page .input-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 38px;
+        padding: 6px 10px;
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .product-report-page .input-container:focus-within {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.12);
+        }
+
+        .product-report-page .input-container i {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .product-report-page .input-container input,
+        .product-report-page .input-container select {
+            width: 100%;
+            min-width: 0;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            color: #1e293b;
+            font-size: 13px;
+        }
+
+    /* --- TARJETAS RESUMEN --- */
+    .product-report-page .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .product-report-page .summary-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 94px;
+        padding: 15px;
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 9px;
+        box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    .product-report-page .summary-icon {
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #eff6ff;
+        color: var(--color-primary);
+        border-radius: 9px;
+        font-size: 1.05rem;
+    }
+
+    .product-report-page .summary-label {
+        display: block;
+        margin-bottom: 2px;
+        color: #64748b;
+        font-size: 0.72rem;
+    }
+
+    .product-report-page .summary-value {
+        color: #1e293b;
+        font-size: 1.05rem;
+        font-weight: 700;
+    }
+
+    /* --- CONTENEDORES DE GRÁFICOS --- */
+    .product-report-page .report-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+    .product-report-page .report-panel {
+        padding: 16px;
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 9px;
+    }
+
+    .product-report-page .report-panel-title {
+        margin: 0 0 12px;
+        color: var(--color-primary);
+        font-size: 0.92rem;
+        font-weight: 700;
+    }
+
+    .product-report-page .chart-placeholder {
+        min-height: 280px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8fafc;
+        color: #94a3b8;
+        border: 1px dashed #cbd5e1;
+        border-radius: 7px;
+        font-size: 0.82rem;
+        text-align: center;
+    }
+
+    /* --- TABLA --- */
+    .product-report-page .table-container {
+        padding: 14px;
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 9px;
+    }
+
+    .product-report-page .custom-table {
+        margin-bottom: 0;
+    }
+
+        .product-report-page .custom-table th {
+            padding: 7px 6px;
+            color: #64748b;
+            border-bottom: 2px solid #f1f5f9;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .product-report-page .custom-table td {
+            padding: 7px 6px;
+            color: #334155;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.8rem;
+            vertical-align: middle;
+        }
+
+        .product-report-page .custom-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+@media (max-width: 992px) {
+    .product-report-page .filter-panel,
+    .product-report-page .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .product-report-page .report-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-report-page .report-header {
+        flex-direction: column;
+    }
+
+    .product-report-page .report-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+        .product-report-page .report-actions .btn {
+            width: 100%;
+        }
+
+    .product-report-page .filter-panel,
+    .product-report-page .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .product-report-page .report-title {
+        font-size: 1.15rem;
+    }
+}

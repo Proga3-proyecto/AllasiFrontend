@@ -1,0 +1,338 @@
+@page "/admin/add-product"
+@layout AdminLayout
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+@using System.IO
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ProductosRS ProductosRS
+@inject MarcasRS MarcasRS
+@inject CategoriasRS CategoriasRS
+
+<AuthorizeView Roles="ADMIN" Context="authContext">
+    <Authorized>
+        <div class="container-fluid mt-3 mb-4">
+
+            <div class="text-center mb-3">
+                <h2 class="fw-bold text-navy" style="letter-spacing: 0.5px; font-size: 1.35rem;">Añadir Nuevo Producto</h2>
+            </div>
+
+            <div class="form-container">
+
+                <EditForm Model="productViewModel" OnValidSubmit="GuardarProducto">
+                    <DataAnnotationsValidator />
+
+                    <div class="row gx-4 align-items-stretch">
+
+                        <div class="col-md-4 mb-3 mb-md-0 d-flex flex-column">
+                            <label class="form-label-custom d-block mb-2">Imágenes del producto</label>
+
+                            <div class="d-flex flex-wrap gap-2 p-2" style="border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fafafa; min-height: 150px;">
+
+                                @foreach (var img in imagenes)
+                                {
+                                    <div class="image-card" style="width: 100px; height: 130px; border: 1px solid #ccc; border-radius: 8px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: white;">
+                                        <img src="@img.PreviewUrl" style="width: 100%; height: 80px; object-fit: cover;" alt="Vista previa" />
+
+                                        <div class="p-1 text-center d-flex align-items-center justify-content-center gap-1" style="flex-grow: 1; background: #f8f9fa;">
+                                            <input type="radio" name="principalImage" checked="@img.IsPrincipal" @onchange="() => SetPrincipal(img)" title="Marcar como principal" style="cursor:pointer;" />
+                                            <small style="font-size: 0.65rem; font-weight: 500;">Principal</small>
+                                        </div>
+
+                                        <button type="button" class="btn btn-sm btn-danger p-0 d-flex align-items-center justify-content-center" style="position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%; font-size: 0.8rem;" @onclick="() => RemoverImagen(img)">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                    </div>
+                                }
+
+                                <label class="image-card" style="width: 100px; height: 130px; border: 2px dashed #bbb; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; background-color: white; margin-bottom: 0; transition: background 0.2s;">
+                                    <InputFile OnChange="HandleFileSelected" accept="image/*" multiple style="display: none;" />
+                                    <i class="bi bi-plus-lg" style="font-size: 2rem; color: #888;"></i>
+                                </label>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-8">
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label-custom">Nombre del producto <span class="asterisk">*</span></label>
+                                    <div class="input-container">
+                                        <i class="bi bi-box"></i>
+                                        <input type="text" placeholder="Ej: Ron Zacapa 23 Años" @bind="productViewModel.nombre">
+                                    </div>
+                                    <ValidationMessage For="@(() => productViewModel.nombre)" class="validation-text" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label-custom">Marca <span class="asterisk">*</span></label>
+                                    <div class="input-container">
+                                        <i class="bi bi-bookmark"></i>
+                                        <input type="text" list="marcasList" placeholder="Ej: Chivas Regal" @bind="productViewModel.marcaTemporal">
+                                        <datalist id="marcasList">
+                                            @if (marcasDisponibles != null)
+                                            {
+                                                @foreach (var marca in marcasDisponibles)
+                                                {
+                                                    <option value="@marca.nombre"></option>
+                                                }
+                                            }
+                                        </datalist>
+                                    </div>
+                                    <ValidationMessage For="@(() => productViewModel.marcaTemporal)" class="validation-text" />
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label-custom">Categoría <span class="asterisk">*</span></label>
+                                    <div class="input-container">
+                                        <i class="bi bi-tags"></i>
+                                        <input type="text" list="categoriasList" placeholder="Ej: Ron, Whisky" @bind="productViewModel.categoriaTemporal">
+                                        <datalist id="categoriasList">
+                                            @if (categoriasDisponibles != null)
+                                            {
+                                                @foreach (var categoria in categoriasDisponibles)
+                                                {
+                                                    <option value="@categoria.nombre"></option>
+                                                }
+                                            }
+                                        </datalist>
+                                    </div>
+                                    <ValidationMessage For="@(() => productViewModel.categoriaTemporal)" class="validation-text" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label-custom">Precio (S/) <span class="asterisk">*</span></label>
+                                    <div class="input-container">
+                                        <i class="bi bi-cash"></i>
+                                        <input type="number" step="0.01" placeholder="Ej: 120.50" @bind="productViewModel.precio" min="0">
+                                    </div>
+                                    <ValidationMessage For="@(() => productViewModel.precio)" class="validation-text" />
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label-custom">Volumen (Litros) <span class="asterisk">*</span></label>
+                                    <div class="input-container">
+                                        <i class="bi bi-cup-straw"></i>
+                                        <input type="number" step="0.01" placeholder="Ej: 0.75" @bind="productViewModel.volumenLitros" min="0">
+                                    </div>
+                                    <ValidationMessage For="@(() => productViewModel.volumenLitros)" class="validation-text" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label-custom">Stock actual <span class="asterisk">*</span></label>
+                                    <div class="input-container">
+                                        <i class="bi bi-boxes"></i>
+                                        <input type="number" placeholder="Ej: 50" @bind="productViewModel.stock" min="0">
+                                    </div>
+                                    <ValidationMessage For="@(() => productViewModel.stock)" class="validation-text" />
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label-custom">% de Alcohol <span class="asterisk">*</span></label>
+                                    <div class="input-container">
+                                        <i class="bi bi-percent"></i>
+                                        <input type="number" step="0.1" placeholder="Ej: 40.0" @bind="productViewModel.porcentajeAlcohol" min="0" max="100">
+                                    </div>
+                                    <ValidationMessage For="@(() => productViewModel.porcentajeAlcohol)" class="validation-text" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label-custom">Descuento aplicado <span class="asterisk">*</span></label>
+                                    <div class="input-container">
+                                        <i class="bi bi-tag"></i>
+                                        <input type="number" step="0.01" placeholder="Ej: 0.0" @bind="productViewModel.descuento" min="0">
+                                    </div>
+                                    <ValidationMessage For="@(() => productViewModel.descuento)" class="validation-text" />
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label class="form-label-custom">Descripción <span class="asterisk">*</span></label>
+                                    <div class="input-container">
+                                        <i class="bi bi-card-text"></i>
+                                        <input type="text" placeholder="Ej: Descripción detallada del producto" @bind="productViewModel.descripcion">
+                                    </div>
+                                    <ValidationMessage For="@(() => productViewModel.descripcion)" class="validation-text" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-3 pt-3" style="border-top: 1px solid rgba(170,170,170,0.3);">
+                        <button type="button" class="btn btn-outline-custom" style="border-radius: 6px; font-size: 0.82rem; padding: 6px 14px;" @onclick='() => Navigation.NavigateTo("/admin/product-list")'>
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn navy-bg" style="border-radius: 6px; font-weight: 500; font-size: 0.82rem; padding: 6px 14px;">
+                            Guardar producto
+                        </button>
+                    </div>
+
+                </EditForm>
+            </div>
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        <div class="container mt-5">
+            <h2>Acceso denegado</h2>
+            <p>No tienes permisos para acceder a esta página.</p>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    public class ProductoViewModel
+    {
+        [Required(ErrorMessage = "El nombre es obligatorio")] public string nombre { get; set; } = string.Empty;
+        [Required(ErrorMessage = "La descripción es obligatoria")] public string descripcion { get; set; } = string.Empty;
+        [Required(ErrorMessage = "La marca es obligatoria")] public string marcaTemporal { get; set; } = string.Empty;
+        [Required(ErrorMessage = "La categoría es obligatoria")] public string categoriaTemporal { get; set; } = string.Empty;
+        [Required][Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor a 0")] public double? precio { get; set; }
+        [Required][Range(0, int.MaxValue, ErrorMessage = "El stock no puede ser negativo")] public int? stock { get; set; }
+        [Required][Range(0.01, double.MaxValue, ErrorMessage = "El volumen debe ser mayor a 0")] public double? volumenLitros { get; set; }
+        [Required][Range(0, 100, ErrorMessage = "Debe estar entre 0 y 100")] public double? porcentajeAlcohol { get; set; }
+        [Required][Range(0, double.MaxValue, ErrorMessage = "El descuento no puede ser negativo")] public double? descuento { get; set; }
+    }
+
+    private ProductoViewModel productViewModel { get; set; } = new();
+
+    private List<Marca> marcasDisponibles = new();
+    private List<Categoria> categoriasDisponibles = new();
+
+    public class ImageItem
+    {
+        public IBrowserFile File { get; set; } = default!;
+        public string PreviewUrl { get; set; } = string.Empty;
+        public bool IsPrincipal { get; set; } = false;
+    }
+
+    private List<ImageItem> imagenes = new();
+    private long maxFileSize = 1024 * 1024 * 5;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            marcasDisponibles = await MarcasRS.ListarTodasAsync() ?? new List<Marca>();
+            categoriasDisponibles = await CategoriasRS.ListarTodasAsync() ?? new List<Categoria>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error cargando opciones: {ex.Message}");
+        }
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles())
+        {
+            try
+            {
+                var resizedImage = await file.RequestImageFileAsync(file.ContentType, 300, 300);
+                var buffer = new byte[resizedImage.Size];
+                await resizedImage.OpenReadStream().ReadAsync(buffer);
+
+                var nuevaImagen = new ImageItem
+                {
+                    File = file,
+                    PreviewUrl = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer)}",
+                    IsPrincipal = (imagenes.Count == 0)
+                };
+
+                imagenes.Add(nuevaImagen);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error procesando la imagen {file.Name}: {ex.Message}");
+            }
+        }
+    }
+
+    private void SetPrincipal(ImageItem selectedImg)
+    {
+        foreach (var img in imagenes)
+        {
+            img.IsPrincipal = (img == selectedImg);
+        }
+    }
+
+    private void RemoverImagen(ImageItem imgToRemove)
+    {
+        imagenes.Remove(imgToRemove);
+        if (imgToRemove.IsPrincipal && imagenes.Count > 0)
+        {
+            imagenes[0].IsPrincipal = true;
+        }
+    }
+
+    private async Task GuardarProducto()
+    {
+        try
+        {
+            Producto nuevoProducto = new Producto
+            {
+                nombre = productViewModel.nombre,
+                descripcion = productViewModel.descripcion,
+                precio = productViewModel.precio ?? 0,
+                stock = productViewModel.stock ?? 0,
+                volumenLitros = productViewModel.volumenLitros ?? 0,
+                porcentajeAlcohol = productViewModel.porcentajeAlcohol ?? 0,
+                descuento = productViewModel.descuento ?? 0,
+                marca = new Marca { nombre = productViewModel.marcaTemporal },
+                categorias = new List<Categoria> { new Categoria { nombre = productViewModel.categoriaTemporal } }
+            };
+
+            int nuevoProductoId = await ProductosRS.InsertarAsync(nuevoProducto);
+
+            if (nuevoProductoId != 0)
+            {
+                foreach (var img in imagenes)
+                {
+                    try
+                    {
+                        using var stream = img.File.OpenReadStream(maxFileSize);
+
+                        if (img.IsPrincipal)
+                        {
+                            await ProductosRS.SubirImagenPrincipalAsync(nuevoProductoId, stream, img.File.Name, img.File.ContentType);
+                        }
+                        else
+                        {
+                            await ProductosRS.SubirImagenAsync(nuevoProductoId, stream, img.File.Name, img.File.ContentType);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error subiendo imagen {img.File.Name}: {ex.Message}");
+                    }
+                }
+
+                productViewModel = new ProductoViewModel();
+                imagenes.Clear();
+                Navigation.NavigateTo("/admin/product-list");
+            }
+            else
+            {
+                Console.WriteLine("Error al guardar el producto en la base de datos.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error de inserción: {ex.Message}");
+        }
+    }
+}

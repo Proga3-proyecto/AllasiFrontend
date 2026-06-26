@@ -1,0 +1,106 @@
+@page "/user/order-details"
+@layout UserLayout
+
+<div class="order-details-container">
+
+    <div class="volver mb-3">
+        <a href="/user/my-orders" class="volver-link">
+            <i class="bi bi-chevron-left me-1" style="font-size: 0.8rem;"></i> Volver a mis pedidos
+        </a>
+    </div>
+
+    <div class="pedido-card shadow-sm">
+
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+                <h2 class="fw-bold text-navy mb-1" style="font-size: 1.35rem;">Pedido #12345</h2>
+                <p class="text-muted mb-0" style="font-size: 0.85rem;">20 Mar. 2025 - 10:30 am</p>
+            </div>
+            <span class="estado proceso">En proceso</span>
+        </div>
+
+        <hr class="text-muted my-3" style="opacity: 0.15;" />
+
+        <div class="pedido-info">
+            <div>
+                <label>Entrega estimada</label>
+                <p class="mb-0 fw-medium text-dark" style="font-size: 0.85rem;">22 Mar. 2025</p>
+            </div>
+            <div>
+                <label>Dirección de entrega</label>
+                <p class="mb-0 text-dark" style="font-size: 0.85rem;">Av. Universitaria 1801, San Miguel, Lima, Perú</p>
+            </div>
+            <div>
+                <label>Pago</label>
+                <p class="mb-0 text-dark" style="font-size: 0.85rem;">Pagar con tarjeta</p>
+            </div>
+        </div>
+
+        <hr class="text-muted my-3" style="opacity: 0.15;" />
+
+        <h3 class="fw-bold text-navy mb-3" style="font-size: 1rem;">Productos (3)</h3>
+
+        <div class="table-responsive mb-3">
+            <table class="table custom-table table-borderless align-middle w-100 mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col" style="width: 50%;" class="ps-2">PRODUCTO</th>
+                        <th scope="col" class="text-center">CANTIDAD</th>
+                        <th scope="col" class="text-end">PRECIO UNIT.</th>
+                        <th scope="col" class="text-end pe-2">SUBTOTAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="ps-2">
+                            <div class="fw-bold text-dark" style="font-size: 0.85rem;">Johnnie Walker Black Label 750 ml</div>
+                            <div class="text-muted mt-1" style="font-size: 0.75rem;">Whisky</div>
+                        </td>
+                        <td class="text-center fw-medium" style="font-size: 0.85rem;">2</td>
+                        <td class="text-end text-muted" style="font-size: 0.85rem;">S/ 89.90</td>
+                        <td class="text-end fw-bold text-dark pe-2" style="font-size: 0.85rem;">S/ 179.80</td>
+                    </tr>
+                    <tr>
+                        <td class="ps-2">
+                            <div class="fw-bold text-dark" style="font-size: 0.85rem;">Pisco Queirolo Acholado 700 ml</div>
+                            <div class="text-muted mt-1" style="font-size: 0.75rem;">Pisco</div>
+                        </td>
+                        <td class="text-center fw-medium" style="font-size: 0.85rem;">1</td>
+                        <td class="text-end text-muted" style="font-size: 0.85rem;">S/ 69.90</td>
+                        <td class="text-end fw-bold text-dark pe-2" style="font-size: 0.85rem;">S/ 69.90</td>
+                    </tr>
+                    <tr>
+                        <td class="ps-2">
+                            <div class="fw-bold text-dark" style="font-size: 0.85rem;">Vino Trapiche Malbec 750 ml</div>
+                            <div class="text-muted mt-1" style="font-size: 0.75rem;">Vino</div>
+                        </td>
+                        <td class="text-center fw-medium" style="font-size: 0.85rem;">1</td>
+                        <td class="text-end text-muted" style="font-size: 0.85rem;">S/ 59.90</td>
+                        <td class="text-end fw-bold text-dark pe-2" style="font-size: 0.85rem;">S/ 59.90</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <div class="total-box">
+                <div class="fila-total">
+                    <span class="text-muted">Subtotal (3 productos)</span>
+                    <span class="fw-medium text-dark">S/ 309.60</span>
+                </div>
+                <div class="fila-total">
+                    <span class="text-muted">Envío</span>
+                    <span class="fw-medium text-dark">S/ 15.00</span>
+                </div>
+
+                <hr class="my-2 text-muted" style="opacity: 0.2;" />
+
+                <div class="fila-total mb-0 align-items-center mt-2">
+                    <span class="fw-bold text-navy text-uppercase" style="font-size: 0.85rem;">Total</span>
+                    <span class="final-price text-navy">S/ 324.60</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

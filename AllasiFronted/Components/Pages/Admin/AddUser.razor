@@ -1,0 +1,201 @@
+@page "/admin/add-user"
+@using Microsoft.AspNetCore.Components.Authorization
+@layout AdminLayout
+
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+@using System.ComponentModel.DataAnnotations
+
+@inject AdminsRS AdminsRS
+@inject ClientesRS ClientesRS
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<AuthorizeView Roles="ADMIN" Context="authContext">
+    <Authorized>
+        <div class="container-fluid mt-3" style="max-width: 1000px;">
+
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <button class="btn p-0 text-navy" @onclick="Cancelar" style="font-size: 1.2rem;">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
+                <h2 class="fw-bold text-navy mb-0" style="font-size: 1.35rem;">Agregar nuevo usuario</h2>
+            </div>
+
+            <div class="table-container shadow-sm p-4" style="background-color: white; border-radius: 8px;">
+
+                <EditForm Model="@usuarioForm" OnValidSubmit="GuardarUsuario">
+                    <DataAnnotationsValidator />
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark" style="font-size: 0.85rem;">DNI</label>
+                            <InputText @bind-Value="usuarioForm.Dni" class="form-control custom-input" placeholder="Ej. 12345678" maxlength="8" />
+                            <ValidationMessage For="@(() => usuarioForm.Dni)" class="text-danger small mt-1" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark" style="font-size: 0.85rem;">NOMBRE</label>
+                            <InputText @bind-Value="usuarioForm.Nombre" class="form-control custom-input" placeholder="Ej. Juan Carlos" />
+                            <ValidationMessage For="@(() => usuarioForm.Nombre)" class="text-danger small mt-1" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark" style="font-size: 0.85rem;">APELLIDO COMPLETO</label>
+                            <InputText @bind-Value="usuarioForm.ApellidoCompleto" class="form-control custom-input" placeholder="Ej. Pérez Gómez" />
+                            <ValidationMessage For="@(() => usuarioForm.ApellidoCompleto)" class="text-danger small mt-1" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark" style="font-size: 0.85rem;">CORREO ELECTRÓNICO</label>
+                            <InputText @bind-Value="usuarioForm.Correo" type="email" class="form-control custom-input" placeholder="ejemplo@licoreria.com" />
+                            <ValidationMessage For="@(() => usuarioForm.Correo)" class="text-danger small mt-1" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark" style="font-size: 0.85rem;">CONTRASEÑA</label>
+                            <InputText @bind-Value="usuarioForm.Contrasena" type="password" class="form-control custom-input" placeholder="••••••••" />
+                            <ValidationMessage For="@(() => usuarioForm.Contrasena)" class="text-danger small mt-1" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark" style="font-size: 0.85rem;">ROL DE USUARIO</label>
+                            <InputSelect @bind-Value="usuarioForm.Rol" class="form-select custom-input">
+                                <option value="">Seleccione un rol...</option>
+                                <option value="Administrador">Administrador</option>
+                                <option value="Cliente">Cliente</option>
+                            </InputSelect>
+                            <ValidationMessage For="@(() => usuarioForm.Rol)" class="text-danger small mt-1" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark" style="font-size: 0.85rem;">ESTADO INICIAL</label>
+                            <InputSelect @bind-Value="usuarioForm.Estado" class="form-select custom-input">
+                                <option value="Activo">Activo</option>
+                                <option value="Inactivo">Inactivo</option>
+                            </InputSelect>
+                            <ValidationMessage For="@(() => usuarioForm.Estado)" class="text-danger small mt-1" />
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-5 pt-3 border-top">
+                        <button type="button" class="btn btn-filter-inactive fw-medium" style="border-radius: 6px; padding: 6px 18px; font-size: 0.85rem;" @onclick="Cancelar">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn navy-bg d-flex align-items-center gap-2 fw-medium" style="border-radius: 6px; padding: 6px 18px; font-size: 0.85rem;">
+                            <i class="bi bi-save"></i> Guardar usuario
+                        </button>
+                    </div>
+                </EditForm>
+
+            </div>
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        <div class="container mt-5">
+            <h2>Acceso denegado</h2>
+            <p>No tienes permisos para acceder a esta página.</p>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    public class UsuarioFormModel
+    {
+        [Required(ErrorMessage = "El DNI es obligatorio.")]
+        [RegularExpression(@"^\d{8}$", ErrorMessage = "El DNI debe tener exactamente 8 dígitos numéricos.")]
+        public string Dni { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "El nombre es obligatorio.")]
+        public string Nombre { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "El apellido completo es obligatorio.")]
+        public string ApellidoCompleto { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "El correo electrónico es obligatorio.")]
+        [EmailAddress(ErrorMessage = "Ingrese una dirección de correo válida.")]
+        public string Correo { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La contraseña es obligatoria.")]
+        [MinLength(6, ErrorMessage = "La contraseña debe contener al menos 6 caracteres.")]
+        public string Contrasena { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Debe asignar un rol al usuario.")]
+        public string Rol { get; set; } = string.Empty;
+
+        public string Estado { get; set; } = "Activo";
+    }
+
+    private UsuarioFormModel usuarioForm = new();
+
+    private async Task GuardarUsuario()
+    {
+        try
+        {
+            EstadoUsuario estadoEnum = usuarioForm.Estado == "Activo" ? EstadoUsuario.ACTIVA : EstadoUsuario.INACTIVA;
+
+            if (usuarioForm.Rol == "Administrador")
+            {
+                var nuevoAdmin = new Admin
+                {
+                    dni = usuarioForm.Dni,
+                    nombre = usuarioForm.Nombre,
+                    apellidoCompleto = usuarioForm.ApellidoCompleto,
+                    correo = usuarioForm.Correo,
+                    contrasenaHash = usuarioForm.Contrasena,
+                    estado = estadoEnum,
+                    createdAt = DateTime.Now,
+                    updatedAt = DateTime.Now,
+                    fechaInicioAdmin = DateTime.Now
+                };
+
+                int resultado = await AdminsRS.InsertarAsync(nuevoAdmin);
+                if (resultado != 0)
+                {
+                    usuarioForm = new UsuarioFormModel();
+                    Navigation.NavigateTo("/admin/user-list");
+                }
+                else
+                {
+                    Console.WriteLine("Error al guardar el admin en la base de datos.");
+                }
+            }
+            else if (usuarioForm.Rol == "Cliente")
+            {
+                var nuevoCliente = new Cliente
+                {
+                    dni = usuarioForm.Dni,
+                    nombre = usuarioForm.Nombre,
+                    apellidoCompleto = usuarioForm.ApellidoCompleto,
+                    correo = usuarioForm.Correo,
+                    contrasenaHash = usuarioForm.Contrasena,
+                    estado = estadoEnum,
+                    createdAt = DateTime.Now,
+                    updatedAt = DateTime.Now,
+                    fechaNacimiento = DateTime.Now
+                };
+
+                int resultado = await ClientesRS.InsertarAsync(nuevoCliente);
+                if (resultado != 0)
+                {
+                    usuarioForm = new UsuarioFormModel();
+                    Navigation.NavigateTo("/admin/user-list");
+                }
+                else
+                {
+                    Console.WriteLine("Error al guardar el cliente en la base de datos.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al insertar el nuevo usuario en el sistema: {ex.Message}");
+        }
+    }
+
+    private void Cancelar()
+    {
+        Navigation.NavigateTo("/admin/user-list");
+    }
+}

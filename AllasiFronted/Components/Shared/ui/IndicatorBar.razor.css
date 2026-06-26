@@ -1,0 +1,26 @@
+﻿.security-indicator-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.security-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-right: 0.75rem;
+    min-width: 110px;
+}
+
+.security-progress-bg {
+    flex-grow: 1;
+    height: 4px;
+    background-color: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.security-progress-bar {
+    height: 100%;
+    width: 0%;
+    transition: width 0.4s ease, background-color 0.4s ease;
+}

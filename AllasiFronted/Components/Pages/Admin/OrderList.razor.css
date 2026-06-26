@@ -1,0 +1,118 @@
+.text-navy {
+    color: #021947;
+}
+
+.navy-bg {
+    background-color: #021947;
+    color: white;
+    transition: background-color 0.2s;
+}
+
+    .navy-bg:hover {
+        background-color: #010d26;
+        color: white;
+    }
+
+.table-container {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #f1f5f9;
+    padding: 14px;
+}
+
+.main-title {
+    font-size: 1.35rem !important;
+}
+
+.badge-id {
+    background-color: #f8f9fa;
+    color: #64748b;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.68rem;
+    border: 1px solid #e2e8f0;
+    margin-top: 4px;
+    display: inline-block;
+}
+
+.form-label-custom {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.custom-input {
+    border-radius: 6px;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    color: #334155;
+}
+
+    .custom-input:focus {
+        box-shadow: none;
+        border-color: #021947;
+        outline: none;
+    }
+
+    .custom-input::placeholder {
+        color: #94a3b8;
+    }
+
+.btn-outline-custom {
+    background-color: transparent;
+    border: 1px solid #021947;
+    color: #021947;
+    font-weight: 500;
+    font-size: 0.75rem !important;
+    padding: 4px 10px !important;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+    .btn-outline-custom:hover {
+        background-color: #f1f5f9;
+    }
+
+.custom-table th {
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.72rem;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.custom-table td {
+    vertical-align: middle;
+    padding: 6px 8px;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.custom-pagination .page-item.active .page-link {
+    background-color: #021947;
+    border-color: #021947;
+    color: white;
+}
+
+.custom-pagination .page-link {
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    margin: 0 1px;
+    border-radius: 4px;
+    background: white;
+    padding: 3px 8px;
+    font-size: 0.78rem;
+    transition: all 0.2s;
+}
+
+    .custom-pagination .page-link:hover:not(:disabled) {
+        background-color: #f1f5f9;
+        color: #021947;
+    }
+
+    .custom-pagination .page-link:disabled {
+        background-color: #f8fafc;
+        color: #cbd5e1;
+        border-color: #f1f5f9;
+    }

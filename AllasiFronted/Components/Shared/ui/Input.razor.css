@@ -1,0 +1,54 @@
+﻿.form-group-container {
+    margin-bottom: 1.5rem;
+}
+
+.form-input-label {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+    display: block;
+}
+
+.custom-input-group {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #fff;
+}
+
+ .custom-input-group:focus-within {
+     border-color: #1a2b4c;
+ }
+
+.custom-form-control {
+    flex: 1;
+    border: none;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    outline: none;
+    color: #495057;
+}
+
+.input-icon-prefix {
+    padding-left: 0.75rem;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon-suffix {
+    background: none;
+    border: none;
+    padding-right: 0.75rem;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.field-icon-img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}

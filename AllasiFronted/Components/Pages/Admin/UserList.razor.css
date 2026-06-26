@@ -1,0 +1,126 @@
+/* --- COLORES PRINCIPALES --- */
+.text-navy {
+    color: #021947; /* O var(--color-primary) si ya lo usas así globalmente */
+}
+
+.navy-bg {
+    background-color: #021947;
+    color: white;
+    transition: background-color 0.2s;
+}
+
+    .navy-bg:hover {
+        background-color: #010d26;
+        color: white;
+    }
+
+/* --- FILTROS --- */
+.btn-filter-inactive {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+}
+
+    .btn-filter-inactive:hover {
+        background-color: #e2e8f0;
+        color: #1e293b;
+    }
+
+/* --- CONTENEDOR DE LA TABLA --- */
+.table-container {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #f1f5f9;
+    padding: 14px; /* Relleno compacto, igual que en Productos */
+}
+
+/* --- BARRA DE BÚSQUEDA --- */
+.custom-input {
+    border-radius: 6px;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    color: #334155;
+    transition: all 0.2s ease-in-out;
+}
+
+    .custom-input:focus {
+        box-shadow: 0 0 0 3px rgba(2, 25, 71, 0.15);
+        border-color: #021947;
+        outline: none;
+    }
+
+    .custom-input::placeholder {
+        color: #94a3b8;
+    }
+
+/* --- AVATAR E IDS --- */
+.avatar-circle {
+    width: 32px; /* Avatar mucho más pequeño */
+    height: 32px;
+    background-color: #021947;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.badge-id {
+    background-color: #f8f9fa;
+    color: #64748b;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.68rem; /* ID más sutil */
+    border: 1px solid #e2e8f0;
+    margin-top: 4px;
+    display: inline-block;
+}
+
+/* --- TABLA MODERNA Y COMPACTA --- */
+.custom-table th {
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.72rem;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.custom-table td {
+    vertical-align: middle;
+    padding: 6px 8px; /* Filas muy juntas y delgadas */
+    border-bottom: 1px solid #f8f9fa;
+}
+
+/* --- PAGINACIÓN MODERNA --- */
+.custom-pagination .page-item.active .page-link {
+    background-color: #021947;
+    border-color: #021947;
+    color: white;
+}
+
+.custom-pagination .page-link {
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    margin: 0 1px;
+    border-radius: 4px;
+    background: white;
+    padding: 3px 8px; /* Botones mini */
+    font-size: 0.78rem;
+    transition: all 0.2s;
+}
+
+    .custom-pagination .page-link:hover:not(:disabled) {
+        background-color: #f1f5f9;
+        color: #021947;
+    }
+
+    .custom-pagination .page-link:disabled {
+        background-color: #f8fafc;
+        color: #cbd5e1;
+        border-color: #f1f5f9;
+    }

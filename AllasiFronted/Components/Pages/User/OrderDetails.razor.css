@@ -1,0 +1,106 @@
+﻿/* --- COLORES PRINCIPALES --- */
+.text-navy {
+    color: var(--color-primary, #021947);
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
+.order-details-container {
+    max-width: 850px; /* Límite para que la tarjeta no se estire demasiado */
+    margin: 0 auto;
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+}
+
+/* --- ENLACE VOLVER --- */
+.volver-link {
+    text-decoration: none;
+    color: #0b5ed7;
+    font-weight: 600;
+    font-size: 0.82rem;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.2s;
+}
+
+    .volver-link:hover {
+        color: #0a4ebd;
+        text-decoration: underline;
+    }
+
+/* --- TARJETA PRINCIPAL --- */
+.pedido-card {
+    background-color: white;
+    border-radius: 8px; /* Menos redondeado */
+    border: 1px solid #e2e8f0;
+    padding: 24px; /* Relleno compacto */
+}
+
+/* --- ETIQUETAS DE ESTADO --- */
+.estado {
+    padding: 4px 10px;
+    border-radius: 6px; /* Forma de píldora ligera */
+    font-size: 0.72rem;
+    font-weight: 600;
+    display: inline-block;
+    letter-spacing: 0.3px;
+}
+
+/* Misma clase de estado que en MyOrders.css */
+.proceso {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+/* --- INFORMACIÓN DEL PEDIDO (MALLA) --- */
+.pedido-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px; /* Reducido de 30px */
+}
+
+    .pedido-info label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 4px;
+        color: #64748b;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+    }
+
+/* --- TABLA DE PRODUCTOS --- */
+.custom-table th {
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.72rem;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.custom-table td {
+    vertical-align: middle;
+    padding: 10px 8px; /* Filas juntas */
+    border-bottom: 1px solid #f8f9fa;
+}
+
+/* --- CAJA DE TOTALES --- */
+.total-box {
+    width: 280px; /* Más angosto (antes 350px) */
+    background-color: #f8fafc; /* Fondo gris sutil */
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 14px 18px; /* Padding interior reducido */
+}
+
+.fila-total {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.82rem;
+}
+
+.final-price {
+    font-size: 1.15rem; /* Destacado pero sin ser enorme (antes 24px) */
+    font-weight: 700;
+}

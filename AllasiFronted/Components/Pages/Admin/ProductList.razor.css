@@ -1,0 +1,150 @@
+/* --- COLORES Y TIPOGRAFÍA GENERAL --- */
+.text-navy {
+    color: var(--color-primary);
+}
+
+/* Título de la página más pequeño */
+.main-title {
+    font-size: 1.35rem !important;
+}
+
+/* --- BOTÓN SUPERIOR (Añadir Producto) --- */
+.navy-bg {
+    background-color: var(--color-primary);
+    color: white;
+    font-size: 0.82rem !important; /* Texto más pequeño */
+    padding: 6px 14px !important; /* Altura y ancho reducidos significativamente */
+    font-weight: 500;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+    .navy-bg:hover {
+        background-color: color-mix(in srgb, var(--color-primary), black 15%);
+        color: white;
+    }
+
+/* --- BOTÓN DE LA TABLA (Actualizar Stock) --- */
+.btn-outline-custom {
+    background-color: transparent;
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    font-weight: 500;
+    font-size: 0.75rem !important; /* Botón de acción bien pequeño */
+    padding: 4px 10px !important; /* Reducción de tamaño total */
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+    .btn-outline-custom:hover {
+        background-color: color-mix(in srgb, var(--color-primary), white 95%);
+    }
+
+/* --- CONTENEDOR PRINCIPAL DE LA TABLA --- */
+.table-container {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    padding: 14px; /* Relleno compacto */
+}
+
+/* --- BARRA DE BÚSQUEDA --- */
+.custom-input {
+    border-radius: 6px;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    color: #334155;
+    transition: all 0.2s ease-in-out;
+}
+
+    .custom-input:focus {
+        box-shadow: 0 0 0 3px rgba(2, 25, 71, 0.15);
+        border-color: #021947;
+        outline: none;
+    }
+
+    .custom-input::placeholder {
+        color: #94a3b8;
+    }
+
+/* --- IMAGEN DEL PRODUCTO --- */
+.product-img-container {
+    width: 26px; /* Miniatura optimizada */
+    height: 38px; /* Miniatura optimizada */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    background-color: #f8fafc;
+    border-radius: 4px;
+}
+
+.product-img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+/* --- MEDIDAS TIPOGRÁFICAS INTERNAS DE LA TABLA --- */
+.custom-table th {
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.72rem; /* Cabeceras compactas */
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.custom-table td {
+    vertical-align: middle;
+    padding: 5px 6px; /* Filas muy juntas y limpias */
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.product-name {
+    font-size: 0.82rem; /* Nombre del producto pequeño y legible */
+    line-height: 1.2;
+}
+
+.product-sku {
+    font-size: 0.78rem; /* SKU discreto */
+}
+
+.stock-current {
+    font-size: 0.95rem; /* El número de stock destaca pero sin ser gigante */
+}
+
+.stock-min {
+    font-size: 0.85rem;
+}
+
+/* --- PAGINACIÓN --- */
+.custom-pagination .page-item.active .page-link {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+
+.custom-pagination .page-link {
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    margin: 0 1px;
+    border-radius: 4px;
+    background: white;
+    padding: 3px 8px; /* Botones de página muy pequeños */
+    font-size: 0.78rem;
+    transition: all 0.2s;
+}
+
+    .custom-pagination .page-link:hover:not(:disabled) {
+        background-color: #f1f5f9;
+        color: var(--color-primary);
+    }
+
+    .custom-pagination .page-link:disabled {
+        background-color: #f8fafc;
+        color: #cbd5e1;
+        border-color: #f1f5f9;
+    }

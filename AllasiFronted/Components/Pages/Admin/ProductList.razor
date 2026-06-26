@@ -1,0 +1,318 @@
+@page "/admin/product-list"
+@using Microsoft.AspNetCore.Components.Authorization
+@layout AdminLayout
+
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+
+@inject ProductosRS ProductosRS
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<AuthorizeView Roles="ADMIN" Context="authContext">
+    <Authorized>
+        <div class="container-fluid mt-3" style="max-width: 1400px;">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="fw-bold text-navy mb-0 main-title">Lista de Productos</h2>
+                <button class="btn navy-bg d-flex align-items-center gap-2" @onclick='() => Navigation.NavigateTo("/admin/add-product")'>
+                    <i class="bi bi-plus-lg" style="font-size: 0.8rem;"></i> Añadir Nuevo Producto
+                </button>
+            </div>
+
+            <div class="row g-3 mb-4 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label-custom text-muted mb-1" style="font-size: 0.85rem;">Nombre</label>
+                    <div class="position-relative">
+                        <input type="text" class="form-control custom-input pe-5" placeholder="Buscar por nombre..." @bind="searchTerm" @bind:event="oninput" />
+                        <i class="bi bi-search position-absolute" style="top: 50%; right: 12px; transform: translateY(-50%); color: #94a3b8;"></i>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label-custom text-muted mb-1" style="font-size: 0.85rem;">Marca</label>
+                    <select class="form-select custom-input" @bind="InputMarca">
+                        <option value="">Todas</option>
+                        @foreach (var m in AvailableMarcas)
+                        {
+                            <option value="@m">@m</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label-custom text-muted mb-1" style="font-size: 0.85rem;">Categoría</label>
+                    <select class="form-select custom-input" @bind="InputCategoria">
+                        <option value="">Todas</option>
+                        @foreach (var c in AvailableCategorias)
+                        {
+                            <option value="@c">@c</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label-custom text-muted mb-1" style="font-size: 0.85rem;">Precio (S/.)</label>
+                    <div class="d-flex gap-2">
+                        <input type="number" class="form-control custom-input" placeholder="Mín" @bind="InputPrecioMin" @bind:event="oninput" min="0" step="0.01" />
+                        <input type="number" class="form-control custom-input" placeholder="Máx" @bind="InputPrecioMax" @bind:event="oninput" min="0" step="0.01" />
+                    </div>
+                </div>
+
+                <div class="col-md-2 d-flex gap-2">
+                    <button class="btn btn-outline-custom px-3 py-2 flex-grow-1 d-flex align-items-center justify-content-center gap-2" style="border-radius: 6px; font-weight: 500;" @onclick="LimpiarFiltros">
+                        <i class="bi bi-arrow-clockwise"></i> Limpiar
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="table custom-table table-borderless align-middle w-100">
+                        <thead class="text-start">
+                            <tr>
+                                <th scope="col" style="width: 40%;" class="text-start px-2">PRODUCTO</th>
+                                <th scope="col" class="text-center">MARCA</th>
+                                <th scope="col" class="text-center">PRECIO</th>
+                                <th scope="col" class="text-center">STOCK</th>
+                                <th scope="col" class="text-center">ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-start">
+                            @if (!productos.Any())
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">
+                                        <em>No hay productos registrados o cargando datos...</em>
+                                    </td>
+                                </tr>
+                            }
+                            else if (!GetPagedProducts().Any())
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">No se encontraron productos con los filtros aplicados.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var product in GetPagedProducts())
+                                {
+                                    <tr>
+                                        <td class="px-2">
+                                            <div class="d-flex align-items-center">
+                                                <div class="product-img-container flex-shrink-0">
+                                                    @{
+                                                        // Extraemos la imagen principal o la primera disponible del array de imágenes
+                                                        var imageUrl = product.imagenes?.FirstOrDefault(i => i.principal)?.url ??
+                                                                       product.imagenes?.FirstOrDefault()?.url;
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(imageUrl))
+                                                    {
+                                                        <img src="@imageUrl" alt="@product.nombre" class="product-img" />
+                                                    }
+                                                </div>
+                                                <span class="fw-bold text-navy product-name">@product.nombre</span>
+                                            </div>
+                                        </td>
+
+                                        <td class="text-center text-muted text-nowrap">
+                                            @(product.marca?.nombre ?? "Sin marca")
+                                        </td>
+
+                                        <td class="text-center text-nowrap">
+                                            <span class="fw-bold text-dark">S/ @product.precio.ToString("0.00")</span>
+                                        </td>
+
+                                        <td class="text-center text-nowrap">
+                                            <span class="fw-bold text-navy">@product.stock</span>
+                                        </td>
+
+                                        <td class="text-center text-nowrap">
+                                            <button class="btn btn-outline-custom btn-sm me-2" @onclick="() => EditarProducto(product.id)">
+                                                Modificar
+                                            </button>
+                                            <button class="btn btn-danger btn-sm" @onclick="() => EliminarProducto(product.id)">
+                                                Eliminar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                @if (TotalPages > 1)
+                {
+                    <div class="d-flex justify-content-center mt-3 mb-1">
+                        <nav>
+                            <ul class="pagination custom-pagination pagination-sm">
+                                <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
+                                    <button class="page-link" @onclick="GoToPreviousPage" disabled="@(CurrentPage == 1)">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </button>
+                                </li>
+
+                                @for (int i = 1; i <= TotalPages; i++)
+                                {
+                                    var pageNumber = i;
+                                    <li class="page-item @(CurrentPage == pageNumber ? "active" : "")">
+                                        <button class="page-link" @onclick="() => ChangePage(pageNumber)">@pageNumber</button>
+                                    </li>
+                                }
+
+                                <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
+                                    <button class="page-link" @onclick="GoToNextPage" disabled="@(CurrentPage == TotalPages)">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                }
+            </div>
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        <div class="container mt-5">
+            <h2>
+                Acceso denegado
+            </h2>
+            <p>
+                No tienes permisos para acceder a esta página.
+            </p>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private List<Producto> productos = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarProductos();
+    }
+
+    private async Task CargarProductos()
+    {
+        try
+        {
+            productos.Clear();
+
+            // Usamos el servicio original inyectado
+            var resultado = await ProductosRS.ListarTodosAsync();
+            if (resultado != null)
+            {
+                productos = resultado;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar productos: {ex.Message}");
+        }
+    }
+
+    private void EditarProducto(int idProducto)
+    {
+        Navigation.NavigateTo($"/admin/update-product/{idProducto}");
+    }
+
+    private async Task EliminarProducto(int idProducto)
+    {
+        try
+        {
+            bool exito = await ProductosRS.EliminarAsync(idProducto);
+            if (exito)
+            {
+                await CargarProductos();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al eliminar el producto: {ex.Message}");
+        }
+    }
+
+    // --- Lógica de paginación y búsqueda ---
+    private string _searchTerm = string.Empty;
+    private string searchTerm
+    {
+        get => _searchTerm;
+        set { _searchTerm = value; CurrentPage = 1; }
+    }
+
+    private string _inputMarca = string.Empty;
+    private string InputMarca
+    {
+        get => _inputMarca;
+        set { _inputMarca = value; CurrentPage = 1; }
+    }
+
+    private string _inputCategoria = string.Empty;
+    private string InputCategoria
+    {
+        get => _inputCategoria;
+        set { _inputCategoria = value; CurrentPage = 1; }
+    }
+
+    private double? _inputPrecioMin;
+    private double? InputPrecioMin
+    {
+        get => _inputPrecioMin;
+        set { _inputPrecioMin = value; CurrentPage = 1; }
+    }
+
+    private double? _inputPrecioMax;
+    private double? InputPrecioMax
+    {
+        get => _inputPrecioMax;
+        set { _inputPrecioMax = value; CurrentPage = 1; }
+    }
+
+    private IEnumerable<string> AvailableMarcas => productos
+        .Where(p => p.marca != null && !string.IsNullOrWhiteSpace(p.marca.nombre))
+        .Select(p => p.marca.nombre)
+        .Distinct()
+        .OrderBy(m => m);
+
+    private IEnumerable<string> AvailableCategorias => productos
+        .Where(p => p.categorias != null)
+        .SelectMany(p => p.categorias)
+        .Select(c => c.nombre)
+        .Where(n => !string.IsNullOrWhiteSpace(n))
+        .Distinct()
+        .OrderBy(c => c);
+
+    private void LimpiarFiltros()
+    {
+        searchTerm = string.Empty;
+        InputMarca = string.Empty;
+        InputCategoria = string.Empty;
+        InputPrecioMin = null;
+        InputPrecioMax = null;
+        CurrentPage = 1;
+    }
+
+    private int CurrentPage { get; set; } = 1;
+    private int PageSize { get; set; } = 10;
+
+    private IEnumerable<Producto> FilteredProducts => productos.Where(p => 
+        (string.IsNullOrWhiteSpace(searchTerm) || (p.nombre != null && p.nombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))) &&
+        (string.IsNullOrWhiteSpace(InputMarca) || (p.marca != null && p.marca.nombre == InputMarca)) &&
+        (string.IsNullOrWhiteSpace(InputCategoria) || (p.categorias != null && p.categorias.Any(c => c.nombre == InputCategoria))) &&
+        (!InputPrecioMin.HasValue || p.precio >= InputPrecioMin.Value) &&
+        (!InputPrecioMax.HasValue || p.precio <= InputPrecioMax.Value)
+    );
+
+    private int TotalPages => Math.Max(1, (int)Math.Ceiling((double)FilteredProducts.Count() / PageSize));
+
+    private IEnumerable<Producto> GetPagedProducts()
+    {
+        return FilteredProducts.Skip((CurrentPage - 1) * PageSize).Take(PageSize);
+    }
+
+    private void ChangePage(int page) => CurrentPage = page;
+    private void GoToPreviousPage() { if (CurrentPage > 1) CurrentPage--; }
+    private void GoToNextPage() { if (CurrentPage < TotalPages) CurrentPage++; }
+}

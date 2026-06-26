@@ -1,0 +1,22 @@
+.user-container {
+    width: 100vw;
+    display: flex;
+    padding: 40px;
+    gap: 20px;
+}
+
+.sidebar {
+    width: fit-content;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    height: fit-content;
+}
+
+.contenido-usuario {
+    flex: 1;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    padding-top: 20px;
+}

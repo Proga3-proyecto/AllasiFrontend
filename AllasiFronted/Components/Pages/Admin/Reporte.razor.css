@@ -1,0 +1,220 @@
+﻿/* =========================================================
+   ReportList.razor.css
+   Diseño aislado para la pantalla principal de reportes.
+   ========================================================= */
+
+.report-list-page {
+    width: 100%;
+    max-width: 1100px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+    .report-list-page .text-navy {
+        color: var(--color-primary);
+    }
+
+    .report-list-page .main-title {
+        margin-bottom: 5px;
+        font-size: 1.35rem;
+    }
+
+    .report-list-page > .text-center p {
+        font-size: 0.86rem;
+    }
+
+.reports-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: 26px;
+}
+
+.report-card {
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+    text-align: left;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 5px 16px rgba(15, 23, 42, 0.06);
+    cursor: pointer;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+    .report-card:hover {
+        border-color: var(--color-primary);
+        box-shadow: 0 12px 25px rgba(15, 23, 42, 0.12);
+        transform: translateY(-4px);
+    }
+
+    .report-card:focus-visible {
+        outline: 3px solid rgba(30, 64, 175, 0.2);
+        outline-offset: 3px;
+    }
+
+.report-image {
+    height: 230px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.report-image-product {
+    background: linear-gradient( 135deg, #eff6ff 0%, #dbeafe 100% );
+}
+
+.report-image-client {
+    background: linear-gradient( 135deg, #f5f3ff 0%, #ede9fe 100% );
+}
+
+.report-image svg {
+    width: 82%;
+    max-width: 310px;
+    height: auto;
+    transition: transform 0.25s ease;
+}
+
+.report-card:hover .report-image svg {
+    transform: scale(1.04);
+}
+
+/* Ilustración de productos */
+.report-image-product .svg-panel {
+    fill: #ffffff;
+    stroke: #bfdbfe;
+    stroke-width: 2;
+}
+
+.report-image-product .svg-box {
+    fill: #dbeafe;
+    stroke: #2563eb;
+    stroke-width: 3;
+}
+
+.report-image-product .svg-line {
+    fill: none;
+    stroke: #2563eb;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.report-image-product .svg-bar {
+    fill: #2563eb;
+}
+
+.report-image-product .svg-axis {
+    fill: none;
+    stroke: #94a3b8;
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
+/* Ilustración de clientes */
+.report-image-client .svg-panel {
+    fill: #ffffff;
+    stroke: #ddd6fe;
+    stroke-width: 2;
+}
+
+.report-image-client .svg-person {
+    fill: #8b5cf6;
+}
+
+.report-image-client .svg-person-secondary {
+    fill: #c4b5fd;
+}
+
+.report-image-client .svg-line-fill {
+    fill: #8b5cf6;
+}
+
+.report-image-client .svg-line-soft {
+    fill: #c4b5fd;
+}
+
+.report-card-content {
+    min-height: 126px;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 32px;
+    align-items: center;
+    gap: 13px;
+    padding: 18px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.report-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f5f9;
+    color: var(--color-primary);
+    border-radius: 9px;
+    font-size: 1.1rem;
+}
+
+.report-card-text h3 {
+    margin: 0 0 5px;
+    color: var(--color-primary);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.report-card-text p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.79rem;
+    line-height: 1.45;
+}
+
+.report-arrow {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    border-radius: 50%;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.report-card:hover .report-arrow {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    transform: translateX(3px);
+}
+
+@media (max-width: 800px) {
+    .reports-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .report-image {
+        height: 205px;
+    }
+}
+
+@media (max-width: 480px) {
+    .report-list-page .main-title {
+        font-size: 1.2rem;
+    }
+
+    .reports-grid {
+        gap: 16px;
+        margin-top: 20px;
+    }
+
+    .report-image {
+        height: 180px;
+    }
+
+    .report-card-content {
+        grid-template-columns: 40px minmax(0, 1fr) 28px;
+        padding: 15px;
+    }
+}

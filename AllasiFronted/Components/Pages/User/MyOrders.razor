@@ -1,0 +1,93 @@
+@page "/user/my-orders"
+@layout UserLayout
+
+<div class="orders-page-container">
+
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-navy mb-1" style="font-size: 1.35rem;">Mis pedidos</h2>
+        <p class="text-muted mb-2" style="font-size: 0.85rem;">Revisa el estado de tus pedidos y su historial.</p>
+    </div>
+
+    <div class="tabs mb-3">
+        <span class="tab-activo pb-2 d-inline-block">Todos</span>
+    </div>
+
+    <div class="pedido-card">
+
+        <div class="pedido-item">
+            <div class="pedido-col">
+                <h3 class="text-navy fw-bold">Pedido #12345</h3>
+                <p class="text-muted">20 Mar. 2025 - 10:30 am</p>
+                <a href="/user/order-details" class="detalle-link">Ver detalle</a>
+            </div>
+
+            <div class="pedido-col">
+                <label>Total</label>
+                <h3 class="text-dark fw-bold">S/ 189.90</h3>
+                <p class="text-muted">Pagar con tarjeta</p>
+            </div>
+
+            <div class="pedido-col">
+                <label>Estado</label>
+                <span class="estado proceso">En proceso</span>
+            </div>
+
+            <div class="pedido-col">
+                <label>Entrega estimada</label>
+                <h3 class="text-dark fw-bold">22 Mar. 2025</h3>
+            </div>
+        </div>
+
+        <div class="pedido-item">
+            <div class="pedido-col">
+                <h3 class="text-navy fw-bold">Pedido #12345</h3>
+                <p class="text-muted">20 Mar. 2025 - 10:30 am</p>
+                <a href="/user/order-details" class="detalle-link">Ver detalle</a>
+            </div>
+
+            <div class="pedido-col">
+                <label>Total</label>
+                <h3 class="text-dark fw-bold">S/ 189.90</h3>
+                <p class="text-muted">Pagar con tarjeta</p>
+            </div>
+
+            <div class="pedido-col">
+                <label>Estado</label>
+                <span class="estado enviado">Enviado</span>
+            </div>
+
+            <div class="pedido-col">
+                <label>Entrega estimada</label>
+                <h3 class="text-dark fw-bold">19 - 20 Mar. 2025</h3>
+            </div>
+        </div>
+
+        <div class="pedido-item">
+            <div class="pedido-col">
+                <h3 class="text-navy fw-bold">Pedido #12345</h3>
+                <p class="text-muted">20 Mar. 2025 - 10:30 am</p>
+                <a href="/user/order-details" class="detalle-link">Ver detalle</a>
+            </div>
+
+            <div class="pedido-col">
+                <label>Total</label>
+                <h3 class="text-dark fw-bold">S/ 189.90</h3>
+                <p class="text-muted">Pagar con tarjeta</p>
+            </div>
+
+            <div class="pedido-col">
+                <label>Estado</label>
+                <span class="estado entregado">Entregado</span>
+            </div>
+
+            <div class="pedido-col">
+                <label>Entrega estimada</label>
+                <h3 class="text-dark fw-bold">17 Mar. 2025</h3>
+            </div>
+        </div>
+
+        <p class="security-footer-text mt-4">
+            <img src="assets/icons/escudo.png" alt="Seguro" class="footer-shield-icon-img" /> Tu información está segura con nosotros y no será compartida con terceros.
+        </p>
+    </div>
+</div>

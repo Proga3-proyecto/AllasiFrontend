@@ -28,21 +28,26 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/logout" class="menu-item text-danger">
+                    <button class="menu-item text-danger" style="background: none; border: none; width: 100%; text-align: left;" @onclick="PerformLogout">
                         <i class="bi bi-box-arrow-right"></i> Log out
-                    </a>
+                    </button>
                 </li>
             }
         </ul>
     </div>
 </div>
 
+@using Progra3_Frontend.Services.Auth
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager NavigationManager
+
 @code {
     [Parameter]
-    public bool IsLoggedIn { get; set; } = false; // Por defecto true para propósitos de demostración
+    public bool IsLoggedIn { get; set; } = false;
 
     [Parameter]
-    public string UserName { get; set; } = "Juan Perez"; // Nombre de prueba
+    public string UserName { get; set; } = "";
 
     private bool isMenuOpen = false;
 
@@ -54,9 +59,17 @@
 
     private async Task HideMenuDelayed()
     {
-        // Pequeño retraso para permitir que los clics en los enlaces se registren antes de cerrar el menú
         await Task.Delay(200);
         isMenuOpen = false;
         StateHasChanged();
+    }
+
+    private void PerformLogout()
+    {
+        if (AuthProvider is CustomAuthenticationStateProvider customProvider)
+        {
+            customProvider.Logout();
+            NavigationManager.NavigateTo("/", forceLoad: true);
+        }
     }
 }

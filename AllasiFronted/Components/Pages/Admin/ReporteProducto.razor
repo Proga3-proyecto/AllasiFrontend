@@ -1,0 +1,259 @@
+@page "/admin/report-product"
+@layout AdminLayout
+
+@inject NavigationManager Navigation
+
+<div class="product-report-page container-fluid mt-3 mb-4">
+
+    <div class="report-header">
+
+        <div class="d-flex align-items-center gap-2">
+
+            <button type="button"
+                    class="btn navy-bg"
+                    @onclick='() => Navigation.NavigateTo("/admin/report-list")'>
+
+                <i class="bi bi-arrow-left me-1"></i>
+                Regresar
+            </button>
+
+            <button type="button"
+                    class="btn navy-bg">
+
+                <i class="bi bi-download me-1"></i>
+                Exportar
+            </button>
+
+        </div>
+
+
+        <div>
+            <h2 class="report-title text-navy">
+                Reporte por Producto
+            </h2>
+
+            <p class="report-subtitle">
+                Consulta el precio y la cantidad vendida de cada producto.
+            </p>
+        </div>
+
+
+    </div>
+
+    <div class="filter-panel"
+         style="grid-template-columns: 1fr 1fr;">
+
+        <div class="filter-group">
+
+            <label>Ordenar por</label>
+
+            <div class="input-container">
+                <i class="bi bi-filter"></i>
+
+                <select @bind="CriterioOrden">
+                    <option value="cantidad">
+                        Cantidad vendida
+                    </option>
+
+                    <option value="precio">
+                        Precio
+                    </option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="filter-group">
+
+            <label>Tipo de orden</label>
+
+            <div class="input-container">
+                <i class="bi bi-sort-down"></i>
+
+                <select @bind="TipoOrden">
+                    <option value="descendente">
+                        Mayor a menor
+                    </option>
+
+                    <option value="ascendente">
+                        Menor a mayor
+                    </option>
+                </select>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="table-container">
+
+        <div class="table-responsive">
+
+            <table class="table custom-table table-borderless align-middle w-100">
+
+                <thead>
+                    <tr>
+                        <th class="text-start">
+                            PRODUCTO
+                        </th>
+
+                        <th class="text-center">
+                            PRECIO
+                        </th>
+
+                        <th class="text-center">
+                            CANTIDAD VENDIDA
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var producto in ProductosOrdenados)
+                    {
+                        <tr>
+
+                            <td class="text-start">
+
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <div class="summary-icon"
+                                         style="width: 36px;
+                                        height: 36px;">
+
+                                        <i class="fa-light fa-martini-glass"></i>
+                                    </div>
+
+                                    <span class="fw-bold text-navy">
+                                        @producto.Nombre
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+                            <td class="text-center text-nowrap">
+
+                                <span class="fw-bold text-dark">
+                                    S/ @producto.Precio.ToString("0.00")
+                                </span>
+
+                            </td>
+
+                            <td class="text-center text-nowrap">
+
+                                <span class="fw-bold text-navy">
+                                    @producto.CantidadVendida
+                                </span>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+@code {
+    private string CriterioOrden { get; set; } = "cantidad";
+
+    private string TipoOrden { get; set; } = "descendente";
+
+    private List<ProductoReporte> Productos { get; set; } =
+    [
+        new()
+        {
+            Nombre = "Whisky Chivas Regal 12 Años",
+            Precio = 119.90,
+            CantidadVendida = 84
+        },
+        new()
+        {
+            Nombre = "Ron Cartavio Black",
+            Precio = 39.90,
+            CantidadVendida = 132
+        },
+        new()
+        {
+            Nombre = "Pisco Queirolo Quebranta",
+            Precio = 34.50,
+            CantidadVendida = 96
+        },
+        new()
+        {
+            Nombre = "Vodka Absolut",
+            Precio = 69.90,
+            CantidadVendida = 71
+        },
+        new()
+        {
+            Nombre = "Gin Tanqueray",
+            Precio = 99.90,
+            CantidadVendida = 58
+        },
+        new()
+        {
+            Nombre = "Tequila José Cuervo Especial",
+            Precio = 79.90,
+            CantidadVendida = 64
+        },
+        new()
+        {
+            Nombre = "Cerveza Corona Six Pack",
+            Precio = 32.90,
+            CantidadVendida = 145
+        },
+        new()
+        {
+            Nombre = "Vino Casillero del Diablo Cabernet",
+            Precio = 44.90,
+            CantidadVendida = 89
+        },
+        new()
+        {
+            Nombre = "Champagne Moët & Chandon",
+            Precio = 249.90,
+            CantidadVendida = 27
+        },
+        new()
+        {
+            Nombre = "Licor Baileys Original",
+            Precio = 89.90,
+            CantidadVendida = 52
+        }
+    ];
+
+
+    private IEnumerable<ProductoReporte> ProductosOrdenados
+    {
+        get
+        {
+            if (CriterioOrden == "precio")
+            {
+                return TipoOrden == "ascendente"
+                    ? Productos.OrderBy(producto => producto.Precio)
+                    : Productos.OrderByDescending(producto => producto.Precio);
+            }
+
+            return TipoOrden == "ascendente"
+                ? Productos.OrderBy(producto => producto.CantidadVendida)
+                : Productos.OrderByDescending(producto => producto.CantidadVendida);
+        }
+    }
+
+    private class ProductoReporte
+    {
+        public string Nombre { get; set; } = string.Empty;
+
+        public double Precio { get; set; }
+
+        public int CantidadVendida { get; set; }
+    }
+}

@@ -1,5 +1,7 @@
 using AllasiFrontend.Components;
 using Progra3_Frontend.Services;
+using Progra3_Frontend.Services.Auth;
+using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +11,25 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<ProductosRS>();
+builder.Services.AddScoped<MarcasRS>();
+builder.Services.AddScoped<CategoriasRS>();
+builder.Services.AddScoped<ImpuestosRS>();
+builder.Services.AddScoped<AlcoholImpuestoRS>();
+builder.Services.AddScoped<ImagenesRS>();
+builder.Services.AddScoped<ClientesRS>();
+builder.Services.AddScoped<AdminsRS>();
 builder.Services.AddScoped<RecetasRS>();
+builder.Services.AddScoped<PedidosRS>();
 builder.Services.AddScoped<CarritoStateService>();
+
+builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:8080/Servicios-1.0-SNAPSHOT/api/");
+});
+builder.Services.AddAuthorizationCore();
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<CustomAuthenticationStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<CustomAuthenticationStateProvider>());
 
 var app = builder.Build();
 

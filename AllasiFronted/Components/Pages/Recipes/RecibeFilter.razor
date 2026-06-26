@@ -1,0 +1,61 @@
+<aside class="filters-card">
+
+    <div class="filters-header">
+        <h2 class="title-2 filter-title">filtros</h2>
+        <i class="bi bi-sliders"></i>
+    </div>
+
+    <div class="filter-block">
+        <div class="filter-title" @onclick="TogglePriceFilter">
+            <span>Rango de precio</span>
+            <i class="bi @(isPriceExpanded ? "bi-chevron-up" : "bi-chevron-down")"></i>
+        </div>
+
+        @if (isPriceExpanded)
+        {
+            <div class="price-range-inputs">
+                <input type="number" min="0" step="1" placeholder="S/ 0"
+                       oninput="this.value = this.value < 0 ? 0 : this.value" />
+
+                <input type="number" min="0" step="1" placeholder="S/ 500+"
+                       oninput="this.value = this.value < 0 ? 0 : this.value" />
+            </div>
+        }
+    </div>
+
+    <div class="filter-block">
+        <div class="filter-title" @onclick="ToggleBrandFilter">
+            <span>Marca</span>
+            <i class="bi @(isBrandExpanded ? "bi-chevron-up" : "bi-chevron-down")"></i>
+        </div>
+
+        @if (isBrandExpanded)
+        {
+            <div class="brand-inputs">
+                <p>Contenido de marcas...</p>
+            </div>
+        }
+    </div>
+
+    <button class="clear-button">
+        <i class="bi bi-arrow-counterclockwise"></i>
+        limpiar filtros
+    </button>
+</aside>
+
+@code {
+    // Variables de estado para controlar qué filtro está abierto
+    private bool isPriceExpanded = true;  // Abierto por defecto
+    private bool isBrandExpanded = false; // Cerrado por defecto
+
+    // Métodos para alternar (toggle) los estados
+    private void TogglePriceFilter()
+    {
+        isPriceExpanded = !isPriceExpanded;
+    }
+
+    private void ToggleBrandFilter()
+    {
+        isBrandExpanded = !isBrandExpanded;
+    }
+}

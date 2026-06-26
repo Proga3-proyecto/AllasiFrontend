@@ -1,0 +1,33 @@
+@using Progra3_Frontend.Model
+@inject NavigationManager Navigation
+
+<article class="recipe-card">
+
+    <div class="recipe-img-box">
+        <img src="@(receta.imagenes?.FirstOrDefault()?.url ?? "/assets/banner/banner.png")"
+             class="recipe-img"
+             alt="@receta.nombre" />
+    </div>
+
+    <h3>@receta.nombre</h3>
+    <p class="recipe-desc">@receta.descripcion</p>
+
+    <div class="recipe-bottom">
+        <span class="spacer"></span>
+
+        <button class="view-recipe-button" @onclick="VerReceta">
+            Ver receta
+        </button>
+    </div>
+</article>
+
+@code {
+    [Parameter]
+    public Receta receta { get; set; } = default!;
+
+    private void VerReceta()
+    {
+        // Navega usando el id real proveniente de la base de datos de Java
+        Navigation.NavigateTo($"/receta/{receta.id}");
+    }
+}

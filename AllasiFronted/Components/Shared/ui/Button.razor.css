@@ -1,0 +1,33 @@
+﻿.generic-btn {
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+    .generic-btn:hover {
+        opacity: 0.9;
+    }
+
+    .generic-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+/* Variantes */
+.primary {
+    background-color: #0b1f5c;
+    color: white;
+}
+
+.secondary {
+    background-color: #e9ecef;
+    color: #333;
+}
+
+.danger {
+    background-color: #dc3545;
+    color: white;
+}

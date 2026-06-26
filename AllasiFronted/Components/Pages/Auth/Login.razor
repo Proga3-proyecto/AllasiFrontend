@@ -1,0 +1,130 @@
+@page "/login"
+@using Progra3_Frontend.Models
+@using Progra3_Frontend.Services
+@using Progra3_Frontend.Services.Auth
+
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@inject CustomAuthenticationStateProvider AuthProvider
+
+<div class="container">
+    <section>
+        <div class="form-header">
+            <i class="bi bi-person-lock logo"></i>
+            <h1 class="title">
+                INICIO DE SESIÓN
+            </h1>
+            <h3 class="sub-title">
+                Introduzca su correo electrónico y contraseña:
+            </h3>
+            <div class="hr"></div>
+        </div>
+
+        <form @onsubmit="OnSumit">
+            <div class="form-input">
+                <label for="email">Correo electrónico</label>
+                <div class="input-container">
+                    <i class="bi bi-envelope"></i>
+                    <input id="email"
+                           @bind="login.Usuario"
+                           placeholder="ejemplo@correo.com"
+                           type="email" />
+                </div>
+            </div>
+
+            <div class="form-input">
+                <label for="password">Contraseña</label>
+                <div class="input-container">
+                    <i class="bi bi-lock-fill"></i>
+                    <input id="password"
+                           @bind="login.Password"
+                           type="@(hidePassword ? "password" : "text")"
+                           placeholder="*************" />
+                    <div @onclick="changeVisibility" style="cursor:pointer;">
+                        @if (hidePassword)
+                        {
+                            <i class="bi bi-eye-slash"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-eye"></i>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <a href="/forgot-password" class="link">
+                <u>¿Olvidaste tu contraseña?</u>
+            </a>
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <div class="alert alert-danger" style="color: red; margin-bottom: 15px;">
+                    @error
+                </div>
+            }
+
+            <button type="submit">Ingresar</button>
+        </form>
+
+        <div class="footer-register">
+            <span class="label">¿Eres nuevo?</span>
+            <a href="/register" class="link"><u>Crear una cuenta</u></a>
+        </div>
+    </section>
+</div>
+
+@code {
+    private LoginRequest login = new();
+
+    private string error = "";
+
+    bool hidePassword = true;
+
+    void changeVisibility()
+    {
+        hidePassword = !hidePassword;
+    }
+
+    async Task OnSumit()
+    {
+        error = "";
+
+        var usuario =
+            await AuthService.Login(login);
+
+        if (usuario == null)
+        {
+            error =
+                "No se pudo conectar con el servidor";
+
+            return;
+        }
+
+        if (usuario.Exito)
+        {
+            AuthProvider.Login(
+                usuario.Nombre,
+                usuario.Rol);
+
+            Console.WriteLine($"Exito: {usuario.Exito}");
+            Console.WriteLine($"Usuario: {usuario.Nombre}");
+            Console.WriteLine($"Rol: '{usuario.Rol}'");
+
+            if (usuario.Rol?.Trim().Equals("ADMIN", StringComparison.OrdinalIgnoreCase) == true)
+            {
+                Navigation.NavigateTo("/admin");
+            }
+            else
+            {
+                Navigation.NavigateTo("/");
+            }
+        }
+
+        if (!usuario.Exito)
+        {
+            error = usuario.Mensaje;
+
+            return;
+        }
+    }
+}

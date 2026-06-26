@@ -1,0 +1,127 @@
+@page "/recetas/{IdReceta:int}/seleccion"
+
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+@inject NavigationManager Navigation
+@inject RecetasRS RecetaService
+
+<div class="add-recipe-container">
+    <header class="add-recipe-header">
+        <h1>Añadir Receta</h1>
+        <div class="title-underline"></div>
+        <p class="subtitle">Para la receta seleccionada se añadirán los siguientes Productos:</p>
+    </header>
+
+    @if (Cargando)
+    {
+        <div class="text-center p-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Buscando ingredientes en el catálogo...</p>
+        </div>
+    }
+    else if (DetalleConfiguracion?.receta?.elementos != null && DetalleConfiguracion.receta.elementos.Any())
+    {
+        <main class="products-selection-list">
+            @foreach (var item in DetalleConfiguracion.receta.elementos)
+            {
+                <article class="product-selection-card">
+                    <div class="card-left">
+                        <img src="@(item.producto?.imagenes?.FirstOrDefault()?.url ?? "/imagenes/default-liquor.png")"
+                             alt="@item.producto?.nombre"
+                             class="product-thumb" />
+                    </div>
+
+                    <div class="card-body">
+                        <p><strong>NOMBRE:</strong> @item.producto?.nombre</p>
+                        <p><strong>MARCA:</strong> @(item.producto?.marca?.nombre ?? "Genérica")</p>
+                        <p><strong>CANTIDAD:</strong> @item.cantidad L</p>
+                    </div>
+
+                    <div class="card-right">
+                        <div class="subtotal-box">
+                            SUBTOTAL: <strong>S/ @(((item.producto?.precioFinal ?? 0) * item.cantidad).ToString("0.00"))</strong>
+                        </div>
+                    </div>
+                </article>
+            }
+        </main>
+
+        <footer class="add-recipe-footer">
+            <div class="total-receta-box mb-3 text-end">
+                <h3>Total de la Combinación: <strong>S/ @DetalleConfiguracion.montoTotal.ToString("0.00")</strong></h3>
+            </div>
+
+            <button class="btn-confirm-cart" @onclick="FinalizarAdicion">
+                <i class="bi bi-cart-fill"></i> Añadir al carrito
+            </button>
+            <p class="footer-notice">
+                <i class="bi bi-check-circle-fill"></i> Revisa tu carrito y confirma los productos antes de finalizar.
+            </p>
+        </footer>
+    }
+    else
+    {
+        <div class="text-center p-5">
+            <p class="text-muted">No se encontraron ingredientes registrados para esta receta en la base de datos.</p>
+            <button class="btn btn-secondary mt-3" @onclick="Regresar">Volver</button>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public int IdReceta { get; set; }
+
+    private DetalleReceta DetalleConfiguracion { get; set; } = new();
+    private bool Cargando { get; set; } = true;
+
+    // Cambiado a OnParametersSetAsync para soportar llamadas HTTP a la API sin congelar la UI
+    protected override async Task OnParametersSetAsync()
+    {
+        Cargando = true;
+        try
+        {
+            // 1. Llamamos a tu servicio REST pasando el ID de la ruta
+            var recetaBack = await RecetaService.ObtenerPorIdAsync(IdReceta);
+
+            if (recetaBack != null)
+            {
+                // 2. Calculamos dinámicamente el precio total sumando (Precio con Impuesto * Cantidad en Litros)
+                double totalAcumulado = 0;
+                if (recetaBack.elementos != null)
+                {
+                    foreach (var item in recetaBack.elementos)
+                    {
+                        if (item.producto != null)
+                        {
+                            totalAcumulado += item.producto.precioFinal * item.cantidad;
+                        }
+                    }
+                }
+
+                // 3. Estructuramos el contenedor de configuración con la data real de la BD
+                DetalleConfiguracion = new DetalleReceta
+                {
+                    id = recetaBack.id,
+                    montoTotal = totalAcumulado,
+                    receta = recetaBack
+                };
+            }
+            else
+            {
+                DetalleConfiguracion = null!;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar la receta en la UI: {ex.Message}");
+            DetalleConfiguracion = null!;
+        }
+        finally
+        {
+            Cargando = false;
+        }
+    }
+
+    private void FinalizarAdicion() => Navigation.NavigateTo("/carrito");
+    private void Regresar() => Navigation.NavigateTo("/categoria/receta");
+}
