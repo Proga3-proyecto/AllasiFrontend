@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Net.Http.Headers;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
@@ -123,6 +125,81 @@ namespace Progra3_Frontend.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en Eliminar: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> SubirImagenAsync(int idReceta, Stream fileStream, string fileName, string contentType)
+        {
+            try
+            {
+                using var content = new MultipartFormDataContent();
+                var streamContent = new StreamContent(fileStream);
+                streamContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+
+                content.Add(streamContent, "archivo", fileName);
+
+                var response = await _httpClient.PostAsync($"{_urlRest}/{idReceta}/subir", content);
+                if (response.IsSuccessStatusCode) _cachedRecetas = null;
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en SubirImagenAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> SubirImagenPrincipalAsync(int idReceta, Stream fileStream, string fileName, string contentType)
+        {
+            try
+            {
+                using var content = new MultipartFormDataContent();
+                var streamContent = new StreamContent(fileStream);
+                streamContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+
+                content.Add(streamContent, "archivo", fileName);
+
+                var response = await _httpClient.PostAsync($"{_urlRest}/{idReceta}/subirPrincipal", content);
+                if (response.IsSuccessStatusCode) _cachedRecetas = null;
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en SubirImagenPrincipalAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> EliminarCategoriaAsync(int idReceta, string nombreCategoria)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"{_urlRest}/{idReceta}/categoria/{nombreCategoria}");
+                if (response.IsSuccessStatusCode) _cachedRecetas = null;
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en EliminarCategoriaAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> AgregarCategoriaAsync(int idReceta, Categoria categoria)
+        {
+            try
+            {
+                var jsonBody = JsonSerializer.Serialize(categoria, _jsonOptions);
+                var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{_urlRest}/{idReceta}/categoria", content);
+                if (response.IsSuccessStatusCode) _cachedRecetas = null;
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en AgregarCategoriaAsync: {ex.Message}");
                 return false;
             }
         }

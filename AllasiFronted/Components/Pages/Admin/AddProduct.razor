@@ -163,7 +163,7 @@
                                     <label class="form-label-custom">Descripción <span class="asterisk">*</span></label>
                                     <div class="input-container">
                                         <i class="bi bi-card-text"></i>
-                                        <input type="text" placeholder="Ej: Descripción detallada del producto" @bind="productViewModel.descripcion">
+                                        <textarea rows="3" placeholder="Ej: Descripción detallada del producto" @bind="productViewModel.descripcion"></textarea>
                                     </div>
                                     <ValidationMessage For="@(() => productViewModel.descripcion)" class="validation-text" />
                                 </div>

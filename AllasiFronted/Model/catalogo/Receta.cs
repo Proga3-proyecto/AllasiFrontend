@@ -1,4 +1,4 @@
-﻿namespace Progra3_Frontend.Model
+namespace Progra3_Frontend.Model
 {
     public class Receta
     {
@@ -11,5 +11,17 @@
         public double descuento { get; set; }
         public List<ElementoReceta> elementos { get; set; } = new List<ElementoReceta>();
         public List<Imagen> imagenes { get; set; } = new List<Imagen>();
+        public List<Categoria> categorias { get; set; } = new List<Categoria>();
+
+        [System.Text.Json.Serialization.JsonIgnore]
+        public string ImagenUrl
+        {
+            get
+            {
+                if (imagenes == null) return "";
+                if (imagenes.Count == 0) return "";
+                return imagenes[0].url;
+            }
+        }
     }
 }
