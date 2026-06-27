@@ -5,6 +5,7 @@
 @using System.ComponentModel.DataAnnotations
 @using Progra3_Frontend.Model
 @using Progra3_Frontend.Services
+@using Microsoft.AspNetCore.Components.Forms
 
 @inject NavigationManager Navigation
 @inject RecetasRS RecetasRS
@@ -43,29 +44,30 @@
                         Imagen de la receta
                     </label>
 
-                    <div class="upload-box flex-grow-1"
-                         style="position: relative;
-                        border: 2px dashed #ccc;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        background-color: #f9f9f9;
-                        border-radius: 8px;">
+                            <div class="d-flex flex-wrap gap-2 p-2" style="border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fafafa; min-height: 150px; flex-grow: 1;">
 
-                        <p class="text-muted text-center px-3 mb-0"
-                           style="font-size: 0.85rem;">
+                                @foreach (var img in imagenes)
+                                {
+                                    <div class="image-card" style="width: 100px; height: 130px; border: 1px solid #ccc; border-radius: 8px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: white;">
+                                        <img src="@img.PreviewUrl" style="width: 100%; height: 80px; object-fit: cover;" alt="Vista previa" />
 
-                            <i class="bi bi-image"
-                               style="font-size: 2rem;
-                                display: block;
-                                margin-bottom: 10px;">
-                            </i>
+                                        <div class="p-1 text-center d-flex align-items-center justify-content-center gap-1" style="flex-grow: 1; background: #f8f9fa;">
+                                            <input type="radio" name="principalImage" checked="@img.IsPrincipal" @onchange="() => SetPrincipal(img)" title="Marcar como principal" style="cursor:pointer;" />
+                                            <small style="font-size: 0.65rem; font-weight: 500;">Principal</small>
+                                        </div>
 
-                            La funcionalidad para modificar imágenes<br />
-                            estará disponible pronto.
-                        </p>
+                                        <button type="button" class="btn btn-sm btn-danger p-0 d-flex align-items-center justify-content-center" style="position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%; font-size: 0.8rem;" @onclick="() => RemoverImagen(img)">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                    </div>
+                                }
 
-                    </div>
+                                <label class="image-card" style="width: 100px; height: 130px; border: 2px dashed #bbb; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; background-color: white; margin-bottom: 0; transition: background 0.2s;">
+                                    <InputFile OnChange="HandleFileSelected" accept="image/*" multiple style="display: none;" />
+                                    <i class="bi bi-plus-lg" style="font-size: 2rem; color: #888;"></i>
+                                </label>
+
+                            </div>
 
                 </div>
 
@@ -380,6 +382,18 @@
         public double? Cantidad { get; set; }
     }
 
+    public class ImageItem
+    {
+        public IBrowserFile? File { get; set; }
+        public bool IsExisting { get; set; } = false;
+        public int Id { get; set; }
+        public string PreviewUrl { get; set; } = string.Empty;
+        public bool IsPrincipal { get; set; } = false;
+    }
+
+    private List<ImageItem> imagenes = new();
+    private long maxFileSize = 1024 * 1024 * 5;
+
     private RecetaViewModel recetaViewModel { get; set; } = new();
     private List<Producto> productosDisponibles = new();
     private List<IngredienteViewModel> ingredientes = [new()];
@@ -440,6 +454,22 @@
                         Cantidad = e.cantidad
                     }).ToList();
                 }
+
+                if (receta.imagenes != null && receta.imagenes.Any())
+                {
+                    imagenes.Clear();
+                    foreach (var img in receta.imagenes)
+                    {
+                        imagenes.Add(new ImageItem
+                        {
+                            PreviewUrl = img.url,
+                            IsPrincipal = img.principal,
+                            IsExisting = true,
+                            Id = img.id,
+                            File = null
+                        });
+                    }
+                }
             }
             else
             {
@@ -470,6 +500,49 @@
             return;
         }
         ingredientes.RemoveAt(indice);
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles())
+        {
+            try
+            {
+                var resizedImage = await file.RequestImageFileAsync(file.ContentType, 300, 300);
+                var buffer = new byte[resizedImage.Size];
+                await resizedImage.OpenReadStream().ReadAsync(buffer);
+
+                var nuevaImagen = new ImageItem
+                {
+                    File = file,
+                    PreviewUrl = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer)}",
+                    IsPrincipal = (imagenes.Count == 0) 
+                };
+
+                imagenes.Add(nuevaImagen);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error procesando la imagen {file.Name}: {ex.Message}");
+            }
+        }
+    }
+
+    private void SetPrincipal(ImageItem selectedImg)
+    {
+        foreach (var img in imagenes)
+        {
+            img.IsPrincipal = (img == selectedImg);
+        }
+    }
+
+    private void RemoverImagen(ImageItem imgToRemove)
+    {
+        imagenes.Remove(imgToRemove);
+        if (imgToRemove.IsPrincipal && imagenes.Count > 0)
+        {
+            imagenes[0].IsPrincipal = true;
+        }
     }
 
     private async Task ActualizarReceta()
@@ -530,6 +603,31 @@
 
             if (resultado)
             {
+                if (imagenes.Count > 0)
+                {
+                    foreach (var img in imagenes)
+                    {
+                        if (img.IsExisting) continue;
+                        try
+                        {
+                            using var stream = img.File!.OpenReadStream(maxFileSize);
+
+                            if (img.IsPrincipal)
+                            {
+                                await RecetasRS.SubirImagenPrincipalAsync(Id, stream, img.File!.Name, img.File!.ContentType);
+                            }
+                            else
+                            {
+                                await RecetasRS.SubirImagenAsync(Id, stream, img.File!.Name, img.File!.ContentType);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error subiendo imagen {img.File!.Name}: {ex.Message}");
+                        }
+                    }
+                }
+
                 Navigation.NavigateTo("/admin/recipe-list");
             }
             else

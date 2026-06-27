@@ -1,4 +1,4 @@
-﻿@page "/admin/recipe-list"
+@page "/admin/recipe-list"
 @layout AdminLayout
 
 @using Progra3_Frontend.Model
@@ -93,7 +93,18 @@
                                     <div class="d-flex align-items-center">
 
                                         <div class="recipe-img-container flex-shrink-0">
-                                            <i class="bi bi-journal-richtext"></i>
+                                            @{
+                                                var imageUrl = receta.imagenes?.FirstOrDefault(i => i.principal)?.url ??
+                                                               receta.imagenes?.FirstOrDefault()?.url;
+                                            }
+                                            @if (!string.IsNullOrEmpty(imageUrl))
+                                            {
+                                                <img src="@imageUrl" alt="@receta.nombre" class="recipe-img" />
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-journal-richtext"></i>
+                                            }
                                         </div>
 
                                         <span class="fw-bold text-navy recipe-name">
