@@ -1,0 +1,550 @@
+﻿@page "/admin/update-recipe"
+@page "/admin/update-recipe/{Id:int}"
+@layout AdminLayout
+
+@using System.ComponentModel.DataAnnotations
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+
+@inject NavigationManager Navigation
+@inject RecetasRS RecetasRS
+@inject ProductosRS ProductosRS
+
+<div class="container-fluid mt-3 mb-4">
+
+    <div class="text-center mb-3">
+        <h2 class="fw-bold text-navy"
+            style="letter-spacing: 0.5px; font-size: 1.35rem;">
+            Modificar Receta
+        </h2>
+    </div>
+
+    <div class="form-container">
+
+        <EditForm Model="recetaViewModel"
+                  OnValidSubmit="ActualizarReceta">
+
+            <DataAnnotationsValidator />
+
+            @if (!string.IsNullOrWhiteSpace(mensajeError))
+            {
+                <div class="alert alert-danger py-2 mb-3"
+                     style="font-size: 0.82rem;">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    @mensajeError
+                </div>
+            }
+
+            <div class="row gx-4 align-items-stretch">
+
+                <div class="col-md-4 mb-3 mb-md-0 d-flex flex-column">
+
+                    <label class="form-label-custom d-block mb-2">
+                        Imagen de la receta
+                    </label>
+
+                    <div class="upload-box flex-grow-1"
+                         style="position: relative;
+                        border: 2px dashed #ccc;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background-color: #f9f9f9;
+                        border-radius: 8px;">
+
+                        <p class="text-muted text-center px-3 mb-0"
+                           style="font-size: 0.85rem;">
+
+                            <i class="bi bi-image"
+                               style="font-size: 2rem;
+                                display: block;
+                                margin-bottom: 10px;">
+                            </i>
+
+                            La funcionalidad para modificar imágenes<br />
+                            estará disponible pronto.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-8">
+
+                    <div class="row mb-3">
+
+                        <div class="col-md-6">
+
+                            <label class="form-label-custom">
+                                Nombre de la receta
+                                <span class="asterisk">*</span>
+                            </label>
+
+                            <div class="input-container">
+                                <i class="bi bi-journal-text"></i>
+
+                                <input type="text"
+                                       placeholder="Ej: Pisco Sour"
+                                       @bind="recetaViewModel.nombre" />
+                            </div>
+
+                            <ValidationMessage For="@(() => recetaViewModel.nombre)"
+                                               class="validation-text" />
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label class="form-label-custom">
+                                Precio (S/)
+                                <span class="asterisk">*</span>
+                            </label>
+
+                            <div class="input-container">
+                                <i class="bi bi-cash"></i>
+
+                                <input type="number"
+                                       step="0.01"
+                                       min="0"
+                                       placeholder="Ej: 35.00"
+                                       @bind="recetaViewModel.precio" />
+                            </div>
+
+                            <ValidationMessage For="@(() => recetaViewModel.precio)"
+                                               class="validation-text" />
+
+                        </div>
+
+                    </div>
+
+                    <div class="row mb-3">
+
+                        <div class="col-md-6">
+
+                            <label class="form-label-custom">
+                                Descuento (%)
+                                <span class="asterisk">*</span>
+                            </label>
+
+                            <div class="input-container">
+                                <i class="bi bi-tag"></i>
+
+                                <input type="number"
+                                       step="0.01"
+                                       min="0"
+                                       max="100"
+                                       placeholder="Ej: 0"
+                                       @bind="recetaViewModel.descuento" />
+                            </div>
+
+                            <ValidationMessage For="@(() => recetaViewModel.descuento)"
+                                               class="validation-text" />
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label class="form-label-custom">
+                                Precio final
+                            </label>
+
+                            <div class="input-container">
+                                <i class="bi bi-cash-coin"></i>
+
+                                <input type="text"
+                                       value="@CalcularPrecioFinal().ToString("0.00")"
+                                       readonly />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row mb-3">
+
+                        <div class="col-12">
+
+                            <label class="form-label-custom">
+                                Descripción
+                                <span class="asterisk">*</span>
+                            </label>
+
+                            <div class="input-container">
+                                <i class="bi bi-card-text"></i>
+
+                                <textarea rows="3"
+                                          placeholder="Describe brevemente la receta"
+                                          @bind="recetaViewModel.descripcion">
+                                </textarea>
+                            </div>
+
+                            <ValidationMessage For="@(() => recetaViewModel.descripcion)"
+                                               class="validation-text" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-4 pt-3"
+                     style="border-top: 1px solid rgba(170,170,170,0.3);">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+
+                        <div>
+                            <h5 class="fw-bold text-navy mb-1"
+                                style="font-size: 1rem;">
+                                Productos de la receta
+                            </h5>
+
+                            <small class="text-muted">
+                                Modifica los productos requeridos o cambia sus cantidades.
+                            </small>
+                        </div>
+
+                        <button type="button"
+                                class="btn btn-outline-custom"
+                                style="border-radius: 6px; font-size: 0.82rem; padding: 6px 14px;"
+                                @onclick="AgregarProducto">
+
+                            <i class="bi bi-plus-lg me-1"></i>
+                            Añadir producto
+                        </button>
+
+                    </div>
+
+                    @if (cargandoDatos)
+                    {
+                        <div class="text-center text-muted py-3">
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                            Cargando información de la receta...
+                        </div>
+                    }
+                    else
+                    {
+                        @for (int i = 0; i < ingredientes.Count; i++)
+                        {
+                            int indice = i;
+
+                            <div class="row g-2 align-items-end mb-2"
+                                 @key="ingredientes[indice]">
+
+                                <div class="col-md-7">
+
+                                    <label class="form-label-custom">
+                                        Producto @(indice + 1)
+                                        <span class="asterisk">*</span>
+                                    </label>
+
+                                    <div class="input-container">
+                                        <i class="bi bi-box-seam"></i>
+
+                                        <select @bind="ingredientes[indice].ProductoId">
+                                            <option value="0">Seleccione un producto</option>
+                                            @foreach (var producto in productosDisponibles)
+                                            {
+                                                <option value="@producto.id">
+                                                    @producto.nombre - S/ @producto.precioFinal.ToString("0.00")
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-3">
+
+                                    <label class="form-label-custom">
+                                        Cantidad
+                                        <span class="asterisk">*</span>
+                                    </label>
+
+                                    <div class="input-container">
+                                        <i class="bi bi-calculator"></i>
+
+                                        <input type="number"
+                                               step="0.01"
+                                               min="0.01"
+                                               placeholder="Ej: 1"
+                                               @bind="ingredientes[indice].Cantidad" />
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-2">
+
+                                    <button type="button"
+                                            class="btn btn-danger w-100"
+                                            style="border-radius: 6px; font-size: 0.82rem; padding: 6px 14px;"
+                                            @onclick="() => QuitarProducto(indice)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+
+                                </div>
+
+                            </div>
+                        }
+                    }
+
+                </div>
+
+                <div class="mt-4 pt-3"
+                     style="border-top: 1px solid rgba(170,170,170,0.3);">
+
+                    <h5 class="fw-bold text-navy mb-1" style="font-size: 1rem;">
+                        Instrucciones de preparación
+                        <span class="asterisk">*</span>
+                    </h5>
+
+                    <small class="text-muted d-block mb-2">
+                        Modifica el procedimiento paso a paso. Presiona Enter para saltar de línea.
+                    </small>
+
+                    <div class="input-container">
+                        <i class="bi bi-list-check"></i>
+                        <textarea rows="6"
+                                  placeholder="Escribe aquí las instrucciones de preparación..."
+                                  @bind="recetaViewModel.instrucciones">
+                        </textarea>
+                    </div>
+
+                    <ValidationMessage For="@(() => recetaViewModel.instrucciones)"
+                                       class="validation-text" />
+
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-3 pt-3"
+                     style="border-top: 1px solid rgba(170,170,170,0.3);">
+
+                    <button type="button"
+                            class="btn btn-outline-custom"
+                            style="border-radius: 6px; font-size: 0.82rem; padding: 6px 14px;"
+                            @onclick='() => Navigation.NavigateTo("/admin/recipe-list")'>
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            class="btn navy-bg"
+                            disabled="@guardando"
+                            style="border-radius: 6px; font-weight: 500; font-size: 0.82rem; padding: 6px 14px;">
+
+                        @if (guardando)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                            <span>Guardando cambios...</span>
+                        }
+                        else
+                        {
+                            <span>Guardar Cambios</span>
+                        }
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </EditForm>
+
+    </div>
+
+</div>
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    public class RecetaViewModel
+    {
+        [Required(ErrorMessage = "El nombre es obligatorio")]
+        public string nombre { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La descripción es obligatoria")]
+        public string descripcion { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "El precio es obligatorio")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor a 0")]
+        public double? precio { get; set; }
+
+        [Required(ErrorMessage = "El descuento es obligatorio (0 si no aplica)")]
+        [Range(0, 100, ErrorMessage = "El descuento debe estar entre 0 y 100")]
+        public double? descuento { get; set; }
+
+        [Required(ErrorMessage = "Las instrucciones de preparación son obligatorias")]
+        public string instrucciones { get; set; } = string.Empty;
+    }
+
+    public class IngredienteViewModel
+    {
+        public int ProductoId { get; set; }
+        public double? Cantidad { get; set; }
+    }
+
+    private RecetaViewModel recetaViewModel { get; set; } = new();
+    private List<Producto> productosDisponibles = new();
+    private List<IngredienteViewModel> ingredientes = [new()];
+    private string mensajeError = string.Empty;
+    private bool cargandoDatos;
+    private bool guardando;
+
+    protected override async Task OnInitializedAsync()
+    {
+        cargandoDatos = true;
+        await CargarProductos();
+        await CargarRecetaExistente();
+        cargandoDatos = false;
+    }
+
+    private async Task CargarProductos()
+    {
+        try
+        {
+            productosDisponibles = await ProductosRS.ListarTodosAsync() ?? new List<Producto>();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error cargando productos: {ex.Message}";
+        }
+    }
+
+    private async Task CargarRecetaExistente()
+    {
+        if (Id <= 0) return;
+
+        try
+        {
+            // Se consume el servicio para obtener la receta actual por su Id
+            Receta? receta = await RecetasRS.ObtenerPorIdAsync(Id);
+
+            if (receta != null)
+            {
+                recetaViewModel.nombre = receta.nombre;
+                recetaViewModel.descripcion = receta.descripcion;
+                recetaViewModel.precio = receta.precio;
+                recetaViewModel.descuento = receta.descuento;
+
+                // PROCESO INVERSO: Convierte el <br /> almacenado de vuelta a saltos de línea ordinarios (\n) para el textarea
+                if (!string.IsNullOrWhiteSpace(receta.instrucciones))
+                {
+                    recetaViewModel.instrucciones = receta.instrucciones
+                        .Replace("<br />", "\n")
+                        .Replace("<br>", "\n");
+                }
+
+                // Mapear los elementos existentes al listado dinámico del ViewModel
+                if (receta.elementos != null && receta.elementos.Count > 0)
+                {
+                    ingredientes = receta.elementos.Select(e => new IngredienteViewModel
+                    {
+                        ProductoId = e.producto?.id ?? 0,
+                        Cantidad = e.cantidad
+                    }).ToList();
+                }
+            }
+            else
+            {
+                mensajeError = "No se encontró la receta seleccionada.";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al obtener los datos de la receta: {ex.Message}";
+        }
+    }
+
+    private double CalcularPrecioFinal()
+    {
+        double precio = recetaViewModel.precio ?? 0;
+        double descuento = recetaViewModel.descuento ?? 0;
+        double precioFinal = precio - (precio * descuento / 100.0);
+        return Math.Round(Math.Max(0, precioFinal), 2);
+    }
+
+    private void AgregarProducto() => ingredientes.Add(new IngredienteViewModel());
+
+    private void QuitarProducto(int indice)
+    {
+        if (ingredientes.Count == 1)
+        {
+            ingredientes[0] = new IngredienteViewModel();
+            return;
+        }
+        ingredientes.RemoveAt(indice);
+    }
+
+    private async Task ActualizarReceta()
+    {
+        mensajeError = string.Empty;
+
+        List<IngredienteViewModel> ingredientesValidos = ingredientes
+            .Where(ingrediente =>
+                ingrediente.ProductoId > 0 &&
+                ingrediente.Cantidad.HasValue &&
+                ingrediente.Cantidad.Value > 0
+            )
+            .ToList();
+
+        if (ingredientesValidos.Count == 0)
+        {
+            mensajeError = "Debes añadir por lo menos un producto a la receta.";
+            return;
+        }
+
+        if (ingredientesValidos.GroupBy(i => i.ProductoId).Any(g => g.Count() > 1))
+        {
+            mensajeError = "No puedes seleccionar el mismo producto más de una vez.";
+            return;
+        }
+
+        try
+        {
+            guardando = true;
+
+            // Almacenar nuevamente convirtiendo los saltos de línea a HTML <br />
+            string instruccionesFormateadas = recetaViewModel.instrucciones
+                .Replace("\r\n", "<br />")
+                .Replace("\n", "<br />");
+
+            List<ElementoReceta> elementos = ingredientesValidos
+                .Select(ingrediente => new ElementoReceta
+                {
+                    producto = new Producto { id = ingrediente.ProductoId },
+                    cantidad = ingrediente.Cantidad ?? 0
+                })
+                .ToList();
+
+            Receta recetaActualizada = new Receta
+            {
+                id = Id, // Se adjunta el ID correspondiente para efectuar el cambio en BD
+                nombre = recetaViewModel.nombre.Trim(),
+                descripcion = recetaViewModel.descripcion.Trim(),
+                instrucciones = instruccionesFormateadas.Trim(),
+                precio = recetaViewModel.precio ?? 0,
+                precioFinal = CalcularPrecioFinal(),
+                descuento = recetaViewModel.descuento ?? 0,
+                elementos = elementos
+            };
+
+            // Se invoca al método ActualizarAsync que retorna un booleano (Igual que en UpdateProduct)
+            bool resultado = await RecetasRS.ActualizarAsync(recetaActualizada);
+
+            if (resultado)
+            {
+                Navigation.NavigateTo("/admin/recipe-list");
+            }
+            else
+            {
+                mensajeError = "No se pudieron guardar las modificaciones en la base de datos.";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al actualizar la receta: {ex.Message}";
+            Console.WriteLine(mensajeError);
+        }
+        finally
+        {
+            guardando = false;
+        }
+    }
+}

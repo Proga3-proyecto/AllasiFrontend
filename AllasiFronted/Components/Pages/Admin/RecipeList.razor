@@ -1,0 +1,314 @@
+﻿@page "/admin/recipe-list"
+@layout AdminLayout
+
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+
+@inject RecetasRS RecetasRS
+@inject NavigationManager Navigation
+
+<div class="recipe-list-page container-fluid mt-3" style="max-width: 1400px;">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold text-navy mb-0 main-title">
+            Gestión de Recetas
+        </h2>
+
+        <button class="btn navy-bg d-flex align-items-center gap-2"
+                @onclick="@(() => Navigation.NavigateTo("/admin/add-recipe"))">
+            <i class="bi bi-plus-lg" style="font-size: 0.8rem;"></i>
+            Añadir Nueva Receta
+        </button>
+    </div>
+
+    <div class="mb-3">
+        <div class="input-container"
+             style="max-width: 400px; background-color: white;">
+            <i class="bi bi-search"></i>
+
+            <input type="text"
+                   placeholder="Buscar por nombre o descripción..."
+                   @bind="TextoBusqueda"
+                   @bind:event="oninput" />
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-responsive">
+
+            <table class="table custom-table table-borderless align-middle w-100">
+
+                <thead class="text-start">
+                    <tr>
+                        <th scope="col"
+                            style="width: 25%;"
+                            class="text-start px-2">
+                            RECETA
+                        </th>
+
+                        <th scope="col"
+                            style="width: 30%;"
+                            class="text-start">
+                            DESCRIPCIÓN
+                        </th>
+
+                        <th scope="col" class="text-center">
+                            PRECIO
+                        </th>
+
+                        <th scope="col" class="text-center">
+                            PRECIO FINAL
+                        </th>
+
+                        <th scope="col" class="text-center">
+                            DESCUENTO
+                        </th>
+
+                        <th scope="col" class="text-center">
+                            ACCIONES
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody class="text-start">
+
+                    @if (!RecetasFiltradas.Any())
+                    {
+                        <tr>
+                            <td colspan="6"
+                                class="text-center py-4 text-muted">
+                                <em>
+                                    No hay recetas registradas o cargando datos...
+                                </em>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var receta in GetPagedRecipes())
+                        {
+                            <tr>
+
+                                <td class="px-2">
+                                    <div class="d-flex align-items-center">
+
+                                        <div class="recipe-img-container flex-shrink-0">
+                                            <i class="bi bi-journal-richtext"></i>
+                                        </div>
+
+                                        <span class="fw-bold text-navy recipe-name">
+                                            @receta.nombre
+                                        </span>
+
+                                    </div>
+                                </td>
+
+                                <td class="text-muted">
+                                    @receta.descripcion
+                                </td>
+
+                                <td class="text-center text-nowrap">
+                                    <span class="fw-bold text-dark">
+                                        S/ @receta.precio.ToString("0.00")
+                                    </span>
+                                </td>
+
+                                <td class="text-center text-nowrap">
+                                    <span class="fw-bold text-navy">
+                                        S/ @receta.precioFinal.ToString("0.00")
+                                    </span>
+                                </td>
+
+                                <td class="text-center text-nowrap">
+                                    @if (receta.descuento > 0)
+                                    {
+                                        <span class="badge bg-success">
+                                            @receta.descuento.ToString("0.##")%
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            Sin descuento
+                                        </span>
+                                    }
+                                </td>
+
+                                <td class="text-center text-nowrap">
+
+                                    <button class="btn btn-outline-custom btn-sm me-2"
+                                            @onclick="() => EditarReceta(receta.id)">
+                                        Modificar
+                                    </button>
+
+                                    <button class="btn btn-danger btn-sm"
+                                            @onclick="() => EliminarReceta(receta.id)">
+                                        Eliminar
+                                    </button>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        @if (TotalPages > 1)
+        {
+            <div class="d-flex justify-content-center mt-3 mb-1">
+                <nav>
+                    <ul class="pagination custom-pagination pagination-sm">
+
+                        <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
+                            <button class="page-link"
+                                    @onclick="GoToPreviousPage"
+                                    disabled="@(CurrentPage == 1)">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                        </li>
+
+                        @for (int i = 1; i <= TotalPages; i++)
+                        {
+                            int pageNumber = i;
+
+                            <li class="page-item @(CurrentPage == pageNumber ? "active" : "")">
+                                <button class="page-link"
+                                        @onclick="() => ChangePage(pageNumber)">
+                                    @pageNumber
+                                </button>
+                            </li>
+                        }
+
+                        <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
+                            <button class="page-link"
+                                    @onclick="GoToNextPage"
+                                    disabled="@(CurrentPage == TotalPages)">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </li>
+
+                    </ul>
+                </nav>
+            </div>
+        }
+
+    </div>
+
+</div>
+
+@code {
+    private List<Receta> recetas = new();
+    private string TextoBusqueda { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarRecetas();
+    }
+
+    private async Task CargarRecetas()
+    {
+        try
+        {
+            recetas.Clear();
+
+            var resultado = await RecetasRS.ListarTodosAsync();
+
+            if (resultado != null)
+            {
+                recetas = resultado;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"Error al cargar recetas: {ex.Message}"
+            );
+        }
+    }
+
+    private IEnumerable<Receta> RecetasFiltradas =>
+        string.IsNullOrWhiteSpace(TextoBusqueda)
+            ? recetas
+            : recetas.Where(receta =>
+                (receta.nombre?.Contains(
+                    TextoBusqueda,
+                    StringComparison.OrdinalIgnoreCase
+                ) ?? false)
+                ||
+                (receta.descripcion?.Contains(
+                    TextoBusqueda,
+                    StringComparison.OrdinalIgnoreCase
+                ) ?? false)
+            );
+
+    private void EditarReceta(int idReceta)
+    {
+        Navigation.NavigateTo(
+            $"/admin/update-recipe/{idReceta}"
+        );
+    }
+
+    private async Task EliminarReceta(int idReceta)
+    {
+        try
+        {
+            bool exito =
+                await RecetasRS.EliminarAsync(idReceta);
+
+            if (exito)
+            {
+                await CargarRecetas();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"Error al eliminar la receta: {ex.Message}"
+            );
+        }
+    }
+
+    private int CurrentPage { get; set; } = 1;
+    private int PageSize { get; set; } = 10;
+
+    private int TotalPages =>
+        Math.Max(
+            1,
+            (int)Math.Ceiling(
+                (double)RecetasFiltradas.Count() / PageSize
+            )
+        );
+
+    private IEnumerable<Receta> GetPagedRecipes()
+    {
+        return RecetasFiltradas
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize);
+    }
+
+    private void ChangePage(int page)
+    {
+        CurrentPage = page;
+    }
+
+    private void GoToPreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+    private void GoToNextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+}
