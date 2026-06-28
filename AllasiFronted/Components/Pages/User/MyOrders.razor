@@ -1,4 +1,10 @@
-@page "/user/my-orders"
+Ôªø@page "/user/my-orders"
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject ClientesRS ClientesService
+@inject AuthenticationStateProvider AuthStateProvider
 @layout UserLayout
 
 <div class="orders-page-container">
@@ -13,81 +19,101 @@
     </div>
 
     <div class="pedido-card">
-
-        <div class="pedido-item">
-            <div class="pedido-col">
-                <h3 class="text-navy fw-bold">Pedido #12345</h3>
-                <p class="text-muted">20 Mar. 2025 - 10:30 am</p>
-                <a href="/user/order-details" class="detalle-link">Ver detalle</a>
+        @if (isLoading)
+        {
+            <div class="text-center">
+                <p>Cargando pedidos...</p>
             </div>
-
-            <div class="pedido-col">
-                <label>Total</label>
-                <h3 class="text-dark fw-bold">S/ 189.90</h3>
-                <p class="text-muted">Pagar con tarjeta</p>
+        }
+        else if (pedidos == null || !pedidos.Any())
+        {
+            <div class="text-center">
+                <p>No tienes pedidos registrados.</p>
             </div>
+        }
+        else
+        {
+            @foreach (var pedido in pedidos)
+            {
+                <div class="pedido-item">
+                    <div class="pedido-col">
+                        <h3 class="text-navy fw-bold">Pedido #@pedido.id</h3>
+                        <p class="text-muted">@(pedido.fechaPedido?.ToString("dd MMM. yyyy - hh:mm tt") ?? "")</p>
+                        <a href="/user/order-details/@pedido.id" class="detalle-link">Ver detalle</a>
+                    </div>
 
-            <div class="pedido-col">
-                <label>Estado</label>
-                <span class="estado proceso">En proceso</span>
-            </div>
+                    <div class="pedido-col">
+                        <label>Total</label>
+                        <h3 class="text-dark fw-bold">S/ @pedido.precioFinal.ToString("0.00")</h3>
+                        <p class="text-muted">Monto total</p>
+                    </div>
 
-            <div class="pedido-col">
-                <label>Entrega estimada</label>
-                <h3 class="text-dark fw-bold">22 Mar. 2025</h3>
-            </div>
-        </div>
+                    <div class="pedido-col">
+                        <label>Estado</label>
+                        <span class="estado @GetEstadoClass(pedido.estado)">@pedido.estado</span>
+                    </div>
 
-        <div class="pedido-item">
-            <div class="pedido-col">
-                <h3 class="text-navy fw-bold">Pedido #12345</h3>
-                <p class="text-muted">20 Mar. 2025 - 10:30 am</p>
-                <a href="/user/order-details" class="detalle-link">Ver detalle</a>
-            </div>
-
-            <div class="pedido-col">
-                <label>Total</label>
-                <h3 class="text-dark fw-bold">S/ 189.90</h3>
-                <p class="text-muted">Pagar con tarjeta</p>
-            </div>
-
-            <div class="pedido-col">
-                <label>Estado</label>
-                <span class="estado enviado">Enviado</span>
-            </div>
-
-            <div class="pedido-col">
-                <label>Entrega estimada</label>
-                <h3 class="text-dark fw-bold">19 - 20 Mar. 2025</h3>
-            </div>
-        </div>
-
-        <div class="pedido-item">
-            <div class="pedido-col">
-                <h3 class="text-navy fw-bold">Pedido #12345</h3>
-                <p class="text-muted">20 Mar. 2025 - 10:30 am</p>
-                <a href="/user/order-details" class="detalle-link">Ver detalle</a>
-            </div>
-
-            <div class="pedido-col">
-                <label>Total</label>
-                <h3 class="text-dark fw-bold">S/ 189.90</h3>
-                <p class="text-muted">Pagar con tarjeta</p>
-            </div>
-
-            <div class="pedido-col">
-                <label>Estado</label>
-                <span class="estado entregado">Entregado</span>
-            </div>
-
-            <div class="pedido-col">
-                <label>Entrega estimada</label>
-                <h3 class="text-dark fw-bold">17 Mar. 2025</h3>
-            </div>
-        </div>
+                    <div class="pedido-col">
+                        <label>Fecha Estimada</label>
+                        <h3 class="text-dark fw-bold">
+                            @if(pedido.horaInicio.HasValue) 
+                            {
+                                @pedido.horaInicio.Value.ToString("dd MMM. yyyy")
+                            }
+                            else 
+                            {
+                                @("Por confirmar")
+                            }
+                        </h3>
+                    </div>
+                </div>
+            }
+        }
 
         <p class="security-footer-text mt-4">
-            <img src="assets/icons/escudo.png" alt="Seguro" class="footer-shield-icon-img" /> Tu informaciÛn est· segura con nosotros y no ser· compartida con terceros.
+            <img src="assets/icons/escudo.png" alt="Seguro" class="footer-shield-icon-img" /> Tu informaci√≥n est√° segura con nosotros y no ser√° compartida con terceros.
         </p>
     </div>
 </div>
+
+@code {
+    private List<Pedido>? pedidos;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
+            if (int.TryParse(userIdClaim, out int userId))
+            {
+                pedidos = await ClientesService.ObtenerPedidosPasadosAsync(userId);
+                
+                if (pedidos != null)
+                {
+                    pedidos = pedidos.OrderByDescending(p => p.fechaPedido).ToList();
+                }
+            }
+        }
+        
+        isLoading = false;
+    }
+
+    private string GetEstadoClass(EstadoPedido estado)
+    {
+        return estado switch
+        {
+            EstadoPedido.PENDIENTE => "proceso",
+            EstadoPedido.EN_PREPARACION => "proceso",
+            EstadoPedido.EN_CAMINO => "enviado",
+            EstadoPedido.ENTREGADO => "entregado",
+            EstadoPedido.CANCELADO => "proceso", 
+            EstadoPedido.RECHAZADO => "proceso",
+            _ => "proceso"
+        };
+    }
+}

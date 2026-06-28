@@ -100,5 +100,24 @@ namespace Progra3_Frontend.Services
                 return false;
             }
         }
+
+        public async Task<bool> CambiarPasswordAsync(int id, string nuevaPassword)
+        {
+            try
+            {
+                var requestBody = new { newPassword = nuevaPassword };
+
+                var jsonBody = JsonSerializer.Serialize(requestBody, _jsonOptions);
+                var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PutAsync($"administradores/{id}/password", content);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en CambiarPassword: {ex.Message}");
+                return false;
+            }
+        }
     }
 }

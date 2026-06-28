@@ -1,4 +1,4 @@
-﻿@page "/login"
+@page "/login"
 @using Progra3_Frontend.Models
 @using Progra3_Frontend.Services
 @using Progra3_Frontend.Services.Auth
@@ -103,6 +103,7 @@
         if (usuario.Exito)
         {
             await AuthProvider.Login(
+                usuario.IdUsuario,
                 usuario.Nombre,
                 usuario.Rol);
 

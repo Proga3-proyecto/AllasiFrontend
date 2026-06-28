@@ -1,44 +1,182 @@
-@page "/user"
+Ôªø@page "/user"
 @using AllasiFrontend.Components.Shared.ui
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject ClientesRS ClientesService
+@inject AuthenticationStateProvider AuthStateProvider
 @layout UserLayout
 
 <div class="profile-page-container">
 
     <div class="text-center mb-4">
         <h2 class="fw-bold text-navy mb-1" style="font-size: 1.35rem;">Mi perfil</h2>
-        <p class="text-muted mb-2" style="font-size: 0.85rem;">Administra tu informaciÛn personal y de contacto.</p>
+        <p class="text-muted mb-2" style="font-size: 0.85rem;">Administra tu informaci√≥n personal y de contacto.</p>
     </div>
 
     <div class="profile-form-card shadow-sm">
+        @if (isLoading)
+        {
+            <div class="text-center">
+                <p>Cargando datos del perfil...</p>
+            </div>
+        }
+        else if (currentClient == null)
+        {
+            <div class="text-center">
+                <p>No se pudo cargar la informaci√≥n del usuario. Verifique si ha iniciado sesi√≥n.</p>
+            </div>
+        }
+        else
+        {
+            <h3 class="fw-bold text-navy mb-3 pb-2" style="font-size: 1rem; border-bottom: 1px solid #e2e8f0;">Informaci√≥n personal</h3>
 
-        <h3 class="fw-bold text-navy mb-3 pb-2" style="font-size: 1rem; border-bottom: 1px solid #e2e8f0;">InformaciÛn personal</h3>
+            <div class="grid mb-4">
+                <Input Label="Nombre" @bind-Value="currentClient.nombre" disabled />
+                <Input Label="Apellido" @bind-Value="currentClient.apellidoCompleto" disabled />
+                <Input Label="DNI" Value="@currentClient.dni" disabled />
+                <Input Label="Fecha de nacimiento" @bind-Value="fechaNacimientoStr" type="date" disabled />
+                <Input Label="Fecha de creaci√≥n de cuenta" Value='@(currentClient.createdAt?.ToString("yyyy-MM-dd") ?? "")' disabled type="date" />
+            </div>
 
-        <div class="grid mb-4">
-            <Input Label="Nombre completo" value="Juan Carlos PÈrez Rodriguez" disabled />
-            <Input Label="DNI" value="12345678" disabled />
-            <Input Label="Fecha de nacimiento" value="1988-05-15" disabled type="date" />
-            <Input Label="Fecha de creaciÛn de cuenta" value="2023-03-20" disabled type="date" />
-        </div>
+            <h3 class="fw-bold text-navy mb-3 pb-2" style="font-size: 1rem; border-bottom: 1px solid #e2e8f0;">Informaci√≥n de contacto</h3>
 
-        <h3 class="fw-bold text-navy mb-3 pb-2" style="font-size: 1rem; border-bottom: 1px solid #e2e8f0;">InformaciÛn de contacto</h3>
+            <div class="grid mb-4">
+                <Input Label="N√∫mero de tel√©fono" @bind-Value="currentClient.telefono" type="text" />
+                <Input Label="Direcci√≥n de entrega"
+                       @bind-Value="direccionStr"
+                       type="text"
+                       TextArea
+                       rows="2" />
+            </div>
 
-        <div class="grid mb-4">
-            <Input Label="N˙mero de telÈfono" value="912 345 678" type="text" />
-            <Input Label="DirecciÛn de entrega"
-                   value="Av. Universitaria 1801, San Miguel, Lima, Per˙"
-                   type="text"
-                   TextArea
-                   rows="2" />
-        </div>
+            @if (!string.IsNullOrEmpty(mensajeMensaje))
+            {
+                <div class="alert alert-success mt-3" style="color: green;">@mensajeMensaje</div>
+            }
+            @if (!string.IsNullOrEmpty(errorMensaje))
+            {
+                <div class="alert alert-danger mt-3" style="color: red;">@errorMensaje</div>
+            }
 
-        <div class="boton-container pt-3 mt-2" style="border-top: 1px solid rgba(170,170,170,0.15);">
-            <Button Text="Guardar cambios" Class="navy-bg px-4 py-2" style="border-radius: 6px; font-weight: 500; font-size: 0.85rem;" />
-        </div>
-
+            <div class="boton-container pt-3 mt-2" style="border-top: 1px solid rgba(170,170,170,0.15);">
+                <Button Text="Guardar cambios" OnClick="GuardarCambios" Class="navy-bg px-4 py-2" style="border-radius: 6px; font-weight: 500; font-size: 0.85rem;" />
+            </div>
+        }
     </div>
 
     <p class="security-footer-text mt-4">
-        <img src="assets/icons/escudo.png" alt="Seguro" class="footer-shield-icon-img" /> Tu informaciÛn est· segura con nosotros y no ser· compartida con terceros.
+        <img src="assets/icons/escudo.png" alt="Seguro" class="footer-shield-icon-img" /> Tu informaci√≥n est√° segura con nosotros y no ser√° compartida con terceros.
     </p>
 
 </div>
+
+@code {
+    private Cliente? currentClient;
+    private bool isLoading = true;
+    private string mensajeMensaje = "";
+    private string errorMensaje = "";
+
+    private string fechaNacimientoStr
+    {
+        get => currentClient?.fechaNacimiento?.ToString("yyyy-MM-dd") ?? "";
+        set
+        {
+            if (currentClient != null &&
+                DateTime.TryParse(value, out var fecha))
+            {
+                currentClient.fechaNacimiento = fecha;
+            }
+        }
+    }
+
+    private string direccionStr
+    {
+        get
+        {
+            if (currentClient?.direcciones?.Any() == true)
+                return currentClient.direcciones.First().direccion ?? "";
+
+            return "";
+        }
+        set
+        {
+            if (currentClient == null)
+                return;
+
+            currentClient.direcciones ??= new List<ClienteDireccion>();
+
+            if (currentClient.direcciones.Any())
+            {
+                currentClient.direcciones.First().direccion = value;
+            }
+            else
+            {
+                currentClient.direcciones.Add(new ClienteDireccion
+                {
+                    direccion = value
+                });
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (!user.Identity?.IsAuthenticated ?? true)
+                return;
+
+            var idClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!int.TryParse(idClaim, out int userId))
+                return;
+
+            currentClient = await ClientesService.GetClienteAsync(userId);
+            
+            if (currentClient == null)
+            {
+                errorMensaje = "No se encontr√≥ el perfil del usuario.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMensaje = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task GuardarCambios()
+    {
+        mensajeMensaje = "";
+        errorMensaje = "";
+
+        if (currentClient == null)
+            return;
+
+        try
+        {
+            var resultado = await ClientesService.ActualizarAsync(currentClient);
+
+            if (resultado)
+            {
+                mensajeMensaje = "Perfil actualizado correctamente.";
+            }
+            else
+            {
+                errorMensaje = "No se pudo actualizar el perfil.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMensaje = ex.Message;
+        }
+    }
+}

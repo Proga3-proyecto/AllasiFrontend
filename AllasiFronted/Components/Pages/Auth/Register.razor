@@ -1,4 +1,4 @@
-@page "/register"
+ï»¿@page "/register"
 @using System.ComponentModel.DataAnnotations
 @using Progra3_Frontend.Model
 @using Progra3_Frontend.Services
@@ -61,7 +61,7 @@
                     </div>
 
                     <div class="form-input">
-                        <label>Correo electrónico</label>
+                        <label>Correo electrÃ³nico</label>
                         <div class="input-container">
                             <i class="bi bi-envelope"></i>
                             <InputText @bind-Value="formUser.Email" placeholder="ejemplo@correo.com" />
@@ -70,19 +70,19 @@
                     </div>
 
                     <div class="form-input">
-                        <label>Contraseña</label>
+                        <label>ContraseÃ±a</label>
                         <div class="input-container">
                             <i class="bi bi-lock-fill"></i>
-                            <InputText @bind-Value="formUser.Password"  placeholder="Crea una contraseña" />
+                            <InputText @bind-Value="formUser.Password"  placeholder="Crea una contraseÃ±a" />
                         </div>
                         <ValidationMessage For="@(() => formUser.Password)" />
                     </div>
 
                     <div class="form-input">
-                        <label>Repetir Contraseña</label>
+                        <label>Repetir ContraseÃ±a</label>
                         <div class="input-container">
                             <i class="bi bi-lock-fill"></i>
-                            <InputText @bind-Value="formUser.ConfirmPassword"  placeholder="Repite tu contraseña" />
+                            <InputText @bind-Value="formUser.ConfirmPassword"  placeholder="Repite tu contraseÃ±a" />
                         </div>
                         <ValidationMessage For="@(() => formUser.ConfirmPassword)" />
                     </div>
@@ -99,10 +99,10 @@
                     </div>
 
                     <div class="form-input">
-                        <label>Teléfono</label>
+                        <label>TelÃ©fono</label>
                         <div class="input-container">
                             <i class="bi bi-telephone"></i>
-                            <InputText @bind-Value="formUser.Telefono" placeholder="Ingresa tu teléfono" maxlength="9" />
+                            <InputText @bind-Value="formUser.Telefono" placeholder="Ingresa tu telÃ©fono" maxlength="9" />
                         </div>
                         <ValidationMessage For="@(() => formUser.Telefono)" />
                     </div>
@@ -123,8 +123,8 @@
             </button>
 
             <div class="footer-link">
-                <span class="label">¿Ya tienes cuenta?</span>
-                <a href="/login" class="link"><u>Iniciar sesión</u></a>
+                <span class="label">Â¿Ya tienes cuenta?</span>
+                <a href="/login" class="link"><u>Iniciar sesiÃ³n</u></a>
             </div>
         </EditForm>
     </section>
@@ -152,11 +152,12 @@
 
         if (nuevoCliente == null)
         {
-            errorMessage = "Hubo un problema al crear la cuenta. Verifica tus datos o intenta más tarde.";
+            errorMessage = "Hubo un problema al crear la cuenta. Verifica tus datos o intenta mÃ¡s tarde.";
         }
         else
         {
             await AuthProvider.Login(
+                nuevoCliente.idUsuario,
                 nuevoCliente.nombre,
                 "CLIENTE"
             );
@@ -177,23 +178,23 @@
         public string ApellidoMaterno { get; set; } = "";
 
         [Required(ErrorMessage = "El DNI es obligatorio")]
-        [RegularExpression(@"^\d{8}$", ErrorMessage = "El DNI debe contener exactamente 8 dígitos")]
+        [RegularExpression(@"^\d{8}$", ErrorMessage = "El DNI debe contener exactamente 8 dÃ­gitos")]
         public string Dni { get; set; } = "";
 
-        [Required(ErrorMessage = "El teléfono es obligatorio")]
-        [RegularExpression(@"^\d{9}$", ErrorMessage = "El teléfono debe contener exactamente 9 dígitos")]
+        [Required(ErrorMessage = "El telÃ©fono es obligatorio")]
+        [RegularExpression(@"^\d{9}$", ErrorMessage = "El telÃ©fono debe contener exactamente 9 dÃ­gitos")]
         public string Telefono { get; set; } = "";
 
         [Required(ErrorMessage = "El correo es obligatorio")]
-        [EmailAddress(ErrorMessage = "Correo inválido")]
+        [EmailAddress(ErrorMessage = "Correo invÃ¡lido")]
         public string Email { get; set; } = "";
 
-        [Required(ErrorMessage = "Debe ingresar una contraseña")]
-        [MinLength(8, ErrorMessage = "La contraseña debe tener mínimo 8 caracteres")]
+        [Required(ErrorMessage = "Debe ingresar una contraseÃ±a")]
+        [MinLength(8, ErrorMessage = "La contraseÃ±a debe tener mÃ­nimo 8 caracteres")]
         public string Password { get; set; } = "";
 
-        [Required(ErrorMessage = "Debe repetir la contraseña")]
-        [Compare(nameof(Password), ErrorMessage = "Las contraseñas no coinciden")]
+        [Required(ErrorMessage = "Debe repetir la contraseÃ±a")]
+        [Compare(nameof(Password), ErrorMessage = "Las contraseÃ±as no coinciden")]
         public string ConfirmPassword { get; set; } = "";
 
         [Required(ErrorMessage = "Seleccione una fecha")]

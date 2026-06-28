@@ -1,106 +1,145 @@
-@page "/user/order-details"
+ï»¿@page "/user/order-details/{id:int}"
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+@inject PedidosRS PedidosService
 @layout UserLayout
 
 <div class="order-details-container">
-
     <div class="volver mb-3">
         <a href="/user/my-orders" class="volver-link">
             <i class="bi bi-chevron-left me-1" style="font-size: 0.8rem;"></i> Volver a mis pedidos
         </a>
     </div>
 
-    <div class="pedido-card shadow-sm">
-
-        <div class="d-flex justify-content-between align-items-start mb-3">
-            <div>
-                <h2 class="fw-bold text-navy mb-1" style="font-size: 1.35rem;">Pedido #12345</h2>
-                <p class="text-muted mb-0" style="font-size: 0.85rem;">20 Mar. 2025 - 10:30 am</p>
-            </div>
-            <span class="estado proceso">En proceso</span>
+    @if (isLoading)
+    {
+        <div class="text-center">
+            <p>Cargando detalle del pedido...</p>
         </div>
-
-        <hr class="text-muted my-3" style="opacity: 0.15;" />
-
-        <div class="pedido-info">
-            <div>
-                <label>Entrega estimada</label>
-                <p class="mb-0 fw-medium text-dark" style="font-size: 0.85rem;">22 Mar. 2025</p>
-            </div>
-            <div>
-                <label>Dirección de entrega</label>
-                <p class="mb-0 text-dark" style="font-size: 0.85rem;">Av. Universitaria 1801, San Miguel, Lima, Perú</p>
-            </div>
-            <div>
-                <label>Pago</label>
-                <p class="mb-0 text-dark" style="font-size: 0.85rem;">Pagar con tarjeta</p>
-            </div>
+    }
+    else if (pedido == null)
+    {
+        <div class="text-center">
+            <p>No se encontrÃ³ el pedido.</p>
         </div>
+    }
+    else
+    {
+        <div class="pedido-card shadow-sm">
 
-        <hr class="text-muted my-3" style="opacity: 0.15;" />
-
-        <h3 class="fw-bold text-navy mb-3" style="font-size: 1rem;">Productos (3)</h3>
-
-        <div class="table-responsive mb-3">
-            <table class="table custom-table table-borderless align-middle w-100 mb-0">
-                <thead>
-                    <tr>
-                        <th scope="col" style="width: 50%;" class="ps-2">PRODUCTO</th>
-                        <th scope="col" class="text-center">CANTIDAD</th>
-                        <th scope="col" class="text-end">PRECIO UNIT.</th>
-                        <th scope="col" class="text-end pe-2">SUBTOTAL</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="ps-2">
-                            <div class="fw-bold text-dark" style="font-size: 0.85rem;">Johnnie Walker Black Label 750 ml</div>
-                            <div class="text-muted mt-1" style="font-size: 0.75rem;">Whisky</div>
-                        </td>
-                        <td class="text-center fw-medium" style="font-size: 0.85rem;">2</td>
-                        <td class="text-end text-muted" style="font-size: 0.85rem;">S/ 89.90</td>
-                        <td class="text-end fw-bold text-dark pe-2" style="font-size: 0.85rem;">S/ 179.80</td>
-                    </tr>
-                    <tr>
-                        <td class="ps-2">
-                            <div class="fw-bold text-dark" style="font-size: 0.85rem;">Pisco Queirolo Acholado 700 ml</div>
-                            <div class="text-muted mt-1" style="font-size: 0.75rem;">Pisco</div>
-                        </td>
-                        <td class="text-center fw-medium" style="font-size: 0.85rem;">1</td>
-                        <td class="text-end text-muted" style="font-size: 0.85rem;">S/ 69.90</td>
-                        <td class="text-end fw-bold text-dark pe-2" style="font-size: 0.85rem;">S/ 69.90</td>
-                    </tr>
-                    <tr>
-                        <td class="ps-2">
-                            <div class="fw-bold text-dark" style="font-size: 0.85rem;">Vino Trapiche Malbec 750 ml</div>
-                            <div class="text-muted mt-1" style="font-size: 0.75rem;">Vino</div>
-                        </td>
-                        <td class="text-center fw-medium" style="font-size: 0.85rem;">1</td>
-                        <td class="text-end text-muted" style="font-size: 0.85rem;">S/ 59.90</td>
-                        <td class="text-end fw-bold text-dark pe-2" style="font-size: 0.85rem;">S/ 59.90</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="d-flex justify-content-end">
-            <div class="total-box">
-                <div class="fila-total">
-                    <span class="text-muted">Subtotal (3 productos)</span>
-                    <span class="fw-medium text-dark">S/ 309.60</span>
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h2 class="fw-bold text-navy mb-1" style="font-size: 1.35rem;">Pedido #@pedido.id</h2>
+                    <p class="text-muted mb-0" style="font-size: 0.85rem;">@(pedido.fechaPedido?.ToString("dd MMM. yyyy - hh:mm tt") ?? "")</p>
                 </div>
-                <div class="fila-total">
-                    <span class="text-muted">Envío</span>
-                    <span class="fw-medium text-dark">S/ 15.00</span>
+                <span class="estado proceso">@pedido.estado</span>
+            </div>
+
+            <hr class="text-muted my-3" style="opacity: 0.15;" />
+
+            <div class="pedido-info">
+                <div>
+                    <label>Entrega estimada</label>
+                    <p class="mb-0 fw-medium text-dark" style="font-size: 0.85rem;">
+                        @(pedido.horaInicio?.ToString("dd MMM. yyyy") ?? "Por confirmar")
+                    </p>
                 </div>
-
-                <hr class="my-2 text-muted" style="opacity: 0.2;" />
-
-                <div class="fila-total mb-0 align-items-center mt-2">
-                    <span class="fw-bold text-navy text-uppercase" style="font-size: 0.85rem;">Total</span>
-                    <span class="final-price text-navy">S/ 324.60</span>
+                <div>
+                    <label>DirecciÃ³n de entrega</label>
+                    <p class="mb-0 text-dark" style="font-size: 0.85rem;">@(pedido.direccionDestino ?? "No especificada")</p>
+                </div>
+                <div>
+                    <label>Pago</label>
+                    <p class="mb-0 text-dark" style="font-size: 0.85rem;">Pagar con tarjeta</p>
                 </div>
             </div>
-        </div>
 
-    </div>
+            <hr class="text-muted my-3" style="opacity: 0.15;" />
+
+            <h3 class="fw-bold text-navy mb-3" style="font-size: 1rem;">Productos (@totalItems)</h3>
+
+            <div class="table-responsive mb-3">
+                <table class="table custom-table table-borderless align-middle w-100 mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 50%;" class="ps-2">PRODUCTO</th>
+                            <th scope="col" class="text-center">CANTIDAD</th>
+                            <th scope="col" class="text-end">PRECIO UNIT.</th>
+                            <th scope="col" class="text-end pe-2">SUBTOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (pedido.detallesProductos != null)
+                        {
+                            foreach (var dp in pedido.detallesProductos)
+                            {
+                                <tr>
+                                    <td class="ps-2">
+                                        <div class="fw-bold text-dark" style="font-size: 0.85rem;">@dp.productoSnapshot.nombre</div>
+                                        <div class="text-muted mt-1" style="font-size: 0.75rem;">
+                                            @(dp.productoSnapshot.categoriasHistoricas?.FirstOrDefault() ?? "Producto")
+                                        </div>
+                                    </td>
+                                    <td class="text-center fw-medium" style="font-size: 0.85rem;">@dp.cantidad</td>
+                                    <td class="text-end text-muted" style="font-size: 0.85rem;">S/ @dp.productoSnapshot.precioFinalVenta.ToString("0.00")</td>
+                                    <td class="text-end fw-bold text-dark pe-2" style="font-size: 0.85rem;">S/ @((dp.cantidad * dp.productoSnapshot.precioFinalVenta).ToString("0.00"))</td>
+                                </tr>
+                            }
+                        }
+                        @if (pedido.detallesRecetas != null)
+                        {
+                            foreach (var dr in pedido.detallesRecetas)
+                            {
+                                <tr>
+                                    <td class="ps-2">
+                                        <div class="fw-bold text-dark" style="font-size: 0.85rem;">@dr.recetaSnapshot.nombre</div>
+                                        <div class="text-muted mt-1" style="font-size: 0.75rem;">Receta</div>
+                                    </td>
+                                    <td class="text-center fw-medium" style="font-size: 0.85rem;">@dr.cantidad</td>
+                                    <td class="text-end text-muted" style="font-size: 0.85rem;">S/ @dr.recetaSnapshot.precioFinalHistorico.ToString("0.00")</td>
+                                    <td class="text-end fw-bold text-dark pe-2" style="font-size: 0.85rem;">S/ @((dr.cantidad * dr.recetaSnapshot.precioFinalHistorico).ToString("0.00"))</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <div class="total-box">
+                    <div class="fila-total">
+                        <span class="text-muted">Subtotal (@totalItems productos)</span>
+                        <span class="fw-medium text-dark">S/ @((pedido.precioFinal - pedido.precioDelivery).ToString("0.00"))</span>
+                    </div>
+                    <div class="fila-total">
+                        <span class="text-muted">EnvÃ­o</span>
+                        <span class="fw-medium text-dark">S/ @pedido.precioDelivery.ToString("0.00")</span>
+                    </div>
+
+                    <hr class="my-2 text-muted" style="opacity: 0.2;" />
+
+                    <div class="fila-total mb-0 align-items-center mt-2">
+                        <span class="fw-bold text-navy text-uppercase" style="font-size: 0.85rem;">Total</span>
+                        <span class="final-price text-navy">S/ @pedido.precioFinal.ToString("0.00")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+    
+    private Pedido? pedido;
+    private bool isLoading = true;
+    
+    private int totalItems => (pedido?.detallesProductos?.Sum(dp => dp.cantidad) ?? 0) + (pedido?.detallesRecetas?.Sum(dr => dr.cantidad) ?? 0);
+
+    protected override async Task OnInitializedAsync()
+    {
+        pedido = await PedidosService.ObtenerPorIdAsync(id);
+        isLoading = false;
+    }
+}
