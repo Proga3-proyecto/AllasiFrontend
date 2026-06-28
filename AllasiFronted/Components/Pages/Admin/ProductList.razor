@@ -71,9 +71,11 @@
                     <table class="table custom-table table-borderless align-middle w-100">
                         <thead class="text-start">
                             <tr>
-                                <th scope="col" style="width: 40%;" class="text-start px-2">PRODUCTO</th>
+                                <th scope="col" style="width: 30%;" class="text-start px-2">PRODUCTO</th>
                                 <th scope="col" class="text-center">MARCA</th>
+                                <th scope="col" class="text-center">CATEGORÍA</th>
                                 <th scope="col" class="text-center">PRECIO</th>
+                                <th scope="col" class="text-center">DESCUENTO</th>
                                 <th scope="col" class="text-center">STOCK</th>
                                 <th scope="col" class="text-center">ACCIONES</th>
                             </tr>
@@ -82,7 +84,7 @@
                             @if (!productos.Any())
                             {
                                 <tr>
-                                    <td colspan="5" class="text-center py-4 text-muted">
+                                    <td colspan="7" class="text-center py-4 text-muted">
                                         <em>No hay productos registrados o cargando datos...</em>
                                     </td>
                                 </tr>
@@ -90,7 +92,7 @@
                             else if (!GetPagedProducts().Any())
                             {
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted py-4">No se encontraron productos con los filtros aplicados.</td>
+                                    <td colspan="7" class="text-center text-muted py-4">No se encontraron productos con los filtros aplicados.</td>
                                 </tr>
                             }
                             else
@@ -123,8 +125,27 @@
                                             @(product.marca?.nombre ?? "Sin marca")
                                         </td>
 
+                                        <td class="text-center text-muted text-nowrap">
+                                            @(product.categorias?.FirstOrDefault()?.nombre ?? "Sin categoría")
+                                        </td>
+
                                         <td class="text-center text-nowrap">
                                             <span class="fw-bold text-dark">S/ @product.precio.ToString("0.00")</span>
+                                        </td>
+
+                                        <td class="text-center text-nowrap">
+                                            @if (product.descuento > 0)
+                                            {
+                                                <span class="badge bg-success">
+                                                    @product.descuento.ToString("0.##")%
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">
+                                                    Sin descuento
+                                                </span>
+                                            }
                                         </td>
 
                                         <td class="text-center text-nowrap">
@@ -301,7 +322,7 @@
     private int CurrentPage { get; set; } = 1;
     private int PageSize { get; set; } = 10;
 
-    private IEnumerable<Producto> FilteredProducts => productos.Where(p => 
+    private IEnumerable<Producto> FilteredProducts => productos.Where(p =>
         (string.IsNullOrWhiteSpace(searchTerm) || (p.nombre != null && p.nombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))) &&
         (string.IsNullOrWhiteSpace(InputMarca) || (p.marca != null && p.marca.nombre == InputMarca)) &&
         (string.IsNullOrWhiteSpace(InputCategoria) || (p.categorias != null && p.categorias.Any(c => c.nombre == InputCategoria))) &&
