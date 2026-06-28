@@ -1,9 +1,13 @@
-@page "/admin/report-list"
+﻿@page "/admin/report-list"
 @layout AdminLayout
 
 @inject NavigationManager Navigation
 
-<div class="report-list-page container-fluid mt-3 mb-4">
+@using Microsoft.AspNetCore.Components.Authorization
+
+<AuthorizeView Roles="ADMIN" Context="authContext">
+    <Authorized>
+        <div class="report-list-page container-fluid mt-3 mb-4">
 
     <div class="text-center mb-4">
         <h2 class="fw-bold text-navy main-title">
@@ -71,7 +75,7 @@
                     <h3>Reporte por Producto</h3>
 
                     <p>
-                        Consulta informaci�n y resultados relacionados
+                        Consulta información y resultados relacionados
                         con los productos.
                     </p>
                 </div>
@@ -138,7 +142,7 @@
                     <h3>Reporte por Cliente</h3>
 
                     <p>
-                        Revisa informaci�n y resultados asociados
+                        Revisa información y resultados asociados
                         con los clientes.
                     </p>
                 </div>
@@ -154,3 +158,12 @@
     </div>
 
 </div>
+
+    </Authorized>
+    <NotAuthorized>
+        <div class="container mt-5">
+            <h2>Acceso denegado</h2>
+            <p>No tienes permisos para acceder a esta página.</p>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>

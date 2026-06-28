@@ -1,22 +1,26 @@
-@page "/recetas/{IdReceta:int}/seleccion"
+Ôªø@page "/recetas/{IdReceta:int}/seleccion"
 
 @using Progra3_Frontend.Model
 @using Progra3_Frontend.Services
 @inject NavigationManager Navigation
 @inject RecetasRS RecetaService
 
-<div class="add-recipe-container">
+@using Microsoft.AspNetCore.Components.Authorization
+
+<AuthorizeView Roles="ADMIN" Context="authContext">
+    <Authorized>
+        <div class="add-recipe-container">
     <header class="add-recipe-header">
-        <h1>AÒadir Receta</h1>
+        <h1>A√±adir Receta</h1>
         <div class="title-underline"></div>
-        <p class="subtitle">Para la receta seleccionada se aÒadir·n los siguientes Productos:</p>
+        <p class="subtitle">Para la receta seleccionada se a√±adir√°n los siguientes Productos:</p>
     </header>
 
     @if (Cargando)
     {
         <div class="text-center p-5">
             <div class="spinner-border text-primary" role="status"></div>
-            <p class="mt-2">Buscando ingredientes en el cat·logo...</p>
+            <p class="mt-2">Buscando ingredientes en el cat√°logo...</p>
         </div>
     }
     else if (DetalleConfiguracion?.receta?.elementos != null && DetalleConfiguracion.receta.elementos.Any())
@@ -33,7 +37,7 @@
 
                     <div class="card-body">
                         <p><strong>NOMBRE:</strong> @item.producto?.nombre</p>
-                        <p><strong>MARCA:</strong> @(item.producto?.marca?.nombre ?? "GenÈrica")</p>
+                        <p><strong>MARCA:</strong> @(item.producto?.marca?.nombre ?? "Gen√©rica")</p>
                         <p><strong>CANTIDAD:</strong> @item.cantidad L</p>
                     </div>
 
@@ -48,11 +52,11 @@
 
         <footer class="add-recipe-footer">
             <div class="total-receta-box mb-3 text-end">
-                <h3>Total de la CombinaciÛn: <strong>S/ @DetalleConfiguracion.montoTotal.ToString("0.00")</strong></h3>
+                <h3>Total de la Combinaci√≥n: <strong>S/ @DetalleConfiguracion.montoTotal.ToString("0.00")</strong></h3>
             </div>
 
             <button class="btn-confirm-cart" @onclick="FinalizarAdicion">
-                <i class="bi bi-cart-fill"></i> AÒadir al carrito
+                <i class="bi bi-cart-fill"></i> A√±adir al carrito
             </button>
             <p class="footer-notice">
                 <i class="bi bi-check-circle-fill"></i> Revisa tu carrito y confirma los productos antes de finalizar.
@@ -68,6 +72,15 @@
     }
 </div>
 
+
+    </Authorized>
+    <NotAuthorized>
+        <div class="container mt-5">
+            <h2>Acceso denegado</h2>
+            <p>No tienes permisos para acceder a esta p√°gina.</p>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 @code {
     [Parameter] public int IdReceta { get; set; }
 
@@ -85,7 +98,7 @@
 
             if (recetaBack != null)
             {
-                // 2. Calculamos din·micamente el precio total sumando (Precio con Impuesto * Cantidad en Litros)
+                // 2. Calculamos din√°micamente el precio total sumando (Precio con Impuesto * Cantidad en Litros)
                 double totalAcumulado = 0;
                 if (recetaBack.elementos != null)
                 {
@@ -98,7 +111,7 @@
                     }
                 }
 
-                // 3. Estructuramos el contenedor de configuraciÛn con la data real de la BD
+                // 3. Estructuramos el contenedor de configuraci√≥n con la data real de la BD
                 DetalleConfiguracion = new DetalleReceta
                 {
                     id = recetaBack.id,

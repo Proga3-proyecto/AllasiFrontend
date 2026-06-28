@@ -7,7 +7,11 @@
 @inject RecetasRS RecetasRS
 @inject NavigationManager Navigation
 
-<div class="recipe-list-page container-fluid mt-3" style="max-width: 1400px;">
+@using Microsoft.AspNetCore.Components.Authorization
+
+<AuthorizeView Roles="ADMIN" Context="authContext">
+    <Authorized>
+        <div class="recipe-list-page container-fluid mt-3" style="max-width: 1400px;">
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="fw-bold text-navy mb-0 main-title">
@@ -211,6 +215,15 @@
     </div>
 
 </div>
+
+    </Authorized>
+    <NotAuthorized>
+        <div class="container mt-5">
+            <h2>Acceso denegado</h2>
+            <p>No tienes permisos para acceder a esta página.</p>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     private List<Receta> recetas = new();
