@@ -1,9 +1,10 @@
-﻿using System;
+﻿using AllasiFrontend.Components.Pages;
+using Microsoft.AspNetCore.Components.Authorization;
+using Progra3_Frontend.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.Authorization;
-using Progra3_Frontend.Model;
 
 namespace Progra3_Frontend.Services
 {
@@ -23,12 +24,12 @@ namespace Progra3_Frontend.Services
         {
             _clientesRS = clientesRS;
             _authStateProvider = authStateProvider;
-            
+
             _authStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
-            
+
             _ = InitializeAsync();
         }
-        
+
         private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
         {
             _isLoaded = false;
@@ -52,7 +53,7 @@ namespace Progra3_Frontend.Services
                     return;
                 }
             }
-            
+
             _userId = null;
             _isLoaded = true;
         }
@@ -65,15 +66,19 @@ namespace Progra3_Frontend.Services
             Productos.Clear();
             if (productosBackend != null)
             {
-                foreach (var group in productosBackend.GroupBy(p => p.id))
+                //foreach (var group in productosBackend.GroupBy(p => p.id))
+                //{
+                //    var p = group.First();
+                //    Productos.Add(new DetalleProducto
+                //    {
+                //        producto = p,
+                //        cantidad = group.Count(),
+                //        montoTotal = group.Count() * p.precioFinal
+                //    });
+                //}
+                foreach (DetalleProducto detalle in productosBackend)
                 {
-                    var p = group.First();
-                    Productos.Add(new DetalleProducto
-                    {
-                        producto = p,
-                        cantidad = group.Count(),
-                        montoTotal = group.Count() * p.precioFinal
-                    });
+                    Productos.Add(detalle);
                 }
             }
 
@@ -81,34 +86,39 @@ namespace Progra3_Frontend.Services
             Recetas.Clear();
             if (recetasBackend != null)
             {
-                foreach (var group in recetasBackend.GroupBy(r => r.id))
+                foreach (DetalleReceta detalle in recetasBackend)
                 {
-                    var r = group.First();
-                    Recetas.Add(new DetalleReceta
-                    {
-                        receta = r,
-                        cantidad = group.Count(),
-                        montoTotal = group.Count() * r.precioFinal
-                    });
+                    Recetas.Add(detalle);
                 }
+
+                //foreach (var group in recetasBackend.GroupBy(r => r.id))
+                //{
+                //    var r = group.First();
+                //    Recetas.Add(new DetalleReceta
+                //    {
+                //        receta = r,
+                //        cantidad = group.Count(),
+                //        montoTotal = group.Count() * r.precioFinal
+                //    });
+                //}
             }
             NotifyStateChanged();
         }
 
-        private async Task SincronizarBackendAsync()
-        {
-            if (!_userId.HasValue) return;
+        //private async Task SincronizarBackendAsync()
+        //{
+        //    if (!_userId.HasValue) return;
 
-            var clientes = await _clientesRS.ListarTodosAsync();
-            var cliente = clientes.FirstOrDefault(c => c.idUsuario == _userId.Value);
-            
-            if (cliente != null)
-            {
-                cliente.carritoProductos = Productos;
-                cliente.carritoRecetas = Recetas;
-                await _clientesRS.ActualizarAsync(cliente);
-            }
-        }
+        //    var clientes = await _clientesRS.ListarTodosAsync();
+        //    var cliente = clientes.FirstOrDefault(c => c.idUsuario == _userId.Value);
+
+        //    if (cliente != null)
+        //    {
+        //        cliente.carritoProductos = Productos;
+        //        cliente.carritoRecetas = Recetas;
+        //        await _clientesRS.ActualizarAsync(cliente);
+        //    }
+        //}
 
         public void AgregarProducto(Producto producto, int cantidad = 1)
         {
@@ -128,7 +138,7 @@ namespace Progra3_Frontend.Services
                 });
             }
             NotifyStateChanged();
-            
+
             if (_userId.HasValue)
             {
                 _ = _clientesRS.AgregarProductoAlCarritoAsync(_userId.Value, producto.id, cantidad);
@@ -153,7 +163,7 @@ namespace Progra3_Frontend.Services
                 });
             }
             NotifyStateChanged();
-            
+
             if (_userId.HasValue)
             {
                 _ = _clientesRS.AgregarRecetaAlCarritoAsync(_userId.Value, receta.id, cantidad);
@@ -179,7 +189,7 @@ namespace Progra3_Frontend.Services
                 });
             }
             NotifyStateChanged();
-            
+
             if (_userId.HasValue)
             {
                 _ = _clientesRS.AgregarRecetaAlCarritoAsync(_userId.Value, detalle.receta.id, detalle.cantidad);
@@ -189,13 +199,19 @@ namespace Progra3_Frontend.Services
         public void ActualizarCantidadProducto(int productoId, int cantidad)
         {
             var item = Productos.FirstOrDefault(p => p.producto.id == productoId);
-            if (item != null && cantidad > 0)
+            if (item != null)
             {
                 item.cantidad = cantidad;
-                item.montoTotal = cantidad * item.producto.precioFinal;
+                item.montoTotal = item.cantidad * item.producto.precioFinal;
                 NotifyStateChanged();
-                _ = SincronizarBackendAsync();
+                if (_userId.HasValue)
+                {
+                    _ = _clientesRS.ActualizarCantidadProductoAsync(_userId.Value, productoId, cantidad);
+                }
             }
+
+
+
         }
 
         public void ActualizarCantidadReceta(int recetaId, int cantidad)
@@ -206,8 +222,13 @@ namespace Progra3_Frontend.Services
                 double precioUnitario = item.montoTotal / item.cantidad;
                 item.cantidad = cantidad;
                 item.montoTotal = cantidad * precioUnitario;
+
+                if (_userId.HasValue)
+                {
+                    _ = _clientesRS.ActualizarCantidadRecetaAsync(_userId.Value, recetaId, cantidad);
+                }
                 NotifyStateChanged();
-                _ = SincronizarBackendAsync();
+
             }
         }
 
@@ -244,7 +265,7 @@ namespace Progra3_Frontend.Services
             Productos.Clear();
             Recetas.Clear();
             NotifyStateChanged();
-            _ = SincronizarBackendAsync();
+            //_ = SincronizarBackendAsync();
         }
 
         public double ObtenerTotal()

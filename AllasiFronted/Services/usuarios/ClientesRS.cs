@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Progra3_Frontend.Model;
+using AllasiFrontend.Model.carrito;
 
 namespace Progra3_Frontend.Services
 {
@@ -137,7 +138,7 @@ namespace Progra3_Frontend.Services
             return new List<Pedido>();
         }
 
-        public async Task<List<Producto>> ObtenerCarritoProductosAsync(int id)
+        public async Task<List<DetalleProducto>> ObtenerCarritoProductosAsync(int id)
         {
             try
             {
@@ -145,17 +146,17 @@ namespace Progra3_Frontend.Services
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
-                    return JsonSerializer.Deserialize<List<Producto>>(jsonResponse, _jsonOptions) ?? new List<Producto>();
+                    return JsonSerializer.Deserialize<List<DetalleProducto>>(jsonResponse, _jsonOptions) ?? new List<DetalleProducto>();
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en ObtenerCarritoProductos: {ex.Message}");
             }
-            return new List<Producto>();
+            return new List<DetalleProducto>();
         }
 
-        public async Task<List<Receta>> ObtenerCarritoRecetasAsync(int id)
+        public async Task<List<DetalleReceta>> ObtenerCarritoRecetasAsync(int id)
         {
             try
             {
@@ -163,14 +164,14 @@ namespace Progra3_Frontend.Services
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
-                    return JsonSerializer.Deserialize<List<Receta>>(jsonResponse, _jsonOptions) ?? new List<Receta>();
+                    return JsonSerializer.Deserialize<List<DetalleReceta>>(jsonResponse, _jsonOptions) ?? new List<DetalleReceta>();
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en ObtenerCarritoRecetas: {ex.Message}");
             }
-            return new List<Receta>();
+            return new List<DetalleReceta>();
         }
 
         public async Task<bool> CambiarPasswordAsync(int id, string nuevaPassword)
@@ -255,6 +256,40 @@ namespace Progra3_Frontend.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en EliminarRecetaDelCarrito: {ex.Message}");
+                return false;
+            }
+        }
+        public async Task<bool> ActualizarCantidadRecetaAsync(int idCliente, int idReceta, int _cantidad)
+        {
+            try
+            {
+                var requestBody = new ActualizarCantidadRequest(_cantidad);
+                var jsonBody = JsonSerializer.Serialize(requestBody, _jsonOptions);
+                var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PutAsync($"clientes/{idCliente}/carritoRecetas/{idReceta}", content);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en actualizar cantidad recetas: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> ActualizarCantidadProductoAsync(int idCliente, int idProducto, int _cantidad)
+        {
+            try
+            {
+                var requestBody = new ActualizarCantidadRequest(_cantidad);
+                var jsonBody = JsonSerializer.Serialize(requestBody, _jsonOptions);
+                var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PutAsync($"clientes/{idCliente}/carritoProductos/{idProducto}", content);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en actualizar cantidad productos: {ex.Message}");
                 return false;
             }
         }
