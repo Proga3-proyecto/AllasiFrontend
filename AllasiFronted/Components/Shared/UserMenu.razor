@@ -84,7 +84,7 @@
         {
             IsLoggedIn = true;
             UserName = user.Identity.Name ?? "";
-            isAdmin = user.IsInRole("ADMIN");
+            isAdmin = user.IsInRole("ADMIN") || user.IsInRole("MASTER");
         }
         else
         {

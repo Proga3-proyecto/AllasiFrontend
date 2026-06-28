@@ -1,4 +1,4 @@
-@page "/admin/order-details/{OrderId:int}"
+ï»¿@page "/admin/order-details/{OrderId:int}"
 @using Microsoft.AspNetCore.Components.Authorization
 @layout AdminLayout
 
@@ -6,7 +6,7 @@
 @inject Progra3_Frontend.Services.PedidosRS PedidosRS
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<AuthorizeView Roles="ADMIN" Context="authContext">
+<AuthorizeView Roles="ADMIN, MASTER" Context="authContext">
     <Authorized>
         <div class="container-fluid mt-3" style="max-width: 1400px;">
 
@@ -15,7 +15,7 @@
                     <i class="bi bi-arrow-left me-1"></i> Volver a pedidos
                 </a>
                 <h2 class="fw-bold text-navy mb-0 main-title">Detalles del Pedido #@OrderId</h2>
-                <p class="text-muted mb-0" style="font-size: 0.95rem;">Panel de Administración</p>
+                <p class="text-muted mb-0" style="font-size: 0.95rem;">Panel de Administraciï¿½n</p>
             </div>
 
             @if (isLoading)
@@ -30,7 +30,7 @@
             else if (Order == null)
             {
                 <div class="alert alert-danger shadow-sm mt-4">
-                    No se encontró el pedido solicitado o hubo un error al cargar la información.
+                    No se encontrï¿½ el pedido solicitado o hubo un error al cargar la informaciï¿½n.
                 </div>
             }
             else
@@ -40,7 +40,7 @@
                     <div class="row gx-5 mb-5">
 
                         <div class="col-md-4 info-column">
-                            <h6 class="fw-bold text-navy mb-4" style="font-size: 1.05rem;">Información del Cliente</h6>
+                            <h6 class="fw-bold text-navy mb-4" style="font-size: 1.05rem;">Informaciï¿½n del Cliente</h6>
 
                             <div class="d-flex mb-3">
                                 <i class="bi bi-person info-icon mt-1 text-primary me-3"></i>
@@ -61,7 +61,7 @@
                             <div class="d-flex mb-3">
                                 <i class="bi bi-telephone info-icon mt-1 text-primary me-3"></i>
                                 <div>
-                                    <div class="info-label text-muted small">Teléfono:</div>
+                                    <div class="info-label text-muted small">Telï¿½fono:</div>
                                     <div class="info-value">@(Order.cliente?.telefono ?? "N/A")</div>
                                 </div>
                             </div>
@@ -69,14 +69,14 @@
                             <div class="d-flex">
                                 <i class="bi bi-geo-alt info-icon mt-1 text-primary me-3"></i>
                                 <div>
-                                    <div class="info-label text-muted small">Dirección de Envío:</div>
+                                    <div class="info-label text-muted small">Direcciï¿½n de Envï¿½o:</div>
                                     <div class="info-value">@(string.IsNullOrEmpty(Order.direccionDestino) ? "Por definir / Recojo" : Order.direccionDestino)</div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-md-4 info-column">
-                            <h6 class="fw-bold text-navy mb-4" style="font-size: 1.05rem;">Información del Pedido</h6>
+                            <h6 class="fw-bold text-navy mb-4" style="font-size: 1.05rem;">Informaciï¿½n del Pedido</h6>
 
                             <div class="d-flex mb-3">
                                 <i class="bi bi-file-earmark-text info-icon mt-1 text-primary me-3"></i>
@@ -134,7 +134,7 @@
                     </div>
 
                     <div>
-                        <h6 class="fw-bold text-navy mb-3" style="font-size: 1.05rem;">Ítems Solicitados</h6>
+                        <h6 class="fw-bold text-navy mb-3" style="font-size: 1.05rem;">ï¿½tems Solicitados</h6>
 
                         <div class="table-responsive">
                             <table class="table custom-table table-borderless align-middle w-100 mb-0">
@@ -142,10 +142,10 @@
                                     <tr>
                                         <th scope="col" style="width: 12%;">Tipo</th>
                                         <th scope="col" class="text-center" style="width: 13%;">Imagen</th>
-                                        <th scope="col" style="width: 35%;">Detalle del Ítem</th>
+                                        <th scope="col" style="width: 35%;">Detalle del ï¿½tem</th>
                                         <th scope="col" class="text-center" style="width: 10%;">Cantidad</th>
                                         <th scope="col" class="text-center" style="width: 15%;">Precio Unitario</th>
-                                        <th scope="col" class="text-center" style="width: 15%;">Total Línea</th>
+                                        <th scope="col" class="text-center" style="width: 15%;">Total Lï¿½nea</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-start">
@@ -154,7 +154,7 @@
                                          (Order.detallesRecetas == null || !Order.detallesRecetas.Any()))
                                     {
                                         <tr>
-                                            <td colspan="6" class="text-center py-4 text-muted">El pedido no registra ítems en el detalle.</td>
+                                            <td colspan="6" class="text-center py-4 text-muted">El pedido no registra ï¿½tems en el detalle.</td>
                                         </tr>
                                     }
                                     else
@@ -269,7 +269,7 @@
                 Acceso denegado
             </h2>
             <p>
-                No tienes permisos para acceder a esta página.
+                No tienes permisos para acceder a esta pï¿½gina.
             </p>
         </div>
     </NotAuthorized>
@@ -287,7 +287,7 @@
         try
         {
             isLoading = true;
-            // Se realiza la petición real a tu backend
+            // Se realiza la peticiï¿½n real a tu backend
             Order = await PedidosRS.ObtenerPorIdAsync(OrderId);
         }
         catch (Exception ex)

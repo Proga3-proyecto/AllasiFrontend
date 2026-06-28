@@ -1,4 +1,4 @@
-@page "/admin/add-user"
+@page "/admin/add-admin"
 @using Microsoft.AspNetCore.Components.Authorization
 @layout AdminLayout
 
@@ -7,7 +7,6 @@
 @using System.ComponentModel.DataAnnotations
 
 @inject AdminsRS AdminsRS
-@inject ClientesRS ClientesRS
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
@@ -60,12 +59,7 @@
 
                         <div class="col-md-6">
                             <label class="form-label fw-semibold text-dark" style="font-size: 0.85rem;">ROL DE USUARIO</label>
-                            <InputSelect @bind-Value="usuarioForm.Rol" class="form-select custom-input">
-                                <option value="">Seleccione un rol...</option>
-                                <option value="Administrador">Administrador</option>
-                                <option value="Cliente">Cliente</option>
-                            </InputSelect>
-                            <ValidationMessage For="@(() => usuarioForm.Rol)" class="text-danger small mt-1" />
+                            <InputText @bind-Value="usuarioForm.Rol" class="form-control custom-input bg-light text-muted" disabled />
                         </div>
 
                         <div class="col-md-6">
@@ -127,7 +121,7 @@
         public string Estado { get; set; } = "Activo";
     }
 
-    private UsuarioFormModel usuarioForm = new();
+    private UsuarioFormModel usuarioForm = new() { Rol = "Administrador" };
 
     private async Task GuardarUsuario()
     {
@@ -153,38 +147,12 @@
                 Admin? admin = await AdminsRS.InsertarAsync(nuevoAdmin);
                 if (admin != null)
                 {
-                    usuarioForm = new UsuarioFormModel();
-                    Navigation.NavigateTo("/admin/user-list");
+                    usuarioForm = new UsuarioFormModel() { Rol = "Administrador" };
+                    Navigation.NavigateTo("/admin/admin-list");
                 }
                 else
                 {
                     Console.WriteLine("Error al guardar el admin en la base de datos.");
-                }
-            }
-            else if (usuarioForm.Rol == "Cliente")
-            {
-                var nuevoCliente = new Cliente
-                {
-                    dni = usuarioForm.Dni,
-                    nombre = usuarioForm.Nombre,
-                    apellidoCompleto = usuarioForm.ApellidoCompleto,
-                    correo = usuarioForm.Correo,
-                    contrasenaHash = usuarioForm.Contrasena,
-                    estado = estadoEnum,
-                    createdAt = DateTime.Now,
-                    updatedAt = DateTime.Now,
-                    fechaNacimiento = DateTime.Now
-                };
-
-                Cliente? cliente = await ClientesRS.InsertarAsync(nuevoCliente);
-                if (cliente != null)
-                {
-                    usuarioForm = new UsuarioFormModel();
-                    Navigation.NavigateTo("/admin/user-list");
-                }
-                else
-                {
-                    Console.WriteLine("Error al guardar el cliente en la base de datos.");
                 }
             }
         }
@@ -196,6 +164,6 @@
 
     private void Cancelar()
     {
-        Navigation.NavigateTo("/admin/user-list");
+        Navigation.NavigateTo("/admin/admin-list");
     }
 }

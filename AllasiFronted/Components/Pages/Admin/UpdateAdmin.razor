@@ -1,0 +1,250 @@
+@page "/admin/update-admin/{Id:int}"
+@using Microsoft.AspNetCore.Components.Authorization
+@layout AdminLayout
+
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+@using System.ComponentModel.DataAnnotations
+
+@inject AdminsRS AdminsRS
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<AuthorizeView Roles="MASTER" Context="authContext">
+    <Authorized>
+        <div class="container-fluid mt-3" style="max-width: 1000px;">
+
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <button class="btn p-0 text-navy" @onclick="Cancelar" style="font-size: 1.2rem;">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
+                <h2 class="fw-bold text-navy mb-0" style="font-size: 1.35rem;">Actualizar usuario</h2>
+            </div>
+
+            <div class="table-container shadow-sm p-4" style="background-color: white; border-radius: 8px;">
+
+                @if (isLoading)
+                {
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-navy" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="mt-2 text-muted fw-medium">Cargando datos del usuario...</p>
+                    </div>
+                }
+                else if (usuarioNoEncontrado)
+                {
+                    <div class="text-center py-5">
+                        <h4 class="text-danger fw-bold"><i class="bi bi-exclamation-triangle"></i> Usuario no encontrado</h4>
+                        <p class="text-muted">El usuario que intentas editar no existe o ha sido eliminado.</p>
+                        <button class="btn btn-outline-secondary mt-3" @onclick="Cancelar">Volver a la lista</button>
+                    </div>
+                }
+                else
+                {
+                    <EditForm Model="@usuarioForm" OnValidSubmit="ActualizarUsuario">
+                        <DataAnnotationsValidator />
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark" style="font-size: 0.85rem;">DNI</label>
+                                <InputText @bind-Value="usuarioForm.Dni" class="form-control custom-input" placeholder="Ej. 12345678" maxlength="8" />
+                                <ValidationMessage For="@(() => usuarioForm.Dni)" class="text-danger small mt-1" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark" style="font-size: 0.85rem;">NOMBRE</label>
+                                <InputText @bind-Value="usuarioForm.Nombre" class="form-control custom-input" placeholder="Ej. Juan Carlos" />
+                                <ValidationMessage For="@(() => usuarioForm.Nombre)" class="text-danger small mt-1" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark" style="font-size: 0.85rem;">APELLIDO COMPLETO</label>
+                                <InputText @bind-Value="usuarioForm.ApellidoCompleto" class="form-control custom-input" placeholder="Ej. Pérez Gómez" />
+                                <ValidationMessage For="@(() => usuarioForm.ApellidoCompleto)" class="text-danger small mt-1" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark" style="font-size: 0.85rem;">CORREO ELECTRÓNICO</label>
+                                <InputText @bind-Value="usuarioForm.Correo" type="email" class="form-control custom-input" placeholder="ejemplo@licoreria.com" />
+                                <ValidationMessage For="@(() => usuarioForm.Correo)" class="text-danger small mt-1" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark" style="font-size: 0.85rem;">NUEVA CONTRASEÑA (Dejar en blanco para no cambiar)</label>
+                                <InputText @bind-Value="usuarioForm.Contrasena" type="password" class="form-control custom-input" placeholder="••••••••" />
+                                <ValidationMessage For="@(() => usuarioForm.Contrasena)" class="text-danger small mt-1" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark" style="font-size: 0.85rem;">ROL DE USUARIO</label>
+                                <InputText @bind-Value="usuarioForm.Rol" class="form-control custom-input bg-light text-muted" disabled />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark" style="font-size: 0.85rem;">ESTADO ACTUAL</label>
+                                <InputSelect @bind-Value="usuarioForm.Estado" class="form-select custom-input">
+                                    <option value="Activo">Activo</option>
+                                    <option value="Inactivo">Inactivo</option>
+                                    <option value="Suspendido" class="text-danger fw-bold">Suspendido</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => usuarioForm.Estado)" class="text-danger small mt-1" />
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-5 pt-3 border-top">
+                            <button type="button" class="btn btn-filter-inactive fw-medium" style="border-radius: 6px; padding: 6px 18px; font-size: 0.85rem;" @onclick="Cancelar">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn navy-bg d-flex align-items-center gap-2 fw-medium" style="border-radius: 6px; padding: 6px 18px; font-size: 0.85rem;">
+                                <i class="bi bi-save"></i> Guardar cambios
+                            </button>
+                        </div>
+                    </EditForm>
+                }
+            </div>
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        <div class="container mt-5">
+            <h2>Acceso denegado</h2>
+            <p>No tienes permisos para acceder a esta página.</p>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    public class UsuarioFormModel
+    {
+        [Required(ErrorMessage = "El DNI es obligatorio.")]
+        [RegularExpression(@"^\d{8}$", ErrorMessage = "El DNI debe tener exactamente 8 dígitos numéricos.")]
+        public string Dni { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "El nombre es obligatorio.")]
+        public string Nombre { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "El apellido completo es obligatorio.")]
+        public string ApellidoCompleto { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "El correo electrónico es obligatorio.")]
+        [EmailAddress(ErrorMessage = "Ingrese una dirección de correo válida.")]
+        public string Correo { get; set; } = string.Empty;
+
+        public string Contrasena { get; set; } = string.Empty;
+
+        public string Rol { get; set; } = string.Empty;
+
+        public string Estado { get; set; } = string.Empty;
+    }
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private UsuarioFormModel usuarioForm = new();
+    private bool isLoading = true;
+    private bool usuarioNoEncontrado = false;
+
+    private Admin? adminOriginal;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarUsuario();
+    }
+
+    private async Task CargarUsuario()
+    {
+        isLoading = true;
+        usuarioNoEncontrado = false;
+
+        try
+        {
+            var admins = await AdminsRS.ListarTodosAsync();
+            adminOriginal = admins?.FirstOrDefault(a => a.idUsuario == Id);
+
+            if (adminOriginal != null)
+            {
+                MapearAFormulario(adminOriginal, "Administrador");
+            }
+            else
+            {
+                usuarioNoEncontrado = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al intentar cargar los datos del usuario: {ex.Message}");
+            usuarioNoEncontrado = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void MapearAFormulario(Usuario usuario, string rolDetectado)
+    {
+        usuarioForm.Dni = usuario.dni ?? "";
+        usuarioForm.Nombre = usuario.nombre ?? "";
+        usuarioForm.ApellidoCompleto = usuario.apellidoCompleto ?? "";
+        usuarioForm.Correo = usuario.correo ?? "";
+        usuarioForm.Rol = rolDetectado;
+        usuarioForm.Estado = usuario.estado.ToString();
+        usuarioForm.Contrasena = string.Empty;
+    }
+
+    private async Task ActualizarUsuario()
+    {
+        try
+        {
+            EstadoUsuario estadoEnum;
+            switch (usuarioForm.Estado)
+            {
+                case "Activo":
+                case "ACTIVA":
+                    estadoEnum = EstadoUsuario.ACTIVA;
+                    break;
+                case "Inactivo":
+                case "INACTIVA":
+                    estadoEnum = EstadoUsuario.INACTIVA;
+                    break;
+                case "Suspendido":
+                case "SUSPENDIDA":
+                    estadoEnum = EstadoUsuario.SUSPENDIDA;
+                    break;
+                default:
+                    estadoEnum = EstadoUsuario.INACTIVA;
+                    break;
+            }
+
+            if (adminOriginal != null)
+            {
+                adminOriginal.dni = usuarioForm.Dni;
+                adminOriginal.nombre = usuarioForm.Nombre;
+                adminOriginal.apellidoCompleto = usuarioForm.ApellidoCompleto;
+                adminOriginal.correo = usuarioForm.Correo;
+                adminOriginal.estado = estadoEnum;
+                adminOriginal.updatedAt = DateTime.Now;
+                adminOriginal.fechaInicioAdmin ??= DateTime.Now;
+
+                if (!string.IsNullOrWhiteSpace(usuarioForm.Contrasena))
+                {
+                    adminOriginal.contrasenaHash = usuarioForm.Contrasena;
+                }
+
+                await AdminsRS.ActualizarAsync(adminOriginal);
+            }
+
+            Navigation.NavigateTo("/admin/admin-list");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error crítico al intentar guardar cambios de edición: {ex.Message}");
+        }
+    }
+
+    private void Cancelar()
+    {
+        Navigation.NavigateTo("/admin/admin-list");
+    }
+}

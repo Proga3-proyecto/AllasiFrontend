@@ -1,6 +1,4 @@
-@page "/admin/update-user"
-@page "/admin/update-user/{Id:int}"
-@page "/admin/update-user/{Id:int}/{Role}"
+@page "/admin/update-client/{Id:int}"
 @using Microsoft.AspNetCore.Components.Authorization
 @layout AdminLayout
 
@@ -8,12 +6,11 @@
 @using Progra3_Frontend.Services
 @using System.ComponentModel.DataAnnotations
 
-@inject AdminsRS AdminsRS
 @inject ClientesRS ClientesRS
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<AuthorizeView Roles="ADMIN" Context="authContext">
+<AuthorizeView Roles="ADMIN, MASTER" Context="authContext">
     <Authorized>
         <div class="container-fluid mt-3" style="max-width: 1000px;">
 
@@ -144,14 +141,10 @@
     [Parameter]
     public int Id { get; set; }
 
-    [Parameter]
-    public string? Role { get; set; }
-
     private UsuarioFormModel usuarioForm = new();
     private bool isLoading = true;
     private bool usuarioNoEncontrado = false;
 
-    private Admin? adminOriginal;
     private Cliente? clienteOriginal;
 
     protected override async Task OnInitializedAsync()
@@ -166,36 +159,10 @@
 
         try
         {
-            if (!string.IsNullOrEmpty(Role))
-            {
-                if (Role.Equals("Administrador", StringComparison.OrdinalIgnoreCase))
-                {
-                    var admins = await AdminsRS.ListarTodosAsync();
-                    adminOriginal = admins?.FirstOrDefault(a => a.idUsuario == Id);
-                }
-                else if (Role.Equals("Cliente", StringComparison.OrdinalIgnoreCase))
-                {
-                    var clientes = await ClientesRS.ListarTodosAsync();
-                    clienteOriginal = clientes?.FirstOrDefault(c => c.idUsuario == Id);
-                }
-            }
-            else
-            {
-                var admins = await AdminsRS.ListarTodosAsync();
-                adminOriginal = admins?.FirstOrDefault(a => a.idUsuario == Id);
+            var clientes = await ClientesRS.ListarTodosAsync();
+            clienteOriginal = clientes?.FirstOrDefault(c => c.idUsuario == Id);
 
-                if (adminOriginal == null)
-                {
-                    var clientes = await ClientesRS.ListarTodosAsync();
-                    clienteOriginal = clientes?.FirstOrDefault(c => c.idUsuario == Id);
-                }
-            }
-
-            if (adminOriginal != null)
-            {
-                MapearAFormulario(adminOriginal, "Administrador");
-            }
-            else if (clienteOriginal != null)
+            if (clienteOriginal != null)
             {
                 MapearAFormulario(clienteOriginal, "Cliente");
             }
@@ -250,24 +217,7 @@
                     break;
             }
 
-            if (usuarioForm.Rol == "Administrador" && adminOriginal != null)
-            {
-                adminOriginal.dni = usuarioForm.Dni;
-                adminOriginal.nombre = usuarioForm.Nombre;
-                adminOriginal.apellidoCompleto = usuarioForm.ApellidoCompleto;
-                adminOriginal.correo = usuarioForm.Correo;
-                adminOriginal.estado = estadoEnum;
-                adminOriginal.updatedAt = DateTime.Now;
-                adminOriginal.fechaInicioAdmin ??= DateTime.Now;
-
-                if (!string.IsNullOrWhiteSpace(usuarioForm.Contrasena))
-                {
-                    adminOriginal.contrasenaHash = usuarioForm.Contrasena;
-                }
-
-                await AdminsRS.ActualizarAsync(adminOriginal);
-            }
-            else if (usuarioForm.Rol == "Cliente" && clienteOriginal != null)
+            if (clienteOriginal != null)
             {
                 clienteOriginal.dni = usuarioForm.Dni;
                 clienteOriginal.nombre = usuarioForm.Nombre;
@@ -285,7 +235,7 @@
                 await ClientesRS.ActualizarAsync(clienteOriginal);
             }
 
-            Navigation.NavigateTo("/admin/user-list");
+            Navigation.NavigateTo("/admin/client-list");
         }
         catch (Exception ex)
         {
@@ -295,6 +245,6 @@
 
     private void Cancelar()
     {
-        Navigation.NavigateTo("/admin/user-list");
+        Navigation.NavigateTo("/admin/client-list");
     }
 }

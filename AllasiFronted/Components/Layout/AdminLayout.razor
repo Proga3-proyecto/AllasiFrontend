@@ -1,6 +1,8 @@
 @using AllasiFrontend.Components.Shared.ui.SidebarNav
+@using Microsoft.AspNetCore.Components.Authorization
 @layout MainLayout
 @inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthStateProvider
 
 <div class="admin-container">
 
@@ -16,47 +18,56 @@
 
 @code {
 
-    List<NavItem> items =
-    [
-        new()
+    List<NavItem> items = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.IsInRole("MASTER"))
         {
-            Href="/admin/user-list",
-            Icon="bi bi-people",
-            Text="Usuarios"
-        },
-        new()
+            items.Add(new NavItem
+            {
+                Href = "/admin/admin-list",
+                Icon = "bi bi-person-badge",
+                Text = "Administradores"
+            });
+        }
+
+        items.Add(new NavItem
         {
-            Href="/admin/product-list",
-            Icon="bi bi-box-seam",
-            Text="Productos"
-        },
+            Href = "/admin/client-list",
+            Icon = "bi bi-people",
+            Text = "Clientes"
+        });
 
-        // AGREGAGO
+        items.Add(new NavItem
+        {
+            Href = "/admin/product-list",
+            Icon = "bi bi-box-seam",
+            Text = "Productos"
+        });
 
-
-        new()
+        items.Add(new NavItem
         {
             Href = "/admin/recipe-list",
             Icon = "bi bi-journal-richtext",
             Text = "Recetas"
-        },
-        //
+        });
 
-
-        new()
+        items.Add(new NavItem
         {
-            Href="/admin/order-list",
-            Icon="bi bi-box-seam",
-            Text="Ordenes"
-        },
+            Href = "/admin/order-list",
+            Icon = "bi bi-box-seam",
+            Text = "Ordenes"
+        });
 
-        //AGREGAR REPORTE
-
-        new()
+        items.Add(new NavItem
         {
-        Href = "/admin/report-list",
-        Icon = "bi bi-bar-chart-line",
-        Text = "Reportes"
-        },
-    ];
+            Href = "/admin/report-list",
+            Icon = "bi bi-bar-chart-line",
+            Text = "Reportes"
+        });
+    }
 }

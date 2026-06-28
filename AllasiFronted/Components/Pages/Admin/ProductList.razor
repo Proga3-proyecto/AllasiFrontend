@@ -9,7 +9,7 @@
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<AuthorizeView Roles="ADMIN" Context="authContext">
+<AuthorizeView Roles="ADMIN, MASTER" Context="authContext">
     <Authorized>
         <div class="container-fluid mt-3" style="max-width: 1400px;">
 

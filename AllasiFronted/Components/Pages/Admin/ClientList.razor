@@ -1,27 +1,20 @@
-@page "/admin"
-@page "/admin/user-list"
+@page "/admin/client-list"
 @using Microsoft.AspNetCore.Components.Authorization
 @layout AdminLayout
 
 @using Progra3_Frontend.Model
 @using Progra3_Frontend.Services
 
-@inject AdminsRS AdminsRS
 @inject ClientesRS ClientesRS
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<AuthorizeView Roles="ADMIN" Context="authContext">
+<AuthorizeView Roles="ADMIN, MASTER" Context="authContext">
     <Authorized>
         <div class="container-fluid mt-3" style="max-width: 1400px;">
 
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="fw-bold text-navy mb-0" style="font-size: 1.35rem;">Lista de usuarios</h2>
-                <button class="btn navy-bg d-flex align-items-center gap-2"
-                        style="border-radius: 6px; font-weight: 500; font-size: 0.82rem; padding: 6px 14px;"
-                        @onclick='() => Navigation.NavigateTo("/admin/add-user")'>
-                    <i class="bi bi-plus-lg"></i> Añadir Nuevo Usuario
-                </button>
+                <h2 class="fw-bold text-navy mb-0" style="font-size: 1.35rem;">Lista de clientes</h2>
             </div>
 
             <div class="table-container shadow-sm">
@@ -34,23 +27,7 @@
                     </div>
                 </div>
 
-                <div class="mb-3 d-flex gap-2">
-                    <button class="btn btn-sm fw-medium @(SelectedFilter == "Todos" ? "navy-bg" : "btn-filter-inactive")"
-                            style="border-radius: 6px; padding: 4px 12px; font-size: 0.8rem;"
-                            @onclick='() => FilterByRole("Todos")'>
-                        Todos
-                    </button>
-                    <button class="btn btn-sm fw-medium @(SelectedFilter == "Administrador" ? "navy-bg" : "btn-filter-inactive")"
-                            style="border-radius: 6px; padding: 4px 12px; font-size: 0.8rem;"
-                            @onclick='() => FilterByRole("Administrador")'>
-                        Administradores
-                    </button>
-                    <button class="btn btn-sm fw-medium @(SelectedFilter == "Cliente" ? "navy-bg" : "btn-filter-inactive")"
-                            style="border-radius: 6px; padding: 4px 12px; font-size: 0.8rem;"
-                            @onclick='() => FilterByRole("Cliente")'>
-                        Clientes
-                    </button>
-                </div>
+
 
                 <div class="table-responsive">
                     <table class="table custom-table table-borderless align-middle w-100">
@@ -184,16 +161,6 @@
         {
             usuarios.Clear();
 
-            var administradores = await AdminsRS.ListarTodosAsync();
-            if (administradores != null)
-            {
-                foreach (var admin in administradores)
-                {
-                    admin.TipoUsuario = "Administrador";
-                    usuarios.Add(admin);
-                }
-            }
-
             var clientes = await ClientesRS.ListarTodosAsync();
             if (clientes != null)
             {
@@ -225,13 +192,11 @@
         }
     }
 
-    private string SelectedFilter { get; set; } = "Todos";
     private int CurrentPage { get; set; } = 1;
     private int PageSize { get; set; } = 10;
 
     private IEnumerable<Usuario> FilteredUsers =>
-        (SelectedFilter == "Todos" ? usuarios : usuarios.Where(u => u.TipoUsuario == SelectedFilter))
-        .Where(u => string.IsNullOrWhiteSpace(searchTerm) || (u.nombre != null && u.nombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)));
+        usuarios.Where(u => string.IsNullOrWhiteSpace(searchTerm) || (u.nombre != null && u.nombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)));
 
     private int TotalPages => Math.Max(1, (int)Math.Ceiling((double)FilteredUsers.Count() / PageSize));
 
@@ -242,7 +207,7 @@
 
     private void EditarUsuario(Usuario user)
     {
-        Navigation.NavigateTo($"/admin/update-user/{user.idUsuario}");
+        Navigation.NavigateTo($"/admin/update-client/{user.idUsuario}");
     }
 
     private async Task EliminarUsuario(Usuario user)
@@ -250,11 +215,7 @@
         try
         {
             bool exito = false;
-            if (user.TipoUsuario == "Administrador")
-            {
-                exito = await AdminsRS.EliminarAsync(user.idUsuario);
-            }
-            else if (user.TipoUsuario == "Cliente")
+            if (user.TipoUsuario == "Cliente")
             {
                 exito = await ClientesRS.EliminarAsync(user.idUsuario);
             }
@@ -268,12 +229,6 @@
         {
             Console.WriteLine($"Error al eliminar el usuario: {ex.Message}");
         }
-    }
-
-    private void FilterByRole(string role)
-    {
-        SelectedFilter = role;
-        CurrentPage = 1;
     }
 
     private bool EsUsuarioActivo(Usuario user)

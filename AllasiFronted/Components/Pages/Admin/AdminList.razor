@@ -1,0 +1,250 @@
+@page "/admin"
+@page "/admin/admin-list"
+@using Microsoft.AspNetCore.Components.Authorization
+@layout AdminLayout
+
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+
+@inject AdminsRS AdminsRS
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<AuthorizeView Roles="MASTER" Context="authContext">
+    <Authorized>
+        <div class="container-fluid mt-3" style="max-width: 1400px;">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="fw-bold text-navy mb-0" style="font-size: 1.35rem;">Lista de administradores</h2>
+                <button class="btn navy-bg d-flex align-items-center gap-2"
+                        style="border-radius: 6px; font-weight: 500; font-size: 0.82rem; padding: 6px 14px;"
+                        @onclick='() => Navigation.NavigateTo("/admin/add-admin")'>
+                    <i class="bi bi-plus-lg"></i> Añadir Nuevo Administrador
+                </button>
+            </div>
+
+            <div class="table-container shadow-sm">
+
+                <div class="mb-4" style="max-width: 400px;">
+                    <label class="text-muted mb-1" style="font-size: 0.85rem; font-weight: 600;">Nombre</label>
+                    <div class="position-relative">
+                        <input type="text" class="form-control custom-input pe-5" placeholder="Buscar por nombre..." @bind="searchTerm" @bind:event="oninput" />
+                        <i class="bi bi-search position-absolute" style="top: 50%; right: 12px; transform: translateY(-50%); color: #94a3b8;"></i>
+                    </div>
+                </div>
+
+
+
+                <div class="table-responsive">
+                    <table class="table custom-table table-borderless align-middle w-100">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width: 35%;" class="ps-2">USUARIO</th>
+                                <th scope="col">ROL</th>
+                                <th scope="col">FECHA DE REGISTRO</th>
+                                <th scope="col">ÚLTIMA ACTIVIDAD</th>
+                                <th scope="col">ESTADO</th>
+                                <th scope="col" class="text-center">ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!usuarios.Any())
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center py-4 text-muted">
+                                        <em>Cargando usuarios o no hay registros disponibles...</em>
+                                    </td>
+                                </tr>
+                            }
+                            else if (!GetPagedUsers().Any())
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">No se encontraron usuarios con este filtro.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var user in GetPagedUsers())
+                                {
+                                    <tr>
+                                        <td class="ps-2">
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-circle me-2 flex-shrink-0">
+                                                    <i class="bi bi-person"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-dark" style="font-size: 0.85rem; line-height: 1.2;">@user.nombre @user.apellidoCompleto</div>
+                                                    <div class="text-muted" style="font-size: 0.75rem;">@user.correo</div>
+                                                    <span class="badge-id">ID: @user.idUsuario</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-dark fw-medium" style="font-size: 0.82rem;">@user.TipoUsuario</td>
+                                        <td>
+                                            <div class="text-dark fw-medium" style="font-size: 0.82rem;">@(user.createdAt?.ToString("dd/MM/yyyy") ?? "N/A")</div>
+                                            <div class="text-muted" style="font-size: 0.75rem;">@(user.createdAt?.ToString("hh:mm tt") ?? "--:--")</div>
+                                        </td>
+                                        <td>
+                                            <div class="text-dark fw-medium" style="font-size: 0.82rem;">@(user.updatedAt?.ToString("dd/MM/yyyy") ?? "N/A")</div>
+                                            <div class="text-muted" style="font-size: 0.75rem;">@(user.updatedAt?.ToString("hh:mm tt") ?? "--:--")</div>
+                                        </td>
+                                        <td>
+                                            <span class="fw-bold @(EsUsuarioActivo(user) ? "text-success" : "text-danger")" style="font-size: 0.82rem;">
+                                                @user.estado
+                                            </span>
+                                        </td>
+                                        <td class="text-center text-nowrap d-flex justify-content-center gap-2">
+                                            <button class="btn btn-outline-custom btn-sm" @onclick="() => EditarUsuario(user)">
+                                                Modificar
+                                            </button>
+                                            <button class="btn btn-danger btn-sm" @onclick="() => EliminarUsuario(user)">
+                                                Eliminar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                @if (TotalPages > 1)
+                {
+                    <div class="d-flex justify-content-center mt-3 mb-1">
+                        <nav>
+                            <ul class="pagination custom-pagination pagination-sm">
+                                <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
+                                    <button class="page-link" @onclick="GoToPreviousPage" disabled="@(CurrentPage == 1)">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </button>
+                                </li>
+
+                                @for (int i = 1; i <= TotalPages; i++)
+                                {
+                                    var pageNumber = i;
+                                    <li class="page-item @(CurrentPage == pageNumber ? "active" : "")">
+                                        <button class="page-link" @onclick="() => ChangePage(pageNumber)">@pageNumber</button>
+                                    </li>
+                                }
+
+                                <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
+                                    <button class="page-link" @onclick="GoToNextPage" disabled="@(CurrentPage == TotalPages)">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </Authorized>
+
+    <NotAuthorized>
+        <div class="container mt-5">
+            <h2>
+                Acceso denegado
+            </h2>
+            <p>
+                No tienes permisos para acceder a esta página.
+            </p>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private List<Usuario> usuarios = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarUsuarios();
+    }
+
+    private async Task CargarUsuarios()
+    {
+        try
+        {
+            usuarios.Clear();
+
+            var administradores = await AdminsRS.ListarTodosAsync();
+            if (administradores != null)
+            {
+                foreach (var admin in administradores)
+                {
+                    admin.TipoUsuario = "Administrador";
+                    usuarios.Add(admin);
+                }
+            }
+
+            // Ordenamos por fecha de creación descendente
+            usuarios = usuarios.OrderByDescending(u => u.createdAt ?? DateTime.MinValue).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar los usuarios: {ex.Message}");
+        }
+    }
+
+    // --- Lógica de paginación y filtrado ---
+    private string _searchTerm = string.Empty;
+    private string searchTerm
+    {
+        get => _searchTerm;
+        set
+        {
+            _searchTerm = value;
+            CurrentPage = 1;
+        }
+    }
+
+    private int CurrentPage { get; set; } = 1;
+    private int PageSize { get; set; } = 10;
+
+    private IEnumerable<Usuario> FilteredUsers =>
+        usuarios.Where(u => string.IsNullOrWhiteSpace(searchTerm) || (u.nombre != null && u.nombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)));
+
+    private int TotalPages => Math.Max(1, (int)Math.Ceiling((double)FilteredUsers.Count() / PageSize));
+
+    private IEnumerable<Usuario> GetPagedUsers()
+    {
+        return FilteredUsers.Skip((CurrentPage - 1) * PageSize).Take(PageSize);
+    }
+
+    private void EditarUsuario(Usuario user)
+    {
+        Navigation.NavigateTo($"/admin/update-admin/{user.idUsuario}");
+    }
+
+    private async Task EliminarUsuario(Usuario user)
+    {
+        try
+        {
+            bool exito = false;
+            if (user.TipoUsuario == "Administrador")
+            {
+                exito = await AdminsRS.EliminarAsync(user.idUsuario);
+            }
+
+            if (exito)
+            {
+                await CargarUsuarios();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al eliminar el usuario: {ex.Message}");
+        }
+    }
+
+    private bool EsUsuarioActivo(Usuario user)
+    {
+        if (user?.estado == null) return false;
+        return user.estado.ToString().Equals("ACTIVA", StringComparison.OrdinalIgnoreCase) ||
+               user.estado.ToString().Equals("ACTIVO", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void ChangePage(int page) => CurrentPage = page;
+    private void GoToPreviousPage() { if (CurrentPage > 1) CurrentPage--; }
+    private void GoToNextPage() { if (CurrentPage < TotalPages) CurrentPage++; }
+}
