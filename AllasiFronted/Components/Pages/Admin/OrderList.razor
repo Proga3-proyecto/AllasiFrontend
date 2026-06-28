@@ -190,7 +190,6 @@
         }
     }
 
-    // --- Variables de Filtros ---
     private string InputEstado { get; set; } = "Todos";
     private string InputCliente { get; set; } = string.Empty;
     private DateTime? InputFechaDesde { get; set; }
@@ -201,11 +200,9 @@
     private DateTime? AppliedFechaDesde { get; set; }
     private DateTime? AppliedFechaHasta { get; set; }
 
-    // --- Paginación ---
     private int CurrentPage { get; set; } = 1;
     private int PageSize { get; set; } = 10;
 
-    // --- Lógica computada de Filtros ---
     private IEnumerable<Pedido> FilteredOrders => pedidos.Where(o =>
         (AppliedEstado == "Todos" || o.estado.ToString() == AppliedEstado) &&
         (string.IsNullOrWhiteSpace(AppliedCliente) ||

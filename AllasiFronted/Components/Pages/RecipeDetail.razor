@@ -26,7 +26,7 @@
 
             <div class="recipe-info">
                 <h1 class="recipe-title">@receta.nombre</h1>
-                <p class="recipe-price">S/. @receta.precio.ToString("0.00")</p>
+                <p class="recipe-price">S/. @receta.precioFinal.ToString("0.00")</p>
 
                 <p class="recipe-description">
                     @(string.IsNullOrEmpty(receta.descripcion) ? "El cóctel bandera del Perú, equilibrado, cítrico y con su clásica espuma de clara de huevo." : receta.descripcion)
@@ -44,7 +44,6 @@
                         }
                         else
                         {
-                            <!-- Mock Data if none -->
                             <li><strong>0.06 oz</strong> de Bombay Sapphire</li>
                             <li><strong>0.01 oz</strong> de Amaretto Disaronno</li>
                         }
@@ -72,16 +71,6 @@
                             <ProductCard ProductoItem="@elemento.producto" />
                         }
                     }
-                }
-                else
-                {
-                    <!-- Mock products fallback if no elements exist -->
-                    <ProductCard 
-                        Rank="0"
-                        ProductoItem="@(new Producto { id = 1, nombre = "Bombay Sapphire", precio = 95.00, categorias = new List<Categoria> { new Categoria { nombre = "Gin" } } })" />
-                    <ProductCard 
-                        Rank="0"
-                        ProductoItem="@(new Producto { id = 2, nombre = "Amaretto Disaronno", precio = 85.00, categorias = new List<Categoria> { new Categoria { nombre = "Licor" } } })" />
                 }
             </div>
         </div>

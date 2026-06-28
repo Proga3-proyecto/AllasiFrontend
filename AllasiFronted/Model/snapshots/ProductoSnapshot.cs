@@ -1,8 +1,11 @@
-﻿namespace Progra3_Frontend.Model
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Progra3_Frontend.Model
 {
     public class ProductoSnapshot
     {
-        public int id { get; set; }
+        public int? id { get; set; }
         public Producto productoOriginal { get; set; }
         public string nombre { get; set; } = string.Empty;
         public double precioVenta { get; set; }
@@ -11,17 +14,21 @@
         public double volumenLitros { get; set; }
         public double porcentajeAlcohol { get; set; }
         public string nombreMarca { get; set; } = string.Empty;
+
         public string nombreImpuesto { get; set; } = string.Empty;
         public double porcentajeImpuesto { get; set; }
         public TipoImpuesto tipoImpuesto { get; set; }
-        public int porcentajePrecioAlcoholHistorico { get; set; }
-        public double valorImpuestoAlcoholHistorico { get; set; }
-        public List<string> categoriasHistoricas { get; set; } = new List<string>();
-        public List<Imagen> imagenesHistoricas { get; set; } = new List<Imagen>();
+
+        public int? porcentajePrecioAlcoholHistorico { get; set; }
+        public double? valorImpuestoAlcoholHistorico { get; set; }
+
+        public Imagen imagen { get; set; }
+        public List<string> categoriasHistoricas { get; set; }
+
         public ProductoSnapshot()
         {
-
         }
+
         public ProductoSnapshot(Producto producto) : this()
         {
             if (producto != null)
@@ -59,15 +66,12 @@
 
                 if (producto.categorias != null)
                 {
-                    foreach (var cat in producto.categorias)
-                    {
-                        this.categoriasHistoricas.Add(cat.nombre);
-                    }
+                    this.categoriasHistoricas = producto.categorias.Select(c => c.nombre).ToList();
                 }
 
-                if (producto.imagenes != null)
+                if (producto.imagenes != null && producto.imagenes.Any())
                 {
-                    this.imagenesHistoricas.AddRange(producto.imagenes);
+                    this.imagen = producto.imagenes.First();
                 }
             }
         }

@@ -2,7 +2,6 @@
 {
     public class RecetaSnapshotElemento
     {
-        public RecetaSnapshot recetaSnapshot { get; set; }
         public ProductoSnapshot productoSnapshot { get; set; }
         public double cantidad { get; set; }
 
@@ -10,11 +9,10 @@
         {
         }
 
-        public RecetaSnapshotElemento(ElementoReceta elementoVivo, RecetaSnapshot recetaPadre)
+        public RecetaSnapshotElemento(ElementoReceta elementoVivo)
         {
             if (elementoVivo != null)
             {
-                this.recetaSnapshot = recetaPadre;
                 this.cantidad = elementoVivo.cantidad;
 
                 if (elementoVivo.producto != null)

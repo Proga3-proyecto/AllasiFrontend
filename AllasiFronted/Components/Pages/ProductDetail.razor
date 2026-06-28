@@ -30,7 +30,7 @@
 
             <div class="product-info">
                 <h1 class="product-title">@producto.nombre</h1>
-                <p class="product-price">S/. @producto.precio.ToString("0.00")</p>
+                <p class="product-price">S/. @producto.precioFinal.ToString("0.00")</p>
 
                 <p class="product-description">
                     @(string.IsNullOrEmpty(producto.descripcion) ? "Vino tinto chileno reconocido internacionalmente por su excelente relación calidad-precio. Presenta aromas a frutos rojos maduros y especias suaves con un final agradable y persistente." : producto.descripcion)
