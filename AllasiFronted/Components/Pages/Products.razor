@@ -215,26 +215,37 @@
 
     private void ApplyFilters()
     {
-        // No filtrar recetas por precio o marca
-        filteredRecetas = recetas.Where(r => (
-            string.IsNullOrWhiteSpace(SearchQuery) || 
-            (r.nombre != null && r.nombre.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)) ||
-            (r.descripcion != null && r.descripcion.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)))
-            && (!minPrice.HasValue || r.precio >= minPrice.Value) &&
-            (!maxPrice.HasValue || r.precio <= maxPrice.Value)
+        filteredRecetas = recetas.Where(r =>
+                        
+            (!minPrice.HasValue || r.precioFinal >= minPrice.Value) &&
+            (!maxPrice.HasValue || r.precioFinal <= maxPrice.Value) &&
+    
+            (string.IsNullOrWhiteSpace(SearchQuery) ||
+                (r.nombre != null && r.nombre.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)) ||
+                (r.descripcion != null && r.descripcion.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase))
+            ) &&
+    
+            (selectedBrands.Count == 0 ||
+                (r.elementos != null && r.elementos.Any(e =>
+                        e.producto != null &&
+                        e.producto.marca != null &&
+                        selectedBrands.Contains(e.producto.marca.nombre)
+                    )   
+                )
+            )       
         ).ToList();
 
-        filteredProductos = productos.Where(p => 
-            (!minPrice.HasValue || p.precio >= minPrice.Value) &&
-            (!maxPrice.HasValue || p.precio <= maxPrice.Value) &&
+        filteredProductos = productos.Where(p =>
+            (!minPrice.HasValue || p.precioFinal >= minPrice.Value) &&
+            (!maxPrice.HasValue || p.precioFinal <= maxPrice.Value) &&
             (selectedBrands.Count == 0 || (p.marca != null && selectedBrands.Contains(p.marca.nombre))) &&
-            (string.IsNullOrWhiteSpace(SearchQuery) || 
+            (string.IsNullOrWhiteSpace(SearchQuery) ||
              (p.nombre != null && p.nombre.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)) ||
              (p.descripcion != null && p.descripcion.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)) ||
              (p.marca != null && p.marca.nombre != null && p.marca.nombre.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)))
         ).ToList();
-        
-        currentPage = 1; // Reset to first page when filtering
+    
+        currentPage = 1;
     }
 
     private void ToggleBrandSelection(string brand, object? isChecked)

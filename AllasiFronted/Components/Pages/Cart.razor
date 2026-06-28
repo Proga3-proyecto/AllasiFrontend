@@ -55,7 +55,9 @@
                                     <td>
                                         <div class="item-info">
                                             <div class="item-img-wrapper">
-                                                <img src="@(item.receta.imagenes != null && item.receta.imagenes.Any() ? item.receta.imagenes[0].url : "/assets/placeholder-bottle.png")" alt="@item.receta.nombre" class="item-img" />
+                                                <a href="/receta/@(item.receta.id)">
+                                                    <img src="@(item.receta.imagenes != null && item.receta.imagenes.Any() ? item.receta.imagenes[0].url : "/assets/placeholder-bottle.png")" alt="@item.receta.nombre" class="item-img" />
+                                                </a>
                                             </div>
                                             <div class="item-details">
                                                 <h4 class="item-name">@item.receta.nombre</h4>
@@ -89,7 +91,9 @@
                                     <td>
                                         <div class="item-info">
                                             <div class="item-img-wrapper">
-                                                <img src="@(item.producto.imagenes != null && item.producto.imagenes.Any() ? item.producto.ImagenUrl : "/assets/placeholder-bottle.png")" alt="@item.producto.nombre" class="item-img" />
+                                                <a href="/producto/@(item.producto.id)">
+                                                    <img src="@(item.producto.imagenes != null && item.producto.imagenes.Any() ? item.producto.ImagenUrl : "/assets/placeholder-bottle.png")" alt="@item.producto.nombre" class="item-img" />
+                                                </a>
                                             </div>
                                             <div class="item-details">
                                                 <h4 class="item-name">@item.producto.nombre</h4>
