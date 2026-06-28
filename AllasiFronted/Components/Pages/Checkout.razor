@@ -1,0 +1,225 @@
+@page "/checkout"
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject CarritoStateService CarritoService
+@inject PedidosRS PedidosService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Finalizar Compra - Allasi Licores</PageTitle>
+
+<div class="checkout-page">
+    <div class="category-banner">
+        <div class="banner-content">
+            <h1 class="banner-title">FINALIZAR COMPRA</h1>
+            <div class="banner-separator">
+                <span class="line"></span>
+                <i class="bi bi-credit-card banner-icon"></i>
+                <span class="line"></span>
+            </div>
+            <p class="banner-subtitle">
+                Ingresa tus datos para completar el pedido
+            </p>
+        </div>
+    </div>
+
+    <div class="checkout-container">
+        @if (CarritoService.Productos.Count == 0 && CarritoService.Recetas.Count == 0)
+        {
+            <div class="empty-checkout">
+                <i class="bi bi-cart-x empty-icon"></i>
+                <h2>Tu carrito está vacío</h2>
+                <p>No puedes proceder al pago sin productos.</p>
+                <button class="btn-shop" @onclick='() => NavigationManager.NavigateTo("/products/all")'>Volver a la tienda</button>
+            </div>
+        }
+        else
+        {
+            <div class="checkout-grid">
+                <div class="checkout-form-section">
+                    <h3>Datos de Envío y Pago</h3>
+                    <form @onsubmit="RealizarPago">
+                        <div class="form-group">
+                            <label for="direccion">Dirección de Entrega</label>
+                            <input type="text" id="direccion" class="form-control" @bind="direccion" required placeholder="Ej: Av. Principal 123" />
+                        </div>
+                        <div class="form-group">
+                            <label for="referencia">Referencia (Opcional)</label>
+                            <input type="text" id="referencia" class="form-control" @bind="referencia" placeholder="Cerca al parque central" />
+                        </div>
+                        <div class="form-group">
+                            <label for="metodoPago">Método de Pago</label>
+                            <select id="metodoPago" class="form-control" @bind="metodoPago">
+                                <option value="tarjeta">Tarjeta de Crédito / Débito</option>
+                                <option value="yape">Yape / Plin</option>
+                                <option value="contraentrega">Pago Contraentrega</option>
+                            </select>
+                            <small class="hint-text">El pago será procesado según el método seleccionado.</small>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="error-alert">
+                                <i class="bi bi-exclamation-circle"></i> @errorMessage
+                            </div>
+                        }
+
+                        <div class="form-actions">
+                            @if (isProcessing)
+                            {
+                                <button type="button" class="btn-checkout loading" disabled>
+                                    Procesando pago...
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn-checkout">PAGAR S/ @Total.ToString("0.00")</button>
+                            }
+                        </div>
+                    </form>
+                </div>
+
+                <div class="checkout-summary-section">
+                    <div class="summary-card">
+                        <h3>RESUMEN DE COMPRA</h3>
+                        <div class="summary-divider"></div>
+                        <div class="summary-items">
+                            @foreach(var item in CarritoService.Productos)
+                            {
+                                <div class="summary-item">
+                                    <div class="item-details">
+                                        <span class="item-name">@item.producto.nombre</span>
+                                        <span class="item-qty">Cant: @item.cantidad</span>
+                                    </div>
+                                    <span class="item-price">S/ @item.montoTotal.ToString("0.00")</span>
+                                </div>
+                            }
+                            @foreach(var item in CarritoService.Recetas)
+                            {
+                                <div class="summary-item">
+                                    <div class="item-details">
+                                        <span class="item-name">@item.receta.nombre</span>
+                                        <span class="item-qty">Cant: @item.cantidad</span>
+                                    </div>
+                                    <span class="item-price">S/ @item.montoTotal.ToString("0.00")</span>
+                                </div>
+                            }
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span>S/ @Subtotal.ToString("0.00")</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Envío</span>
+                            <span>S/ @Delivery.ToString("0.00")</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-row total-row">
+                            <span>TOTAL</span>
+                            <span>S/ @Total.ToString("0.00")</span>
+                        </div>
+                        <p class="taxes-label">Impuestos incluidos</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private string direccion = "";
+    private string referencia = "";
+    private string metodoPago = "tarjeta";
+    private bool isProcessing = false;
+    private string errorMessage = "";
+    private int? userId = null;
+
+    private double Subtotal => CarritoService.ObtenerTotal();
+    private double Delivery => Subtotal > 0 ? 15.00 : 0.00;
+    private double Total => Subtotal + Delivery;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var userIdClaim = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(userIdClaim, out int uid))
+            {
+                userId = uid;
+            }
+        }
+    }
+
+    private async Task RealizarPago()
+    {
+        if (string.IsNullOrWhiteSpace(direccion))
+        {
+            errorMessage = "La dirección de entrega es requerida.";
+            return;
+        }
+
+        if (userId == null)
+        {
+            errorMessage = "Debes iniciar sesión para realizar un pedido.";
+            return;
+        }
+
+        isProcessing = true;
+        errorMessage = "";
+        
+        try
+        {
+            // Construir el objeto Pedido
+            var nuevoPedido = new Pedido
+            {
+                cliente = new Cliente { idUsuario = userId.Value },
+                fechaPedido = DateTime.Now,
+                horaInicio = DateTime.Now,
+                horaFin = DateTime.Now.AddHours(1),
+                precioTotal = Subtotal,
+                precioDelivery = Delivery,
+                precioFinal = Total,
+                estado = EstadoPedido.PENDIENTE,
+                direccionDestino = direccion + (!string.IsNullOrWhiteSpace(referencia) ? $" ({referencia})" : ""),
+                detallesProductos = CarritoService.Productos.Select(p => new PedidoDetalleProducto
+                {
+                    productoSnapshot = new ProductoSnapshot(p.producto),
+                    cantidad = p.cantidad
+                }).ToList(),
+                detallesRecetas = CarritoService.Recetas.Select(r => new PedidoDetalleReceta
+                {
+                    recetaSnapshot = new RecetaSnapshot(r.receta),
+                    cantidad = r.cantidad,
+                    descuentoHistorico = r.receta.descuento
+                }).ToList()
+            };
+
+            // Enviar al backend
+            int idPedido = await PedidosService.InsertarAsync(nuevoPedido);
+
+            if (idPedido > 0)
+            {
+                // Limpiar carrito en frontend
+                CarritoService.LimpiarCarrito();
+                // Redirigir a la página de éxito
+                NavigationManager.NavigateTo($"/order-success/{idPedido}");
+            }
+            else
+            {
+                errorMessage = "Hubo un error al procesar el pago. Por favor, intenta de nuevo.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Error de conexión: " + ex.Message;
+        }
+        finally
+        {
+            isProcessing = false;
+        }
+    }
+}

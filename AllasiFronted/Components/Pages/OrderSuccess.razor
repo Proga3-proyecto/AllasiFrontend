@@ -1,0 +1,48 @@
+@page "/order-success/{OrderId:int}"
+@inject NavigationManager NavigationManager
+
+<PageTitle>Pedido Exitoso - Allasi Licores</PageTitle>
+
+<div class="success-page">
+    <div class="category-banner">
+        <div class="banner-content">
+            <h1 class="banner-title">COMPRA EXITOSA</h1>
+            <div class="banner-separator">
+                <span class="line"></span>
+                <i class="bi bi-check-circle banner-icon"></i>
+                <span class="line"></span>
+            </div>
+            <p class="banner-subtitle">
+                Gracias por tu preferencia
+            </p>
+        </div>
+    </div>
+
+    <div class="success-container">
+        <div class="success-card">
+            <div class="success-icon">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h2>¡Tu pedido ha sido confirmado!</h2>
+            <p class="success-text">Hemos procesado tu pago correctamente y estamos preparando tu pedido para el envío.</p>
+            
+            <div class="order-details-box">
+                <div class="order-row">
+                    <span class="order-label">Número de Pedido:</span>
+                    <span class="order-value highlight">#@OrderId.ToString("D5")</span>
+                </div>
+                <div class="order-row">
+                    <span class="order-label">Estado:</span>
+                    <span class="order-value badge">Confirmado</span>
+                </div>
+            </div>
+
+            <button class="btn-shop" @onclick='() => NavigationManager.NavigateTo("/")'>Volver al Inicio</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int OrderId { get; set; }
+}
