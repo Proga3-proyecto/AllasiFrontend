@@ -536,9 +536,9 @@
                 elementos = elementos
             };
 
-            int resultado = await RecetasRS.InsertarAsync(nuevaReceta);
+            Receta? receta = await RecetasRS.InsertarAsync(nuevaReceta);
 
-            if (resultado != 0)
+            if (receta != null)
             {
                 foreach (var img in imagenes)
                 {
@@ -548,11 +548,11 @@
 
                         if (img.IsPrincipal)
                         {
-                            await RecetasRS.SubirImagenPrincipalAsync(resultado, stream, img.File.Name, img.File.ContentType);
+                            await RecetasRS.SubirImagenPrincipalAsync(receta.id, stream, img.File.Name, img.File.ContentType);
                         }
                         else
                         {
-                            await RecetasRS.SubirImagenAsync(resultado, stream, img.File.Name, img.File.ContentType);
+                            await RecetasRS.SubirImagenAsync(receta.id, stream, img.File.Name, img.File.ContentType);
                         }
                     }
                     catch (Exception ex)

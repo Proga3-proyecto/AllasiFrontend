@@ -1,6 +1,11 @@
 @page "/register"
 @using System.ComponentModel.DataAnnotations
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+@using Progra3_Frontend.Services.Auth
 @inject NavigationManager Navigation
+@inject ClientesRS clienteRS
+@inject CustomAuthenticationStateProvider AuthProvider
 
 <div class="container">
     <section>
@@ -14,17 +19,25 @@
             <div class="hr"></div>
         </div>
 
-        <EditForm Model="usuario" OnValidSubmit="CrearCuenta" class="form-body">
+        <EditForm Model="formUser" OnValidSubmit="CrearCuenta" class="form-body">
             <DataAnnotationsValidator />
+            
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger" style="color: red; margin-bottom: 15px; font-weight: bold;" role="alert">
+                    @errorMessage
+                </div>
+            }
+
             <div class="register-container">
                 <div class="left-column">
                     <div class="form-input">
                         <label>Nombre(s)</label>
                         <div class="input-container">
                             <i class="bi bi-person"></i>
-                            <InputText @bind-Value="usuario.Nombres" placeholder="Ingresa tu nombre" />
+                            <InputText @bind-Value="formUser.Nombres" placeholder="Ingresa tu nombre" />
                         </div>
-                        <ValidationMessage For="@(() => usuario.Nombres)" />
+                        <ValidationMessage For="@(() => formUser.Nombres)" />
                     </div>
 
                     <div class="double-row">
@@ -32,18 +45,18 @@
                             <label>Apellido Paterno</label>
                             <div class="input-container">
                                 <i class="bi bi-person"></i>
-                                <InputText @bind-Value="usuario.ApellidoPaterno" placeholder="Apellido paterno" />
+                                <InputText @bind-Value="formUser.ApellidoPaterno" placeholder="Apellido paterno" />
                             </div>
-                            <ValidationMessage For="@(() => usuario.ApellidoPaterno)" />
+                            <ValidationMessage For="@(() => formUser.ApellidoPaterno)" />
                         </div>
 
                         <div class="form-input">
                             <label>Apellido Materno</label>
                             <div class="input-container">
                                 <i class="bi bi-person"></i>
-                                <InputText @bind-Value="usuario.ApellidoMaterno" placeholder="Apellido materno" />
+                                <InputText @bind-Value="formUser.ApellidoMaterno" placeholder="Apellido materno" />
                             </div>
-                            <ValidationMessage For="@(() => usuario.ApellidoMaterno)" />
+                            <ValidationMessage For="@(() => formUser.ApellidoMaterno)" />
                         </div>
                     </div>
 
@@ -51,27 +64,27 @@
                         <label>Correo electrónico</label>
                         <div class="input-container">
                             <i class="bi bi-envelope"></i>
-                            <InputText @bind-Value="usuario.Email" placeholder="ejemplo@correo.com" />
+                            <InputText @bind-Value="formUser.Email" placeholder="ejemplo@correo.com" />
                         </div>
-                        <ValidationMessage For="@(() => usuario.Email)" />
+                        <ValidationMessage For="@(() => formUser.Email)" />
                     </div>
 
                     <div class="form-input">
                         <label>Contraseña</label>
                         <div class="input-container">
                             <i class="bi bi-lock-fill"></i>
-                            <InputText @bind-Value="usuario.Password" type="password" placeholder="Crea una contraseña" />
+                            <InputText @bind-Value="formUser.Password"  placeholder="Crea una contraseña" />
                         </div>
-                        <ValidationMessage For="@(() => usuario.Password)" />
+                        <ValidationMessage For="@(() => formUser.Password)" />
                     </div>
 
                     <div class="form-input">
                         <label>Repetir Contraseña</label>
                         <div class="input-container">
                             <i class="bi bi-lock-fill"></i>
-                            <InputText @bind-Value="usuario.ConfirmPassword" type="password" placeholder="Repite tu contraseña" />
+                            <InputText @bind-Value="formUser.ConfirmPassword"  placeholder="Repite tu contraseña" />
                         </div>
-                        <ValidationMessage For="@(() => usuario.ConfirmPassword)" />
+                        <ValidationMessage For="@(() => formUser.ConfirmPassword)" />
                     </div>
                 </div>
 
@@ -80,18 +93,27 @@
                         <label>DNI</label>
                         <div class="input-container">
                             <i class="bi bi-person-vcard"></i>
-                            <InputText @bind-Value="usuario.Dni" placeholder="Ingresa tu DNI" />
+                            <InputText @bind-Value="formUser.Dni" placeholder="Ingresa tu DNI" maxlength="8" />
                         </div>
-                        <ValidationMessage For="@(() => usuario.Dni)" />
+                        <ValidationMessage For="@(() => formUser.Dni)" />
+                    </div>
+
+                    <div class="form-input">
+                        <label>Teléfono</label>
+                        <div class="input-container">
+                            <i class="bi bi-telephone"></i>
+                            <InputText @bind-Value="formUser.Telefono" placeholder="Ingresa tu teléfono" maxlength="9" />
+                        </div>
+                        <ValidationMessage For="@(() => formUser.Telefono)" />
                     </div>
 
                     <div class="form-input">
                         <label>Fecha de Nacimiento</label>
                         <div class="input-container">
                             <i class="bi bi-calendar3"></i>
-                            <InputDate @bind-Value="usuario.FechaNacimiento" />
+                            <InputDate @bind-Value="formUser.FechaNacimiento" />
                         </div>
-                        <ValidationMessage For="@(() => usuario.FechaNacimiento)" />
+                        <ValidationMessage For="@(() => formUser.FechaNacimiento)" />
                     </div>
                 </div>
             </div>
@@ -109,13 +131,37 @@
 </div>
 
 @code {
-    private RegistroUsuario usuario = new();
+    private RegistroUsuario formUser = new();
+    
+    private string? errorMessage;
 
     private async Task CrearCuenta()
     {
-        // Aquí irá tu BL o API
-        Navigation.NavigateTo("/login");
-        await Task.CompletedTask;
+        errorMessage = null;
+
+        Cliente cliente = new();
+        cliente.dni = formUser.Dni;
+        cliente.correo = formUser.Email;
+        cliente.nombre = formUser.Nombres;
+        cliente.apellidoCompleto = formUser.ApellidoPaterno + " " + formUser.ApellidoMaterno;
+        cliente.contrasenaHash = formUser.Password; //TODO: Encriptar mensaje
+        cliente.fechaNacimiento = formUser.FechaNacimiento;
+        cliente.telefono = formUser.Telefono; 
+        
+        Cliente? nuevoCliente = await clienteRS.InsertarAsync(cliente);
+
+        if (nuevoCliente == null)
+        {
+            errorMessage = "Hubo un problema al crear la cuenta. Verifica tus datos o intenta más tarde.";
+        }
+        else
+        {
+            await AuthProvider.Login(
+                nuevoCliente.nombre,
+                "CLIENTE"
+            );
+            Navigation.NavigateTo("/login");
+        }
     }
 
     public class RegistroUsuario
@@ -133,6 +179,10 @@
         [Required(ErrorMessage = "El DNI es obligatorio")]
         [RegularExpression(@"^\d{8}$", ErrorMessage = "El DNI debe contener exactamente 8 dígitos")]
         public string Dni { get; set; } = "";
+
+        [Required(ErrorMessage = "El teléfono es obligatorio")]
+        [RegularExpression(@"^\d{9}$", ErrorMessage = "El teléfono debe contener exactamente 9 dígitos")]
+        public string Telefono { get; set; } = "";
 
         [Required(ErrorMessage = "El correo es obligatorio")]
         [EmailAddress(ErrorMessage = "Correo inválido")]

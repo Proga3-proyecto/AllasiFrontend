@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Progra3_Frontend.Model;
@@ -13,14 +12,11 @@ namespace Progra3_Frontend.Services
     public class MarcasRS
     {
         private readonly HttpClient _httpClient;
-        private readonly string _urlRest;
         private readonly JsonSerializerOptions _jsonOptions;
 
-        public MarcasRS(HttpClient httpClient, IConfiguration config)
+        public MarcasRS(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            string baseUrl = "http://localhost:8080/Servicios-1.0-SNAPSHOT/api/";
-            _urlRest = $"{baseUrl}marcas";
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -32,7 +28,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{_urlRest}");
+                var response = await _httpClient.GetAsync("marcas");
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -46,33 +42,32 @@ namespace Progra3_Frontend.Services
             return new List<Marca>();
         }
 
-        public async Task<int> InsertarAsync(Marca marca)
+        public async Task<Marca?> InsertarAsync(Marca marca)
         {
             try
             {
                 var jsonBody = JsonSerializer.Serialize(marca, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync($"{_urlRest}/{marca.nombre}", content);
+                var response = await _httpClient.PostAsync($"marcas/{marca.nombre}", content);
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
-                    Marca marca_aux = JsonSerializer.Deserialize<Marca>(jsonResponse, _jsonOptions);
-                    return marca_aux != null ? marca_aux.id : 0;
+                    return JsonSerializer.Deserialize<Marca>(jsonResponse, _jsonOptions);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en Insertar: {ex.Message}");
             }
-            return 0;
+            return null;
         }
 
         public async Task<bool> EliminarAsync(Marca marca)
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"{_urlRest}/{marca.nombre}");
+                var response = await _httpClient.DeleteAsync($"marcas/{marca.nombre}");
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)

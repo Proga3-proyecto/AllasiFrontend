@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Progra3_Frontend.Model;
@@ -13,14 +12,12 @@ namespace Progra3_Frontend.Services
     public class CategoriasRS
     {
         private readonly HttpClient _httpClient;
-        private readonly string _urlRest;
         private readonly JsonSerializerOptions _jsonOptions;
 
-        public CategoriasRS(HttpClient httpClient, IConfiguration config)
+        public CategoriasRS(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            string baseUrl = "http://localhost:8080/Servicios-1.0-SNAPSHOT/api/";
-            _urlRest = $"{baseUrl}categorias";
+
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -32,7 +29,8 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{_urlRest}");
+                // Usamos solo el endpoint relativo "categorias"
+                var response = await _httpClient.GetAsync("categorias");
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -46,33 +44,34 @@ namespace Progra3_Frontend.Services
             return new List<Categoria>();
         }
 
-        public async Task<int> InsertarAsync(Categoria categoria)
+        public async Task<Categoria?> InsertarAsync(Categoria categoria)
         {
             try
             {
                 var jsonBody = JsonSerializer.Serialize(categoria, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync($"{_urlRest}/{categoria.nombre}", content);
+                // Concatenamos el nombre de la categoría a la ruta relativa
+                var response = await _httpClient.PostAsync($"categorias/{categoria.nombre}", content);
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
-                    Categoria categoria_aux = JsonSerializer.Deserialize<Categoria>(jsonResponse, _jsonOptions);
-                    return categoria_aux != null ? categoria_aux.id : 0;
+                    return  JsonSerializer.Deserialize<Categoria>(jsonResponse, _jsonOptions);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en Insertar: {ex.Message}");
             }
-            return 0;
+            return null;
         }
 
         public async Task<bool> EliminarAsync(Categoria categoria)
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"{_urlRest}/{categoria.nombre}");
+                // Concatenamos el nombre de la categoría a la ruta relativa
+                var response = await _httpClient.DeleteAsync($"categorias/{categoria.nombre}");
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)

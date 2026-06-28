@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Progra3_Frontend.Model;
@@ -15,15 +14,12 @@ namespace Progra3_Frontend.Services
     public class ProductosRS
     {
         private readonly HttpClient _httpClient;
-        private readonly string _urlRest;
         private List<Producto>? _cachedProductos;
         private readonly JsonSerializerOptions _jsonOptions;
 
-        public ProductosRS(HttpClient httpClient, IConfiguration config)
+        public ProductosRS(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            string baseUrl = "http://localhost:8080/Servicios-1.0-SNAPSHOT/api/";
-            _urlRest = $"{baseUrl}productos";
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -33,14 +29,11 @@ namespace Progra3_Frontend.Services
 
         public async Task<List<Producto>> ListarTodosAsync()
         {
-            if (_cachedProductos != null)
-            {
-                return _cachedProductos;
-            }
+            if (_cachedProductos != null) return _cachedProductos;
 
             try
             {
-                var response = await _httpClient.GetAsync($"{_urlRest}");
+                var response = await _httpClient.GetAsync("productos");
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -59,7 +52,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{_urlRest}/{id}");
+                var response = await _httpClient.GetAsync($"productos/{id}");
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -73,27 +66,26 @@ namespace Progra3_Frontend.Services
             return null;
         }
 
-        public async Task<int> InsertarAsync(Producto producto)
+        public async Task<Producto?> InsertarAsync(Producto producto)
         {
             try
             {
                 var jsonBody = JsonSerializer.Serialize(producto, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync($"{_urlRest}", content);
+                var response = await _httpClient.PostAsync("productos", content);
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
                     _cachedProductos = null;
-                    Producto producto_aux = JsonSerializer.Deserialize<Producto>(jsonResponse, _jsonOptions);
-                    return producto_aux != null ? producto_aux.id : 0;
+                    return JsonSerializer.Deserialize<Producto>(jsonResponse, _jsonOptions);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en Insertar: {ex.Message}");
             }
-            return 0;
+            return null;
         }
 
         public async Task<bool> ActualizarAsync(Producto producto)
@@ -103,7 +95,7 @@ namespace Progra3_Frontend.Services
                 var jsonBody = JsonSerializer.Serialize(producto, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PutAsync($"{_urlRest}/{producto.id}", content);
+                var response = await _httpClient.PutAsync($"productos/{producto.id}", content);
                 if (response.IsSuccessStatusCode) _cachedProductos = null;
                 return response.IsSuccessStatusCode;
             }
@@ -118,7 +110,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"{_urlRest}/{id}");
+                var response = await _httpClient.DeleteAsync($"productos/{id}");
                 if (response.IsSuccessStatusCode) _cachedProductos = null;
                 return response.IsSuccessStatusCode;
             }
@@ -139,7 +131,7 @@ namespace Progra3_Frontend.Services
 
                 content.Add(streamContent, "archivo", fileName);
 
-                var response = await _httpClient.PostAsync($"{_urlRest}/{idProducto}/imagen", content);
+                var response = await _httpClient.PostAsync($"productos/{idProducto}/imagen", content);
                 if (response.IsSuccessStatusCode) _cachedProductos = null;
                 return response.IsSuccessStatusCode;
             }
@@ -154,7 +146,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"{_urlRest}/{idProducto}/imagen/{idImagen}");
+                var response = await _httpClient.DeleteAsync($"productos/{idProducto}/imagen/{idImagen}");
                 if (response.IsSuccessStatusCode) _cachedProductos = null;
                 return response.IsSuccessStatusCode;
             }
@@ -175,7 +167,7 @@ namespace Progra3_Frontend.Services
 
                 content.Add(streamContent, "archivo", fileName);
 
-                var response = await _httpClient.PostAsync($"{_urlRest}/{idProducto}/imagenPrincipal", content);
+                var response = await _httpClient.PostAsync($"productos/{idProducto}/imagenPrincipal", content);
                 if (response.IsSuccessStatusCode) _cachedProductos = null;
                 return response.IsSuccessStatusCode;
             }
@@ -190,7 +182,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"{_urlRest}/{idProducto}/categoria/{nombreCategoria}");
+                var response = await _httpClient.DeleteAsync($"productos/{idProducto}/categoria/{nombreCategoria}");
                 if (response.IsSuccessStatusCode) _cachedProductos = null;
                 return response.IsSuccessStatusCode;
             }
@@ -208,7 +200,7 @@ namespace Progra3_Frontend.Services
                 var jsonBody = JsonSerializer.Serialize(categoria, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync($"{_urlRest}/{idProducto}/categoria", content);
+                var response = await _httpClient.PostAsync($"productos/{idProducto}/categoria", content);
                 if (response.IsSuccessStatusCode) _cachedProductos = null;
                 return response.IsSuccessStatusCode;
             }
@@ -226,7 +218,7 @@ namespace Progra3_Frontend.Services
                 var jsonBody = JsonSerializer.Serialize(marca, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PutAsync($"{_urlRest}/{idProducto}/marca", content);
+                var response = await _httpClient.PutAsync($"productos/{idProducto}/marca", content);
                 if (response.IsSuccessStatusCode) _cachedProductos = null;
                 return response.IsSuccessStatusCode;
             }

@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
 using Progra3_Frontend.Models;
+using System.Threading.Tasks;
 
 namespace Progra3_Frontend.Services.Auth
 {
@@ -12,19 +13,16 @@ namespace Progra3_Frontend.Services.Auth
             this.http = http;
         }
 
-        public async Task<LoginResponse?> Login(
-            LoginRequest request)
+        public async Task<LoginResponse?> Login(LoginRequest request)
         {
-            var response =
-                await http.PostAsJsonAsync(
-                    "auth/login",
-                    request);
+            var response = await http.PostAsJsonAsync("auth/login", request);
 
             if (!response.IsSuccessStatusCode)
                 return null;
 
-            return await response.Content
-                .ReadFromJsonAsync<LoginResponse>();
+            return await response.Content.ReadFromJsonAsync<LoginResponse>();
         }
+
+
     }
 }

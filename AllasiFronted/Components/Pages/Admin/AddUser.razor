@@ -150,8 +150,8 @@
                     fechaInicioAdmin = DateTime.Now
                 };
 
-                int resultado = await AdminsRS.InsertarAsync(nuevoAdmin);
-                if (resultado != 0)
+                Admin? admin = await AdminsRS.InsertarAsync(nuevoAdmin);
+                if (admin != null)
                 {
                     usuarioForm = new UsuarioFormModel();
                     Navigation.NavigateTo("/admin/user-list");
@@ -176,8 +176,8 @@
                     fechaNacimiento = DateTime.Now
                 };
 
-                int resultado = await ClientesRS.InsertarAsync(nuevoCliente);
-                if (resultado != 0)
+                Cliente? cliente = await ClientesRS.InsertarAsync(nuevoCliente);
+                if (cliente != null)
                 {
                     usuarioForm = new UsuarioFormModel();
                     Navigation.NavigateTo("/admin/user-list");

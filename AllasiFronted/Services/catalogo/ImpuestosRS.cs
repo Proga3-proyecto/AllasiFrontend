@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Progra3_Frontend.Model;
@@ -13,14 +12,11 @@ namespace Progra3_Frontend.Services
     public class ImpuestosRS
     {
         private readonly HttpClient _httpClient;
-        private readonly string _urlRest;
         private readonly JsonSerializerOptions _jsonOptions;
 
-        public ImpuestosRS(HttpClient httpClient, IConfiguration config)
+        public ImpuestosRS(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            string baseUrl = "http://localhost:8080/Servicios-1.0-SNAPSHOT/api/";
-            _urlRest = $"{baseUrl}impuestos";
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -32,7 +28,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{_urlRest}");
+                var response = await _httpClient.GetAsync("impuestos");
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -46,26 +42,25 @@ namespace Progra3_Frontend.Services
             return new List<Impuesto>();
         }
 
-        public async Task<int> InsertarAsync(Impuesto impuesto)
+        public async Task<Impuesto?> InsertarAsync(Impuesto impuesto)
         {
             try
             {
                 var jsonBody = JsonSerializer.Serialize(impuesto, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync($"{_urlRest}", content);
+                var response = await _httpClient.PostAsync("impuestos", content);
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
-                    Impuesto impuesto_aux = JsonSerializer.Deserialize<Impuesto>(jsonResponse, _jsonOptions);
-                    return impuesto_aux != null ? impuesto_aux.id : 0;
+                    return JsonSerializer.Deserialize<Impuesto>(jsonResponse, _jsonOptions);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en Insertar: {ex.Message}");
             }
-            return 0;
+            return null;
         }
 
         public async Task<bool> ActualizarAsync(Impuesto impuesto)
@@ -75,7 +70,7 @@ namespace Progra3_Frontend.Services
                 var jsonBody = JsonSerializer.Serialize(impuesto, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PutAsync($"{_urlRest}/{impuesto.id}", content);
+                var response = await _httpClient.PutAsync($"impuestos/{impuesto.id}", content);
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)
@@ -89,7 +84,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"{_urlRest}/{id}");
+                var response = await _httpClient.DeleteAsync($"impuestos/{id}");
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)

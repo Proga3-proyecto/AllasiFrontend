@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Progra3_Frontend.Model;
@@ -13,15 +12,12 @@ namespace Progra3_Frontend.Services
     public class PedidosRS
     {
         private readonly HttpClient _httpClient;
-        private readonly string _urlRest;
         private List<Pedido>? _cachedPedidos;
         private readonly JsonSerializerOptions _jsonOptions;
 
-        public PedidosRS(HttpClient httpClient, IConfiguration config)
+        public PedidosRS(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            string baseUrl = "http://localhost:8080/Servicios-1.0-SNAPSHOT/api/";
-            _urlRest = $"{baseUrl}pedidos";
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -35,7 +31,7 @@ namespace Progra3_Frontend.Services
 
             try
             {
-                var response = await _httpClient.GetAsync($"{_urlRest}");
+                var response = await _httpClient.GetAsync("pedidos");
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -54,7 +50,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{_urlRest}/{id}");
+                var response = await _httpClient.GetAsync($"pedidos/{id}");
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -75,7 +71,7 @@ namespace Progra3_Frontend.Services
                 var jsonBody = JsonSerializer.Serialize(pedido, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync($"{_urlRest}", content);
+                var response = await _httpClient.PostAsync("pedidos", content);
                 if (response.IsSuccessStatusCode)
                 {
                     _cachedPedidos = null;
@@ -98,7 +94,7 @@ namespace Progra3_Frontend.Services
                 var jsonBody = JsonSerializer.Serialize(pedido, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PutAsync($"{_urlRest}/{pedido.id}", content);
+                var response = await _httpClient.PutAsync($"pedidos/{pedido.id}", content);
                 if (response.IsSuccessStatusCode) _cachedPedidos = null;
                 return response.IsSuccessStatusCode;
             }
@@ -113,7 +109,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"{_urlRest}/{id}");
+                var response = await _httpClient.DeleteAsync($"pedidos/{id}");
                 if (response.IsSuccessStatusCode) _cachedPedidos = null;
                 return response.IsSuccessStatusCode;
             }

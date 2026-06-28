@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Progra3_Frontend.Model;
@@ -12,14 +11,11 @@ namespace Progra3_Frontend.Services
     public class ImagenesRS
     {
         private readonly HttpClient _httpClient;
-        private readonly string _urlRest;
         private readonly JsonSerializerOptions _jsonOptions;
 
-        public ImagenesRS(HttpClient httpClient, IConfiguration config)
+        public ImagenesRS(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            string baseUrl = "http://localhost:8080/Servicios-1.0-SNAPSHOT/api/";
-            _urlRest = $"{baseUrl}imagenes";
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -31,7 +27,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{_urlRest}");
+                var response = await _httpClient.GetAsync("imagenes");
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -49,7 +45,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{_urlRest}/{id}");
+                var response = await _httpClient.GetAsync($"imagenes/{id}");
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -67,7 +63,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"{_urlRest}/{imagen.id}");
+                var response = await _httpClient.DeleteAsync($"imagenes/{imagen.id}");
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)

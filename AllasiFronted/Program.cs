@@ -9,23 +9,34 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddHttpClient();
-builder.Services.AddScoped<ProductosRS>();
-builder.Services.AddScoped<MarcasRS>();
-builder.Services.AddScoped<CategoriasRS>();
-builder.Services.AddScoped<ImpuestosRS>();
-builder.Services.AddScoped<AlcoholImpuestoRS>();
-builder.Services.AddScoped<ImagenesRS>();
-builder.Services.AddScoped<ClientesRS>();
-builder.Services.AddScoped<AdminsRS>();
-builder.Services.AddScoped<RecetasRS>();
-builder.Services.AddScoped<PedidosRS>();
+
+builder.Services.ConfigureHttpClientDefaults(httpBuilder =>
+{
+    httpBuilder.ConfigureHttpClient(client =>
+    {
+        client.BaseAddress = new Uri("http://localhost:8080/Servicios-1.0-SNAPSHOT/api/");
+    });
+});
+
+builder.Services.AddHttpClient<ProductosRS>();
+builder.Services.AddHttpClient<MarcasRS>();
+builder.Services.AddHttpClient<CategoriasRS>();
+builder.Services.AddHttpClient<ImpuestosRS>();
+builder.Services.AddHttpClient<AlcoholImpuestoRS>();
+builder.Services.AddHttpClient<ImagenesRS>();
+builder.Services.AddHttpClient<ClientesRS>();
+builder.Services.AddHttpClient<AdminsRS>();
+builder.Services.AddHttpClient<RecetasRS>();
+builder.Services.AddHttpClient<PedidosRS>();
+builder.Services.AddHttpClient<AuthService>();
+
+
+builder.Services.AddHttpClient<IAuthService, AuthService>();
+
 builder.Services.AddScoped<CarritoStateService>();
 
-builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
-{
-    client.BaseAddress = new Uri("http://localhost:8080/Servicios-1.0-SNAPSHOT/api/");
-});
+
+
 builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<CustomAuthenticationStateProvider>();

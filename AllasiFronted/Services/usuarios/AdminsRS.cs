@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Progra3_Frontend.Model;
@@ -13,15 +12,12 @@ namespace Progra3_Frontend.Services
     public class AdminsRS
     {
         private readonly HttpClient _httpClient;
-        private readonly string _urlRest;
         private List<Admin>? _cachedAdmins;
         private readonly JsonSerializerOptions _jsonOptions;
 
-        public AdminsRS(HttpClient httpClient, IConfiguration config)
+        public AdminsRS(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            string baseUrl = "http://localhost:8080/Servicios-1.0-SNAPSHOT/api/";
-            _urlRest = $"{baseUrl}administradores";
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -35,7 +31,7 @@ namespace Progra3_Frontend.Services
 
             try
             {
-                var response = await _httpClient.GetAsync($"{_urlRest}");
+                var response = await _httpClient.GetAsync("administradores");
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -50,27 +46,26 @@ namespace Progra3_Frontend.Services
             return new List<Admin>();
         }
 
-        public async Task<int> InsertarAsync(Admin admin)
+        public async Task<Admin?> InsertarAsync(Admin admin)
         {
             try
             {
                 var jsonBody = JsonSerializer.Serialize(admin, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync($"{_urlRest}", content);
+                var response = await _httpClient.PostAsync("administradores", content);
                 if (response.IsSuccessStatusCode)
                 {
                     _cachedAdmins = null;
                     var jsonResponse = await response.Content.ReadAsStringAsync();
-                    Admin admin_aux = JsonSerializer.Deserialize<Admin>(jsonResponse, _jsonOptions);
-                    return admin_aux != null ? admin_aux.idUsuario : 0;
+                    return JsonSerializer.Deserialize<Admin>(jsonResponse, _jsonOptions);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en Insertar: {ex.Message}");
             }
-            return 0;
+            return null;
         }
 
         public async Task<bool> ActualizarAsync(Admin admin)
@@ -80,7 +75,7 @@ namespace Progra3_Frontend.Services
                 var jsonBody = JsonSerializer.Serialize(admin, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PutAsync($"{_urlRest}/{admin.idUsuario}", content);
+                var response = await _httpClient.PutAsync($"administradores/{admin.idUsuario}", content);
                 if (response.IsSuccessStatusCode) _cachedAdmins = null;
                 return response.IsSuccessStatusCode;
             }
@@ -95,7 +90,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"{_urlRest}/{id}");
+                var response = await _httpClient.DeleteAsync($"administradores/{id}");
                 if (response.IsSuccessStatusCode) _cachedAdmins = null;
                 return response.IsSuccessStatusCode;
             }
@@ -107,4 +102,3 @@ namespace Progra3_Frontend.Services
         }
     }
 }
-

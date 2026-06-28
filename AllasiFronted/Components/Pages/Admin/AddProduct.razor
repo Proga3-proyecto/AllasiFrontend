@@ -296,9 +296,9 @@
                 categorias = new List<Categoria> { new Categoria { nombre = productViewModel.categoriaTemporal } }
             };
 
-            int nuevoProductoId = await ProductosRS.InsertarAsync(nuevoProducto);
+            Producto? producto = await ProductosRS.InsertarAsync(nuevoProducto);
 
-            if (nuevoProductoId != 0)
+            if (producto !=null)
             {
                 foreach (var img in imagenes)
                 {
@@ -308,11 +308,11 @@
 
                         if (img.IsPrincipal)
                         {
-                            await ProductosRS.SubirImagenPrincipalAsync(nuevoProductoId, stream, img.File.Name, img.File.ContentType);
+                            await ProductosRS.SubirImagenPrincipalAsync(producto.id, stream, img.File.Name, img.File.ContentType);
                         }
                         else
                         {
-                            await ProductosRS.SubirImagenAsync(nuevoProductoId, stream, img.File.Name, img.File.ContentType);
+                            await ProductosRS.SubirImagenAsync(producto.id, stream, img.File.Name, img.File.ContentType);
                         }
                     }
                     catch (Exception ex)

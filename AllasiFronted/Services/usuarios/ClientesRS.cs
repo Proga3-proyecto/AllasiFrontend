@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Progra3_Frontend.Model;
@@ -13,15 +12,12 @@ namespace Progra3_Frontend.Services
     public class ClientesRS
     {
         private readonly HttpClient _httpClient;
-        private readonly string _urlRest;
         private List<Cliente>? _cachedClientes;
         private readonly JsonSerializerOptions _jsonOptions;
 
-        public ClientesRS(HttpClient httpClient, IConfiguration config)
+        public ClientesRS(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            string baseUrl = "http://localhost:8080/Servicios-1.0-SNAPSHOT/api/";
-            _urlRest = $"{baseUrl}clientes";
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -35,7 +31,7 @@ namespace Progra3_Frontend.Services
 
             try
             {
-                var response = await _httpClient.GetAsync($"{_urlRest}");
+                var response = await _httpClient.GetAsync("clientes");
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -50,27 +46,26 @@ namespace Progra3_Frontend.Services
             return new List<Cliente>();
         }
 
-        public async Task<int> InsertarAsync(Cliente cliente)
+        public async Task<Cliente?> InsertarAsync(Cliente cliente)
         {
             try
             {
                 var jsonBody = JsonSerializer.Serialize(cliente, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync($"{_urlRest}", content);
+                var response = await _httpClient.PostAsync("clientes", content);
                 if (response.IsSuccessStatusCode)
                 {
                     _cachedClientes = null;
                     var jsonResponse = await response.Content.ReadAsStringAsync();
-                    Cliente cliente_aux = JsonSerializer.Deserialize<Cliente>(jsonResponse, _jsonOptions);
-                    return cliente_aux != null ? cliente_aux.idUsuario : 0;
+                    return JsonSerializer.Deserialize<Cliente>(jsonResponse, _jsonOptions);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en Insertar: {ex.Message}");
             }
-            return 0;
+            return null;
         }
 
         public async Task<bool> ActualizarAsync(Cliente cliente)
@@ -80,7 +75,7 @@ namespace Progra3_Frontend.Services
                 var jsonBody = JsonSerializer.Serialize(cliente, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PutAsync($"{_urlRest}/{cliente.idUsuario}", content);
+                var response = await _httpClient.PutAsync($"clientes/{cliente.idUsuario}", content);
                 if (response.IsSuccessStatusCode) _cachedClientes = null;
                 return response.IsSuccessStatusCode;
             }
@@ -95,7 +90,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"{_urlRest}/{id}");
+                var response = await _httpClient.DeleteAsync($"clientes/{id}");
                 if (response.IsSuccessStatusCode) _cachedClientes = null;
                 return response.IsSuccessStatusCode;
             }

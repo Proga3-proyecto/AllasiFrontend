@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Progra3_Frontend.Model;
@@ -15,15 +14,12 @@ namespace Progra3_Frontend.Services
     public class RecetasRS
     {
         private readonly HttpClient _httpClient;
-        private readonly string _urlRest;
         private List<Receta>? _cachedRecetas;
         private readonly JsonSerializerOptions _jsonOptions;
 
-        public RecetasRS(HttpClient httpClient, IConfiguration config)
+        public RecetasRS(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            string baseUrl = "http://localhost:8080/Servicios-1.0-SNAPSHOT/api/";
-            _urlRest = $"{baseUrl}recetas";
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -33,14 +29,11 @@ namespace Progra3_Frontend.Services
 
         public async Task<List<Receta>> ListarTodosAsync()
         {
-            if (_cachedRecetas != null)
-            {
-                return _cachedRecetas;
-            }
+            if (_cachedRecetas != null) return _cachedRecetas;
 
             try
             {
-                var response = await _httpClient.GetAsync($"{_urlRest}");
+                var response = await _httpClient.GetAsync("recetas");
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -59,7 +52,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{_urlRest}/{id}");
+                var response = await _httpClient.GetAsync($"recetas/{id}");
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -73,27 +66,26 @@ namespace Progra3_Frontend.Services
             return null;
         }
 
-        public async Task<int> InsertarAsync(Receta receta)
+        public async Task<Receta?> InsertarAsync(Receta receta)
         {
             try
             {
                 var jsonBody = JsonSerializer.Serialize(receta, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync($"{_urlRest}", content);
+                var response = await _httpClient.PostAsync("recetas", content);
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
                     _cachedRecetas = null;
-                    Receta receta_aux = JsonSerializer.Deserialize<Receta>(jsonResponse, _jsonOptions);
-                    return receta_aux != null ? receta_aux.id : 0;
+                    return JsonSerializer.Deserialize<Receta>(jsonResponse, _jsonOptions);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en Insertar: {ex.Message}");
             }
-            return 0;
+            return null;
         }
 
         public async Task<bool> ActualizarAsync(Receta receta)
@@ -103,7 +95,7 @@ namespace Progra3_Frontend.Services
                 var jsonBody = JsonSerializer.Serialize(receta, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PutAsync($"{_urlRest}/{receta.id}", content);
+                var response = await _httpClient.PutAsync($"recetas/{receta.id}", content);
                 if (response.IsSuccessStatusCode) _cachedRecetas = null;
                 return response.IsSuccessStatusCode;
             }
@@ -118,7 +110,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"{_urlRest}/{id}");
+                var response = await _httpClient.DeleteAsync($"recetas/{id}");
                 if (response.IsSuccessStatusCode) _cachedRecetas = null;
                 return response.IsSuccessStatusCode;
             }
@@ -139,7 +131,7 @@ namespace Progra3_Frontend.Services
 
                 content.Add(streamContent, "archivo", fileName);
 
-                var response = await _httpClient.PostAsync($"{_urlRest}/{idReceta}/subir", content);
+                var response = await _httpClient.PostAsync($"recetas/{idReceta}/subir", content);
                 if (response.IsSuccessStatusCode) _cachedRecetas = null;
                 return response.IsSuccessStatusCode;
             }
@@ -160,7 +152,7 @@ namespace Progra3_Frontend.Services
 
                 content.Add(streamContent, "archivo", fileName);
 
-                var response = await _httpClient.PostAsync($"{_urlRest}/{idReceta}/subirPrincipal", content);
+                var response = await _httpClient.PostAsync($"recetas/{idReceta}/subirPrincipal", content);
                 if (response.IsSuccessStatusCode) _cachedRecetas = null;
                 return response.IsSuccessStatusCode;
             }
@@ -175,7 +167,7 @@ namespace Progra3_Frontend.Services
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"{_urlRest}/{idReceta}/categoria/{nombreCategoria}");
+                var response = await _httpClient.DeleteAsync($"recetas/{idReceta}/categoria/{nombreCategoria}");
                 if (response.IsSuccessStatusCode) _cachedRecetas = null;
                 return response.IsSuccessStatusCode;
             }
@@ -193,7 +185,7 @@ namespace Progra3_Frontend.Services
                 var jsonBody = JsonSerializer.Serialize(categoria, _jsonOptions);
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync($"{_urlRest}/{idReceta}/categoria", content);
+                var response = await _httpClient.PostAsync($"recetas/{idReceta}/categoria", content);
                 if (response.IsSuccessStatusCode) _cachedRecetas = null;
                 return response.IsSuccessStatusCode;
             }
