@@ -294,5 +294,21 @@ namespace Progra3_Frontend.Services
             }
         }
 
+        public async Task<bool> LimpiarCarritoAsync(int idCliente)
+        {
+            try
+            {
+                //var requestBody = new { };
+
+                //var jsonBody = JsonSerializer.Serialize(requestBody, _jsonOptions);
+                var response = await _httpClient.PostAsync($"clientes/{idCliente}/limpiarCarrito", null);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en actualizar cantidad productos: {ex.Message}");
+                return false;
+            }
+        }
     }
 }

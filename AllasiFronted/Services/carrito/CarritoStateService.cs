@@ -265,7 +265,10 @@ namespace Progra3_Frontend.Services
             Productos.Clear();
             Recetas.Clear();
             NotifyStateChanged();
-            //_ = SincronizarBackendAsync();
+            if (_userId.HasValue)
+            {
+                _ = _clientesRS.LimpiarCarritoAsync(_userId.Value);
+            }
         }
 
         public double ObtenerTotal()
