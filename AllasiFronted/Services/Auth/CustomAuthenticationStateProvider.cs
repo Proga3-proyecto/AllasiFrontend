@@ -4,20 +4,24 @@ using System.Security.Claims;
 
 namespace Progra3_Frontend.Services.Auth;
 
-public class CustomAuthenticationStateProvider
-    : AuthenticationStateProvider
+// 1. Agregamos IDisposable para evitar fugas de memoria con el evento estático
+public class CustomAuthenticationStateProvider : AuthenticationStateProvider, IDisposable
 {
     private readonly ProtectedLocalStorage _protectedLocalStorage;
-    private ClaimsPrincipal usuarioActual =
-        new(new ClaimsIdentity());
+    private ClaimsPrincipal usuarioActual = new(new ClaimsIdentity());
+
+    private string nombreActual = "";
+
+    public static event Action<string>? OnGlobalLogout;
 
     public CustomAuthenticationStateProvider(ProtectedLocalStorage protectedLocalStorage)
     {
         _protectedLocalStorage = protectedLocalStorage;
+
+        OnGlobalLogout += HandleGlobalLogout;
     }
 
-    public override async Task<AuthenticationState>
-        GetAuthenticationStateAsync()
+    public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         try
         {
@@ -27,6 +31,8 @@ public class CustomAuthenticationStateProvider
             if (nombreResult.Success && !string.IsNullOrEmpty(nombreResult.Value) &&
                 rolResult.Success && !string.IsNullOrEmpty(rolResult.Value))
             {
+                nombreActual = nombreResult.Value; // Actualizamos la variable interna
+
                 var identity = new ClaimsIdentity(new[]
                 {
                     new Claim(ClaimTypes.Name, nombreResult.Value),
@@ -38,11 +44,12 @@ public class CustomAuthenticationStateProvider
             else
             {
                 usuarioActual = new ClaimsPrincipal(new ClaimsIdentity());
+                nombreActual = "";
             }
         }
         catch
         {
-            // Catch for prerendering where JS interop is not available
+          
         }
 
         return new AuthenticationState(usuarioActual);
@@ -53,6 +60,8 @@ public class CustomAuthenticationStateProvider
         await _protectedLocalStorage.SetAsync("usuarioNombre", nombre);
         await _protectedLocalStorage.SetAsync("usuarioRol", rol);
 
+        nombreActual = nombre;
+
         var identity = new ClaimsIdentity(
             new[]
             {
@@ -62,23 +71,42 @@ public class CustomAuthenticationStateProvider
             "CustomAuth"
         );
 
-        usuarioActual =
-            new ClaimsPrincipal(identity);
-
-        NotifyAuthenticationStateChanged(
-            GetAuthenticationStateAsync());
+        usuarioActual = new ClaimsPrincipal(identity);
+        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 
     public async Task Logout()
     {
+        string usuarioQueSale = nombreActual;
+
         await _protectedLocalStorage.DeleteAsync("usuarioNombre");
         await _protectedLocalStorage.DeleteAsync("usuarioRol");
 
-        usuarioActual =
-            new ClaimsPrincipal(
-                new ClaimsIdentity());
+        usuarioActual = new ClaimsPrincipal(new ClaimsIdentity());
+        nombreActual = "";
 
-        NotifyAuthenticationStateChanged(
-            GetAuthenticationStateAsync());
+        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+
+        if (!string.IsNullOrEmpty(usuarioQueSale))
+        {
+            OnGlobalLogout?.Invoke(usuarioQueSale);
+        }
+    }
+
+    private void HandleGlobalLogout(string nombreUsuarioQueSalio)
+    {
+        
+        if (!string.IsNullOrEmpty(nombreActual) && nombreActual == nombreUsuarioQueSalio)
+        {
+            usuarioActual = new ClaimsPrincipal(new ClaimsIdentity());
+            nombreActual = "";
+
+            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(usuarioActual)));
+        }
+    }
+
+    public void Dispose()
+    {
+        OnGlobalLogout -= HandleGlobalLogout;
     }
 }

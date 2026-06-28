@@ -48,9 +48,8 @@
 
 @using Progra3_Frontend.Services.Auth
 @using Microsoft.AspNetCore.Components.Authorization
-@inject AuthenticationStateProvider AuthProvider
 @inject NavigationManager NavigationManager
-@inject CustomAuthenticationStateProvider AuthProvider
+@inject AuthenticationStateProvider AuthProvider
 
 @code {
     [Parameter]
@@ -59,6 +58,8 @@
     [Parameter]
     public string UserName { get; set; } = "";
 
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
 
     public bool isAdmin = false;
 
@@ -71,12 +72,29 @@
     }
 
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        var state = await AuthProvider.GetAuthenticationStateAsync();
-        if (state == null) return;
-        isAdmin = state.User.IsInRole("ADMIN") || state.User.IsInRole("admin");
+        if (AuthStateTask is null) return;
+
+        var state = await AuthStateTask;
+        var user = state.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            IsLoggedIn = true;
+            UserName = user.Identity.Name ?? "";
+            isAdmin = user.IsInRole("ADMIN");
+        }
+        else
+        {
+            IsLoggedIn = false;
+            UserName = "";
+            isAdmin = false;
+            isMenuOpen = false;
+        }
     }
+
+
     private async Task HideMenuDelayed()
     {
         await Task.Delay(200);
