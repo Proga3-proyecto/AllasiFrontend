@@ -1,9 +1,13 @@
-@page "/admin/report-client"
+Ôªø@page "/admin/report-client"
 @layout AdminLayout
 
 @inject NavigationManager Navigation
 
-<div class="client-report-page container-fluid mt-3 mb-4">
+@using Microsoft.AspNetCore.Components.Authorization
+
+<AuthorizeView Roles="ADMIN" Context="authContext">
+    <Authorized>
+        <div class="client-report-page container-fluid mt-3 mb-4">
 
     <div class="report-header">
 
@@ -166,6 +170,15 @@
 
 </div>
 
+
+    </Authorized>
+    <NotAuthorized>
+        <div class="container mt-5">
+            <h2>Acceso denegado</h2>
+            <p>No tienes permisos para acceder a esta p√°gina.</p>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 @code {
     private string CriterioOrden { get; set; } = "cantidad";
 
@@ -181,7 +194,7 @@
         },
         new()
         {
-            Nombre = "MarÌa Fernanda LÛpez",
+            Nombre = "Mar√≠a Fernanda L√≥pez",
             Documento = "70649215",
             CantidadComprada = 58
         },
@@ -193,7 +206,7 @@
         },
         new()
         {
-            Nombre = "JosÈ Antonio RamÌrez",
+            Nombre = "Jos√© Antonio Ram√≠rez",
             Documento = "46821579",
             CantidadComprada = 24
         },
@@ -217,19 +230,19 @@
         },
         new()
         {
-            Nombre = "Luis Alberto Ch·vez",
+            Nombre = "Luis Alberto Ch√°vez",
             Documento = "45271968",
             CantidadComprada = 31
         },
         new()
         {
-            Nombre = "Eventos del PacÌfico S.A.C.",
+            Nombre = "Eventos del Pac√≠fico S.A.C.",
             Documento = "20596472831",
             CantidadComprada = 83
         },
         new()
         {
-            Nombre = "Valeria Paredes GÛmez",
+            Nombre = "Valeria Paredes G√≥mez",
             Documento = "76842159",
             CantidadComprada = 41
         }

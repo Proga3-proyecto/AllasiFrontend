@@ -10,7 +10,11 @@
 @inject RecetasRS RecetasRS
 @inject ProductosRS ProductosRS
 
-<div class="add-recipe-page container-fluid mt-3 mb-4">
+@using Microsoft.AspNetCore.Components.Authorization
+
+<AuthorizeView Roles="ADMIN" Context="authContext">
+    <Authorized>
+        <div class="add-recipe-page container-fluid mt-3 mb-4">
 
     <div class="text-center mb-3">
         <h2 class="fw-bold text-navy"
@@ -351,6 +355,15 @@
     </div>
 
 </div>
+
+    </Authorized>
+    <NotAuthorized>
+        <div class="container mt-5">
+            <h2>Acceso denegado</h2>
+            <p>No tienes permisos para acceder a esta página.</p>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
 

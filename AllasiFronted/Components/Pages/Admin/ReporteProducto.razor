@@ -1,9 +1,13 @@
-@page "/admin/report-product"
+ï»¿@page "/admin/report-product"
 @layout AdminLayout
 
 @inject NavigationManager Navigation
 
-<div class="product-report-page container-fluid mt-3 mb-4">
+@using Microsoft.AspNetCore.Components.Authorization
+
+<AuthorizeView Roles="ADMIN" Context="authContext">
+    <Authorized>
+        <div class="product-report-page container-fluid mt-3 mb-4">
 
     <div class="report-header">
 
@@ -161,6 +165,15 @@
 
 </div>
 
+
+    </Authorized>
+    <NotAuthorized>
+        <div class="container mt-5">
+            <h2>Acceso denegado</h2>
+            <p>No tienes permisos para acceder a esta pÃ¡gina.</p>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 @code {
     private string CriterioOrden { get; set; } = "cantidad";
 
@@ -170,7 +183,7 @@
     [
         new()
         {
-            Nombre = "Whisky Chivas Regal 12 Años",
+            Nombre = "Whisky Chivas Regal 12 AÃ±os",
             Precio = 119.90,
             CantidadVendida = 84
         },
@@ -200,7 +213,7 @@
         },
         new()
         {
-            Nombre = "Tequila José Cuervo Especial",
+            Nombre = "Tequila JosÃ© Cuervo Especial",
             Precio = 79.90,
             CantidadVendida = 64
         },
@@ -218,7 +231,7 @@
         },
         new()
         {
-            Nombre = "Champagne Moët & Chandon",
+            Nombre = "Champagne MoÃ«t & Chandon",
             Precio = 249.90,
             CantidadVendida = 27
         },

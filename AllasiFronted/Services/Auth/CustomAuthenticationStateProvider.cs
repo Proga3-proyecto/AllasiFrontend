@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.Security.Claims;
 
@@ -43,6 +43,11 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider, ID
                     new Claim(ClaimTypes.Role, rolResult.Value)
                 }, "CustomAuth");
 
+                if (rolResult.Value?.Trim().Equals("MASTER", StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    identity.AddClaim(new Claim(ClaimTypes.Role, "ADMIN"));
+                }
+
                 usuarioActual = new ClaimsPrincipal(identity);
             }
             else
@@ -78,6 +83,11 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider, ID
             },
             "CustomAuth"
         );
+
+        if (rol?.Trim().Equals("MASTER", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            identity.AddClaim(new Claim(ClaimTypes.Role, "ADMIN"));
+        }
 
         usuarioActual = new ClaimsPrincipal(identity);
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
