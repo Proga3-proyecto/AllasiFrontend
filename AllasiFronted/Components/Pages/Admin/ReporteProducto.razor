@@ -4,6 +4,10 @@
 @inject NavigationManager Navigation
 
 @using Microsoft.AspNetCore.Components.Authorization
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+
+@inject PedidosRS pedidosRS
 
 <AuthorizeView Roles="ADMIN" Context="authContext">
     <Authorized>
@@ -179,69 +183,22 @@
 
     private string TipoOrden { get; set; } = "descendente";
 
-    private List<ProductoReporte> Productos { get; set; } =
-    [
-        new()
+    private List<ProductoReporte> Productos { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        List<Pedido> pedidos = await pedidosRS.ListarTodosAsync();
+
+        Productos = pedidos.Select(pedido => new ProductoReporte
         {
-            Nombre = "Whisky Chivas Regal 12 Años",
-            Precio = 119.90,
-            CantidadVendida = 84
-        },
-        new()
-        {
-            Nombre = "Ron Cartavio Black",
-            Precio = 39.90,
-            CantidadVendida = 132
-        },
-        new()
-        {
-            Nombre = "Pisco Queirolo Quebranta",
-            Precio = 34.50,
-            CantidadVendida = 96
-        },
-        new()
-        {
-            Nombre = "Vodka Absolut",
-            Precio = 69.90,
-            CantidadVendida = 71
-        },
-        new()
-        {
-            Nombre = "Gin Tanqueray",
-            Precio = 99.90,
-            CantidadVendida = 58
-        },
-        new()
-        {
-            Nombre = "Tequila José Cuervo Especial",
-            Precio = 79.90,
-            CantidadVendida = 64
-        },
-        new()
-        {
-            Nombre = "Cerveza Corona Six Pack",
-            Precio = 32.90,
-            CantidadVendida = 145
-        },
-        new()
-        {
-            Nombre = "Vino Casillero del Diablo Cabernet",
-            Precio = 44.90,
-            CantidadVendida = 89
-        },
-        new()
-        {
-            Nombre = "Champagne Moët & Chandon",
-            Precio = 249.90,
-            CantidadVendida = 27
-        },
-        new()
-        {
-            Nombre = "Licor Baileys Original",
-            Precio = 89.90,
-            CantidadVendida = 52
-        }
-    ];
+            Nombre = pedido.cliente.nombre,
+            Precio = pedido.precioFinal,
+            CantidadVendida =
+        pedido.detallesProductos.Sum(dp => dp.cantidad) +
+        pedido.detallesRecetas.Sum(dr => dr.cantidad)
+        }).ToList();
+
+    }
 
 
     private IEnumerable<ProductoReporte> ProductosOrdenados
@@ -254,6 +211,8 @@
                     ? Productos.OrderBy(producto => producto.Precio)
                     : Productos.OrderByDescending(producto => producto.Precio);
             }
+
+            if (Productos == null) return [];
 
             return TipoOrden == "ascendente"
                 ? Productos.OrderBy(producto => producto.CantidadVendida)
