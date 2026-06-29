@@ -17,14 +17,18 @@
         <div class="detail-grid">
             <div class="image-gallery">
                 <div class="main-image-container">
-                    <button class="nav-btn prev-btn"><i class="bi bi-chevron-left"></i></button>
-                    <img src="@producto.ImagenUrl" alt="@producto.nombre" class="main-image" />
-                    <button class="nav-btn next-btn"><i class="bi bi-chevron-right"></i></button>
+                    <button class="nav-btn prev-btn" @onclick="PrevImage"><i class="bi bi-chevron-left"></i></button>
+                    <img src="@producto.imagenes[currentImage].url" alt="@producto.nombre" class="main-image" />
+                    <button class="nav-btn next-btn" @onclick="NextImage"><i class="bi bi-chevron-right"></i></button>
                 </div>
                 <div class="thumbnails">
-                    <div class="thumbnail active">
-                        <img src="@producto.ImagenUrl" alt="@producto.nombre" />
-                    </div>
+
+                    @foreach (Imagen imagen in producto.imagenes)
+                    {
+                        <div class="thumbnail @(imagen.id == currentImageId ? "active" : "")" @onclick="()=>SelectImage(imagen.id)">
+                            <img src="@imagen.url" alt="@producto.nombre" />
+                        </div>
+                    }
                 </div>
             </div>
 
@@ -62,11 +66,51 @@
     public int id { get; set; }
 
     private Producto? producto;
+    private List<Imagen> imagenes;
     private int quantity = 1;
+
+    private int currentImage = 0;
+    private int? currentImageId = null;
+
+
 
     protected override async Task OnInitializedAsync()
     {
         producto = await ProductosService.ObtenerPorIdAsync(id);
+        if (producto == null) return;
+        imagenes = producto.imagenes;
+        imagenes.Sort((a, b) => a.principal ? 1 : 0);
+
+        currentImageId = imagenes[0].id;
+    }
+
+    private void NextImage()
+    {
+        currentImage = (currentImage + 1) % imagenes.Count;
+        currentImageId = imagenes[currentImage].id;
+    }
+
+    private void PrevImage()
+    {
+        currentImage--;
+        if (currentImage < 0)
+        {
+            currentImage = imagenes.Count - 1;
+        }
+        currentImageId = imagenes[currentImage].id;
+    }
+
+    private void SelectImage(int id)
+    {
+        for(int i = 0; i < imagenes.Count; i++)
+        {
+            if(imagenes[i].id == id)
+            {
+                currentImageId = id;
+                currentImage = i;
+                break;
+            }
+        }
     }
 
     private void DecreaseQuantity()

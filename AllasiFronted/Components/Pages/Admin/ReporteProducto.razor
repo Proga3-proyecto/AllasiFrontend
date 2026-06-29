@@ -13,161 +13,161 @@
     <Authorized>
         <div class="product-report-page container-fluid mt-3 mb-4">
 
-    <div class="report-header">
+            <div class="report-header">
 
-        <div class="d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
 
-            <button type="button"
-                    class="btn navy-bg"
-                    @onclick='() => Navigation.NavigateTo("/admin/report-list")'>
+                    <button type="button"
+                            class="btn navy-bg"
+                            @onclick='() => Navigation.NavigateTo("/admin/report-list")'>
 
-                <i class="bi bi-arrow-left me-1"></i>
-                Regresar
-            </button>
+                        <i class="bi bi-arrow-left me-1"></i>
+                        Regresar
+                    </button>
 
-            <button type="button"
-                    class="btn navy-bg">
+                    <button type="button"
+                            class="btn navy-bg">
 
-                <i class="bi bi-download me-1"></i>
-                Exportar
-            </button>
+                        <i class="bi bi-download me-1"></i>
+                        Exportar
+                    </button>
 
-        </div>
-
-
-        <div>
-            <h2 class="report-title text-navy">
-                Reporte por Producto
-            </h2>
-
-            <p class="report-subtitle">
-                Consulta el precio y la cantidad vendida de cada producto.
-            </p>
-        </div>
+                </div>
 
 
-    </div>
+                <div>
+                    <h2 class="report-title text-navy">
+                        Reporte por Producto
+                    </h2>
 
-    <div class="filter-panel"
-         style="grid-template-columns: 1fr 1fr;">
+                    <p class="report-subtitle">
+                        Consulta el precio y la cantidad vendida de cada producto.
+                    </p>
+                </div>
 
-        <div class="filter-group">
 
-            <label>Ordenar por</label>
+            </div>
 
-            <div class="input-container">
-                <i class="bi bi-filter"></i>
+            <div class="filter-panel"
+                 style="grid-template-columns: 1fr 1fr;">
 
-                <select @bind="CriterioOrden">
-                    <option value="cantidad">
-                        Cantidad vendida
-                    </option>
+                <div class="filter-group">
 
-                    <option value="precio">
-                        Precio
-                    </option>
-                </select>
+                    <label>Ordenar por</label>
+
+                    <div class="input-container">
+                        <i class="bi bi-filter"></i>
+
+                        <select @bind="CriterioOrden">
+                            <option value="cantidad">
+                                Cantidad vendida
+                            </option>
+
+                            <option value="precio">
+                                Precio
+                            </option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="filter-group">
+
+                    <label>Tipo de orden</label>
+
+                    <div class="input-container">
+                        <i class="bi bi-sort-down"></i>
+
+                        <select @bind="TipoOrden">
+                            <option value="descendente">
+                                Mayor a menor
+                            </option>
+
+                            <option value="ascendente">
+                                Menor a mayor
+                            </option>
+                        </select>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="table-container">
+
+                <div class="table-responsive">
+
+                    <table class="table custom-table table-borderless align-middle w-100">
+
+                        <thead>
+                            <tr>
+                                <th class="text-start">
+                                    PRODUCTO
+                                </th>
+
+                                <th class="text-center">
+                                    PRECIO
+                                </th>
+
+                                <th class="text-center">
+                                    CANTIDAD VENDIDA
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var producto in ProductosOrdenados)
+                            {
+                                <tr>
+
+                                    <td class="text-start">
+
+                                        <div class="d-flex align-items-center gap-2">
+
+                                            <div class="summary-icon"
+                                                 style="width: 36px;
+                                                height: 36px;">
+
+                                                <i class="fa-light fa-martini-glass"></i>
+                                            </div>
+
+                                            <span class="fw-bold text-navy">
+                                                @producto.Nombre
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+                                    <td class="text-center text-nowrap">
+
+                                        <span class="fw-bold text-dark">
+                                            S/ @producto.Precio.ToString("0.00")
+                                        </span>
+
+                                    </td>
+
+                                    <td class="text-center text-nowrap">
+
+                                        <span class="fw-bold text-navy">
+                                            @producto.CantidadVendida
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
             </div>
 
         </div>
-
-        <div class="filter-group">
-
-            <label>Tipo de orden</label>
-
-            <div class="input-container">
-                <i class="bi bi-sort-down"></i>
-
-                <select @bind="TipoOrden">
-                    <option value="descendente">
-                        Mayor a menor
-                    </option>
-
-                    <option value="ascendente">
-                        Menor a mayor
-                    </option>
-                </select>
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="table-container">
-
-        <div class="table-responsive">
-
-            <table class="table custom-table table-borderless align-middle w-100">
-
-                <thead>
-                    <tr>
-                        <th class="text-start">
-                            PRODUCTO
-                        </th>
-
-                        <th class="text-center">
-                            PRECIO
-                        </th>
-
-                        <th class="text-center">
-                            CANTIDAD VENDIDA
-                        </th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    @foreach (var producto in ProductosOrdenados)
-                    {
-                        <tr>
-
-                            <td class="text-start">
-
-                                <div class="d-flex align-items-center gap-2">
-
-                                    <div class="summary-icon"
-                                         style="width: 36px;
-                                        height: 36px;">
-
-                                        <i class="fa-light fa-martini-glass"></i>
-                                    </div>
-
-                                    <span class="fw-bold text-navy">
-                                        @producto.Nombre
-                                    </span>
-
-                                </div>
-
-                            </td>
-
-                            <td class="text-center text-nowrap">
-
-                                <span class="fw-bold text-dark">
-                                    S/ @producto.Precio.ToString("0.00")
-                                </span>
-
-                            </td>
-
-                            <td class="text-center text-nowrap">
-
-                                <span class="fw-bold text-navy">
-                                    @producto.CantidadVendida
-                                </span>
-
-                            </td>
-
-                        </tr>
-                    }
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-</div>
 
 
     </Authorized>

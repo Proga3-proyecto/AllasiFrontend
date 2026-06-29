@@ -7,6 +7,14 @@
 @using Progra3_Frontend.Model
 @using Progra3_Frontend.Services
 
+@using Microsoft.JSInterop
+@using QuestPDF.Fluent
+@using QuestPDF.Helpers
+@using QuestPDF.Infrastructure
+
+@inject IJSRuntime JS
+
+
 @inject PedidosRS pedidosRS
 
 <AuthorizeView Roles="ADMIN" Context="authContext">
@@ -25,12 +33,13 @@
                 Regresar
             </button>
 
-            <button type="button"
-                    class="btn navy-bg">
+			<button type="button"
+					class="btn navy-bg"
+					@onclick="ExportarPdf">
 
-                <i class="bi bi-download me-1"></i>
-                Exportar
-            </button>
+				<i class="bi bi-download me-1"></i>
+				Exportar PDF
+			</button>
 
         </div>
 
@@ -232,4 +241,114 @@
 
         public double TotalComprado { get; set; }
     }
+	
+	// 
+	public async Task ExportarPdf()
+	{
+		QuestPDF.Settings.License = LicenseType.Community;
+
+		List<ClienteReporte> clientesExportar = ClientesOrdenados.ToList();
+
+		double totalGeneral = clientesExportar.Sum(
+			cliente => cliente.TotalComprado
+		);
+
+		byte[] pdf = Document.Create(container =>
+		{
+			container.Page(page =>
+			{
+				page.Margin(30);
+
+				page.Header()
+					.Text("Reporte por Cliente")
+					.FontSize(20)
+					.Bold();
+
+				page.Content().Column(col =>
+				{
+					col.Spacing(10);
+
+					col.Item().Text(
+						$"Total de clientes: {clientesExportar.Count}"
+					);
+
+					col.Item().Text(
+						$"Total general comprado: S/ {totalGeneral:0.00}"
+					);
+
+					col.Item()
+						.PaddingTop(15)
+						.Table(table =>
+						{
+							table.ColumnsDefinition(columns =>
+							{
+								columns.RelativeColumn();
+								columns.ConstantColumn(100);
+								columns.ConstantColumn(120);
+							});
+
+							table.Header(header =>
+							{
+								header.Cell()
+									.Background(Colors.Blue.Darken3)
+									.Padding(6)
+									.Text("Cliente")
+									.FontColor(Colors.White)
+									.Bold();
+
+								header.Cell()
+									.Background(Colors.Blue.Darken3)
+									.Padding(6)
+									.Text("DNI")
+									.FontColor(Colors.White)
+									.Bold();
+
+								header.Cell()
+									.Background(Colors.Blue.Darken3)
+									.Padding(6)
+									.Text("Total comprado")
+									.FontColor(Colors.White)
+									.Bold();
+							});
+
+							foreach (ClienteReporte cliente in clientesExportar)
+							{
+								table.Cell()
+									.BorderBottom(1)
+									.BorderColor(Colors.Grey.Lighten2)
+									.Padding(6)
+									.Text(cliente.Nombre);
+
+								table.Cell()
+									.BorderBottom(1)
+									.BorderColor(Colors.Grey.Lighten2)
+									.Padding(6)
+									.Text(cliente.Dni);
+
+								table.Cell()
+									.BorderBottom(1)
+									.BorderColor(Colors.Grey.Lighten2)
+									.Padding(6)
+									.Text($"S/ {cliente.TotalComprado:0.00}");
+							}
+						});
+				});
+
+				page.Footer()
+					.AlignCenter()
+					.Text(text =>
+					{
+						text.Span("Página ");
+						text.CurrentPageNumber();
+					});
+			});
+		}).GeneratePdf();
+
+		await JS.InvokeVoidAsync(
+			"descargarArchivo",
+			"ReporteClientes.pdf",
+			"application/pdf",
+			Convert.ToBase64String(pdf)
+		);
+	}
 }
