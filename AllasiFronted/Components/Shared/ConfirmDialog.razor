@@ -8,8 +8,8 @@
         <div class="custom-modal-dialog" @onclick:stopPropagation="true">
             <div class="custom-modal-content">
                 
-                <div class="custom-modal-icon">
-                    <i class="bi bi-exclamation-triangle"></i>
+                <div class="custom-modal-icon @GetIconBackgroundClass()">
+                    <i class="@GetIconClass()"></i>
                 </div>
                 
                 <h3 class="custom-modal-title">@title</h3>
@@ -17,7 +17,7 @@
                 
                 <div class="custom-modal-actions">
                     <button class="btn-custom-cancel" @onclick="Cancel">Cancelar</button>
-                    <button class="btn-custom-confirm" @onclick="Confirm">Confirmar</button>
+                    <button class="btn-custom-confirm @GetButtonClass()" @onclick="Confirm">Confirmar</button>
                 </div>
             </div>
         </div>
@@ -56,8 +56,6 @@
         .custom-modal-icon {
             width: 72px;
             height: 72px;
-            background-color: #fee2e2;
-            color: #ef4444;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -65,6 +63,11 @@
             font-size: 2.2rem;
             margin: 0 auto 20px auto;
         }
+
+        .icon-bg-danger { background-color: #fee2e2; color: #ef4444; }
+        .icon-bg-info { background-color: #e0f2fe; color: #0ea5e9; }
+        .icon-bg-success { background-color: #dcfce3; color: #22c55e; }
+        .icon-bg-warning { background-color: #fef3c7; color: #f59e0b; }
 
         /* Textos */
         .custom-modal-title {
@@ -109,18 +112,22 @@
         }
 
         .btn-custom-confirm {
-            background-color: #ef4444;
             color: white;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
         }
 
-        .btn-custom-confirm:hover {
-            background-color: #dc2626;
-            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35);
-            transform: translateY(-2px);
-        }
+        .btn-confirm-danger { background-color: #ef4444; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25); }
+        .btn-confirm-danger:hover { background-color: #dc2626; box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35); transform: translateY(-2px); }
 
-        /* Animaciones (escapadas con doble arroba para Razor) */
+        .btn-confirm-info { background-color: #0ea5e9; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25); }
+        .btn-confirm-info:hover { background-color: #0284c7; box-shadow: 0 6px 16px rgba(14, 165, 233, 0.35); transform: translateY(-2px); }
+
+        .btn-confirm-success { background-color: #22c55e; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25); }
+        .btn-confirm-success:hover { background-color: #16a34a; box-shadow: 0 6px 16px rgba(34, 197, 94, 0.35); transform: translateY(-2px); }
+
+        .btn-confirm-warning { background-color: #f59e0b; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25); }
+        .btn-confirm-warning:hover { background-color: #d97706; box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35); transform: translateY(-2px); }
+
+        /* Animaciones */
         @@keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -137,6 +144,7 @@
     private bool isVisible;
     private string title = string.Empty;
     private string message = string.Empty;
+    private DialogType currentType = DialogType.Danger;
     private TaskCompletionSource<bool>? tcs;
 
     protected override void OnInitialized()
@@ -144,10 +152,11 @@
         DialogService.OnShow += ShowAsync;
     }
 
-    private Task<bool> ShowAsync(string title, string message)
+    private Task<bool> ShowAsync(string title, string message, DialogType type)
     {
         this.title = title;
         this.message = message;
+        this.currentType = type;
         this.isVisible = true;
         this.tcs = new TaskCompletionSource<bool>();
         StateHasChanged();
@@ -167,6 +176,30 @@
         tcs?.SetResult(false);
         StateHasChanged();
     }
+
+    private string GetIconClass() => currentType switch
+    {
+        DialogType.Info => "bi bi-info-circle",
+        DialogType.Success => "bi bi-check-circle",
+        DialogType.Warning => "bi bi-exclamation-triangle",
+        _ => "bi bi-exclamation-triangle"
+    };
+
+    private string GetIconBackgroundClass() => currentType switch
+    {
+        DialogType.Info => "icon-bg-info",
+        DialogType.Success => "icon-bg-success",
+        DialogType.Warning => "icon-bg-warning",
+        _ => "icon-bg-danger"
+    };
+
+    private string GetButtonClass() => currentType switch
+    {
+        DialogType.Info => "btn-confirm-info",
+        DialogType.Success => "btn-confirm-success",
+        DialogType.Warning => "btn-confirm-warning",
+        _ => "btn-confirm-danger"
+    };
 
     public void Dispose()
     {

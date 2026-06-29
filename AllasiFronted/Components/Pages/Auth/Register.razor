@@ -6,6 +6,7 @@
 @inject NavigationManager Navigation
 @inject ClientesRS clienteRS
 @inject CustomAuthenticationStateProvider AuthProvider
+@inject ConfirmDialogService DialogService
 
 <div class="container">
     <section>
@@ -71,18 +72,20 @@
 
                     <div class="form-input">
                         <label>Contraseña</label>
-                        <div class="input-container">
+                        <div class="input-container" style="position: relative;">
                             <i class="bi bi-lock-fill"></i>
-                            <InputText @bind-Value="formUser.Password"  placeholder="Crea una contraseña" />
+                            <InputText @bind-Value="formUser.Password" type="@(showPassword ? "text" : "password")" placeholder="Crea una contraseña" style="padding-right: 35px; width: 100%;" />
+                            <i class="bi @(showPassword ? "bi-eye-slash" : "bi-eye") text-muted" style="position: absolute; right: 15px; cursor: pointer;" @onclick="() => showPassword = !showPassword"></i>
                         </div>
                         <ValidationMessage For="@(() => formUser.Password)" />
                     </div>
 
                     <div class="form-input">
                         <label>Repetir Contraseña</label>
-                        <div class="input-container">
+                        <div class="input-container" style="position: relative;">
                             <i class="bi bi-lock-fill"></i>
-                            <InputText @bind-Value="formUser.ConfirmPassword"  placeholder="Repite tu contraseña" />
+                            <InputText @bind-Value="formUser.ConfirmPassword" type="@(showConfirmPassword ? "text" : "password")" placeholder="Repite tu contraseña" style="padding-right: 35px; width: 100%;" />
+                            <i class="bi @(showConfirmPassword ? "bi-eye-slash" : "bi-eye") text-muted" style="position: absolute; right: 15px; cursor: pointer;" @onclick="() => showConfirmPassword = !showConfirmPassword"></i>
                         </div>
                         <ValidationMessage For="@(() => formUser.ConfirmPassword)" />
                     </div>
@@ -145,6 +148,8 @@
     
     private string? errorMessage;
     private bool isProcessing = false;
+    private bool showPassword = false;
+    private bool showConfirmPassword = false;
 
     private async Task CrearCuenta()
     {
@@ -154,8 +159,14 @@
 
         try
         {
+            bool esMayor = await DialogService.ConfirmAsync("Verificación de edad", "¿Confirmas ser mayor de edad?", DialogType.Info);
+            if (!esMayor)
+            {
+                Navigation.NavigateTo("/underage");
+                return;
+            }
 
-        Cliente cliente = new();
+            Cliente cliente = new();
         cliente.dni = formUser.Dni;
         cliente.correo = formUser.Email;
         cliente.nombre = formUser.Nombres;
@@ -219,6 +230,24 @@
         public string ConfirmPassword { get; set; } = "";
 
         [Required(ErrorMessage = "Seleccione una fecha")]
+        [MayorDeEdad(ErrorMessage = "Debe ingresar una fecha de nacimiento mayor a 18 años.")]
         public DateTime? FechaNacimiento { get; set; }
+    }
+
+    public class MayorDeEdadAttribute : ValidationAttribute
+    {
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+        {
+            if (value is DateTime fechaNac)
+            {
+                var edad = DateTime.Today.Year - fechaNac.Year;
+                if (fechaNac.Date > DateTime.Today.AddYears(-edad)) edad--;
+                if (edad < 18)
+                {
+                    return new ValidationResult(ErrorMessage ?? "Debe ser mayor de edad.");
+                }
+            }
+            return ValidationResult.Success;
+        }
     }
 }
