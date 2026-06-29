@@ -19,6 +19,17 @@
         {
             <p class="product-category">@GetSubtitle()</p>
         }
+        @if (ProductoItem != null)
+        {
+            if (ProductoItem.stock <= 0)
+            {
+                <p class="product-stock text-danger" style="font-size: 0.85rem; font-weight: bold; margin-bottom: 5px;">Agotado</p>
+            }
+            else
+            {
+                <p class="product-stock text-muted" style="font-size: 0.85rem; margin-bottom: 5px;">Stock: @ProductoItem.stock</p>
+            }
+        }
         <div class="product-bottom">
             <span class="product-price">S/ @GetPrice().ToString("0.00")</span>
             <button class="cart-button" title="Añadir al carrito" @onclick="AddToCart" @onclick:stopPropagation><i class="bi bi-cart"></i></button>
@@ -88,6 +99,19 @@
 
         if (ProductoItem != null)
         {
+            if (ProductoItem.stock <= 0)
+            {
+                ToastService.ShowToast("Este producto se encuentra agotado.", "warning", 1500);
+                return;
+            }
+            
+            var itemInCart = CarritoService.Productos.FirstOrDefault(p => p.producto.id == ProductoItem.id);
+            if (itemInCart != null && itemInCart.cantidad >= ProductoItem.stock)
+            {
+                ToastService.ShowToast("No hay más stock disponible de este producto.", "warning", 1500);
+                return;
+            }
+
             CarritoService.AgregarProducto(ProductoItem, 1);
         }
         else if (RecetaItem != null)

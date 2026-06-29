@@ -224,11 +224,11 @@
     private async Task CrearCuenta()
     {
         if (isProcessing) return;
-        if (strengthPercent < 100) 
-        {
-            errorMessage = "La contraseña no cumple con todos los requisitos de seguridad.";
-            return;
-        }
+       if (PasswordScore < 4) 
+    {
+        errorMessage = "La contraseña no cumple con todos los requisitos de seguridad.";
+        return;
+    }
         isProcessing = true;
         errorMessage = null;
 

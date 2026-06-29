@@ -46,6 +46,14 @@
                     <p><strong>Porcentaje de Alcohol:</strong> @producto.porcentajeAlcohol%</p>
                     <p><strong>Volumen:</strong> @producto.volumenLitros Ltrs</p>
                     <p><strong>Descuento disponible:</strong> @(producto.descuento > 0 ? $"{producto.descuento}%" : "Sin descuento")</p>
+                    @if (producto.stock <= 0)
+                    {
+                        <p class="text-danger" style="font-weight: bold;">Estado: Agotado</p>
+                    }
+                    else
+                    {
+                        <p><strong>Stock disponible:</strong> @producto.stock</p>
+                    }
                 </div>
 
                 <div class="add-to-cart-section">
@@ -122,6 +130,11 @@
 
     private void IncreaseQuantity()
     {
+        if (producto != null && quantity >= producto.stock)
+        {
+            ToastService.ShowToast("No hay más stock disponible de este producto.", "warning", 1500);
+            return;
+        }
         quantity++;
     }
 
@@ -130,12 +143,25 @@
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         if (authState.User.Identity == null || !authState.User.Identity.IsAuthenticated)
         {
-            ToastService.ShowToast("No se puede agregar al carrito si no estás registrado.", "warning");
+            ToastService.ShowToast("No se puede agregar al carrito si no estás registrado.", "warning", 1500);
             return;
         }
 
         if (producto != null)
         {
+            if (producto.stock <= 0)
+            {
+                ToastService.ShowToast("Este producto se encuentra agotado.", "warning", 1500);
+                return;
+            }
+            
+            var itemInCart = CarritoService.Productos.FirstOrDefault(p => p.producto.id == producto.id);
+            if (itemInCart != null && (itemInCart.cantidad + quantity) > producto.stock)
+            {
+                ToastService.ShowToast("No hay suficiente stock para añadir esa cantidad.", "warning", 1500);
+                return;
+            }
+
             CarritoService.AgregarProducto(producto, quantity);
         }
     }
