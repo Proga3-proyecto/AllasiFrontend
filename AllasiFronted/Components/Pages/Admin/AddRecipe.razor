@@ -14,7 +14,7 @@
 
 <AuthorizeView Roles="ADMIN" Context="authContext">
     <Authorized>
-        <div class="add-recipe-page container-fluid mt-3 mb-4">
+        <div class="container-fluid mt-3 mb-4">
 
     <div class="text-center mb-3">
         <h2 class="fw-bold text-navy"
@@ -245,16 +245,9 @@
                                     <div class="input-container">
                                         <i class="bi bi-box-seam"></i>
 
-                                        <select @bind="ingredientes[indice].ProductoId">
-                                            <option value="0">Seleccione un producto</option>
-                                            @foreach (var producto in productosDisponibles)
-                                            {
-                                                <option value="@producto.id">
-                                                    @producto.nombre - S/ @producto.precioFinal.ToString("0.00")
-                                                </option>
-                                            }
-                                        </select>
+                                        <input type="text" list="productosList" placeholder="Ej: Pisco Quebranta" @bind="ingredientes[indice].ProductoNombreTemporal" />
                                     </div>
+
 
                                 </div>
 
@@ -290,6 +283,16 @@
 
                             </div>
                         }
+
+                        <datalist id="productosList">
+                            @if (productosDisponibles != null)
+                            {
+                                @foreach (var producto in productosDisponibles)
+                                {
+                                    <option value="@producto.nombre"></option>
+                                }
+                            }
+                        </datalist>
                     }
 
                 </div>
@@ -324,7 +327,7 @@
 
                     <button type="button"
                             class="btn btn-outline-custom"
-                            style="border-radius: 6px; font-size: 0.82rem; padding: 6px 14px;"
+                            style="border-radius: 6px; font-size: 0.82rem; padding: 7px 14px;"
                             @onclick='() => Navigation.NavigateTo("/admin/recipe-list")'>
                         Cancelar
                     </button>
@@ -332,7 +335,7 @@
                     <button type="submit"
                             class="btn navy-bg"
                             disabled="@guardando"
-                            style="border-radius: 6px; font-weight: 500; font-size: 0.82rem; padding: 6px 14px;">
+                            style="border-radius: 6px; font-weight: 500; font-size: 0.82rem; padding: 7px 14px;">
 
                         @if (guardando)
                         {
@@ -392,6 +395,7 @@
     {
         public int ProductoId { get; set; }
         public double? Cantidad { get; set; }
+        public string ProductoNombreTemporal { get; set; } = string.Empty;
     }
 
     public class ImageItem
@@ -506,6 +510,19 @@
     {
         mensajeError = string.Empty;
 
+        foreach (var ing in ingredientes)
+        {
+            var p = productosDisponibles.FirstOrDefault(x => string.Equals(x.nombre, ing.ProductoNombreTemporal?.Trim(), StringComparison.OrdinalIgnoreCase));
+            if (p != null)
+            {
+                ing.ProductoId = p.id;
+            }
+            else
+            {
+                ing.ProductoId = 0;
+            }
+        }
+
         List<IngredienteViewModel> ingredientesValidos = ingredientes
             .Where(ingrediente =>
                 ingrediente.ProductoId > 0 &&
@@ -516,7 +533,7 @@
 
         if (ingredientesValidos.Count == 0)
         {
-            mensajeError = "Debes añadir por lo menos un producto a la receta.";
+            mensajeError = "Debes añadir por lo menos un producto a la receta (verifica que el nombre sea válido).";
             return;
         }
 
