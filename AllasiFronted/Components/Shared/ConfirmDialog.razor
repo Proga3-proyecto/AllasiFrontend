@@ -1,0 +1,175 @@
+@using Progra3_Frontend.Services
+@inject ConfirmDialogService DialogService
+@implements IDisposable
+
+@if (isVisible)
+{
+    <div class="custom-modal-backdrop" @onclick="Cancel">
+        <div class="custom-modal-dialog" @onclick:stopPropagation="true">
+            <div class="custom-modal-content">
+                
+                <div class="custom-modal-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                
+                <h3 class="custom-modal-title">@title</h3>
+                <p class="custom-modal-message">@message</p>
+                
+                <div class="custom-modal-actions">
+                    <button class="btn-custom-cancel" @onclick="Cancel">Cancelar</button>
+                    <button class="btn-custom-confirm" @onclick="Confirm">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Backdrop con blur */
+        .custom-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        /* Contenedor principal del modal */
+        .custom-modal-dialog {
+            background-color: #ffffff;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 400px;
+            padding: 32px 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            animation: scaleUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Contenedor del Icono */
+        .custom-modal-icon {
+            width: 72px;
+            height: 72px;
+            background-color: #fee2e2;
+            color: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            margin: 0 auto 20px auto;
+        }
+
+        /* Textos */
+        .custom-modal-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+
+        .custom-modal-message {
+            font-size: 0.95rem;
+            color: #64748b;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* Botones */
+        .custom-modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .btn-custom-cancel, .btn-custom-confirm {
+            padding: 12px 20px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+
+        .btn-custom-cancel {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-custom-cancel:hover {
+            background-color: #e2e8f0;
+        }
+
+        .btn-custom-confirm {
+            background-color: #ef4444;
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+        }
+
+        .btn-custom-confirm:hover {
+            background-color: #dc2626;
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35);
+            transform: translateY(-2px);
+        }
+
+        /* Animaciones (escapadas con doble arroba para Razor) */
+        @@keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @@keyframes scaleUp {
+            from { opacity: 0; transform: scale(0.85); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+}
+
+@code {
+    private bool isVisible;
+    private string title = string.Empty;
+    private string message = string.Empty;
+    private TaskCompletionSource<bool>? tcs;
+
+    protected override void OnInitialized()
+    {
+        DialogService.OnShow += ShowAsync;
+    }
+
+    private Task<bool> ShowAsync(string title, string message)
+    {
+        this.title = title;
+        this.message = message;
+        this.isVisible = true;
+        this.tcs = new TaskCompletionSource<bool>();
+        StateHasChanged();
+        return this.tcs.Task;
+    }
+
+    private void Confirm()
+    {
+        isVisible = false;
+        tcs?.SetResult(true);
+        StateHasChanged();
+    }
+
+    private void Cancel()
+    {
+        isVisible = false;
+        tcs?.SetResult(false);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        DialogService.OnShow -= ShowAsync;
+    }
+}

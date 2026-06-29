@@ -9,6 +9,7 @@
 @inject ClientesRS ClientesRS
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ConfirmDialogService DialogService
 
 <AuthorizeView Roles="ADMIN, MASTER" Context="authContext">
     <Authorized>
@@ -249,6 +250,9 @@
 
     private async Task EliminarUsuario(Usuario user)
     {
+        bool confirmed = await DialogService.ConfirmAsync("Eliminar Cliente", $"¿Estás seguro que deseas eliminar al cliente {user.nombre}?");
+        if (!confirmed) return;
+
         processingItemId = user.idUsuario;
         processingAction = "Eliminar";
         try

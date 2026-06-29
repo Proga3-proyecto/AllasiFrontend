@@ -8,6 +8,7 @@
 @inject ProductosRS ProductosRS
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ConfirmDialogService DialogService
 
 <AuthorizeView Roles="ADMIN, MASTER" Context="authContext">
     <Authorized>
@@ -281,6 +282,9 @@
 
     private async Task EliminarProducto(int idProducto)
     {
+        bool confirmed = await DialogService.ConfirmAsync("Eliminar Producto", "¿Estás seguro que deseas eliminar este producto? Esta acción no se puede deshacer.");
+        if (!confirmed) return;
+
         processingItemId = idProducto;
         processingAction = "Eliminar";
         try

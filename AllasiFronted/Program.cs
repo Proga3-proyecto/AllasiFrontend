@@ -37,7 +37,7 @@ builder.Services.AddHttpClient<AuthService>();
 builder.Services.AddHttpClient<IAuthService, AuthService>();
 
 builder.Services.AddScoped<CarritoStateService>();
-
+builder.Services.AddScoped<ConfirmDialogService>();
 
 
 builder.Services.AddAuthorizationCore();

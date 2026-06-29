@@ -6,6 +6,7 @@
 
 @inject RecetasRS RecetasRS
 @inject NavigationManager Navigation
+@inject ConfirmDialogService DialogService
 
 @using Microsoft.AspNetCore.Components.Authorization
 
@@ -315,6 +316,9 @@
 
     private async Task EliminarReceta(int idReceta)
     {
+        bool confirmed = await DialogService.ConfirmAsync("Eliminar Receta", "¿Estás seguro que deseas eliminar esta receta? Esta acción es irreversible.");
+        if (!confirmed) return;
+
         processingItemId = idReceta;
         processingAction = "Eliminar";
         try

@@ -10,6 +10,7 @@
 @inject AdminsRS AdminsRS
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ConfirmDialogService DialogService
 
 <AuthorizeView Roles="MASTER" Context="authContext">
     <Authorized>
@@ -269,6 +270,9 @@
 
     private async Task EliminarUsuario(Usuario user)
     {
+        bool confirmed = await DialogService.ConfirmAsync("Eliminar Administrador", $"¿Estás seguro que deseas eliminar al administrador {user.nombre}?");
+        if (!confirmed) return;
+
         processingItemId = user.idUsuario;
         processingAction = "Eliminar";
         try
