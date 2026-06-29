@@ -88,6 +88,8 @@ namespace Progra3_Frontend.Services
 
         public void AgregarProducto(Producto producto, int cantidad = 1)
         {
+
+            if (!_userId.HasValue) return;
             var item = Productos.FirstOrDefault(p => p.producto.id == producto.id);
             if (item != null)
             {
@@ -113,6 +115,7 @@ namespace Progra3_Frontend.Services
 
         public void AgregarReceta(Receta receta, int cantidad = 1)
         {
+            if (!_userId.HasValue) return;
             var item = Recetas.FirstOrDefault(r => r.receta.id == receta.id);
             if (item != null)
             {
@@ -136,32 +139,6 @@ namespace Progra3_Frontend.Services
             }
         }
 
-        public void AgregarDetalleReceta(DetalleReceta detalle)
-        {
-            var item = Recetas.FirstOrDefault(r => r.receta.id == detalle.receta.id);
-            if (item != null)
-            {
-                item.cantidad += detalle.cantidad;
-                item.montoTotal += detalle.montoTotal;
-            }
-            else
-            {
-                Recetas.Add(new DetalleReceta
-                {
-                    receta = detalle.receta,
-                    cantidad = detalle.cantidad,
-                    montoTotal = detalle.montoTotal,
-                    id = detalle.id
-                });
-            }
-            NotifyStateChanged();
-
-            if (_userId.HasValue)
-            {
-                _ = _clientesRS.AgregarRecetaAlCarritoAsync(_userId.Value, detalle.receta.id, detalle.cantidad);
-            }
-        }
-
         public void ActualizarCantidadProducto(int productoId, int cantidad)
         {
             var item = Productos.FirstOrDefault(p => p.producto.id == productoId);
@@ -179,7 +156,6 @@ namespace Progra3_Frontend.Services
 
 
         }
-
         public void ActualizarCantidadReceta(int recetaId, int cantidad)
         {
             var item = Recetas.FirstOrDefault(r => r.receta.id == recetaId);
