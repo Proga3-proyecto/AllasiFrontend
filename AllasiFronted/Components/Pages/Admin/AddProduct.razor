@@ -13,6 +13,8 @@
 @inject ProductosRS ProductosRS
 @inject MarcasRS MarcasRS
 @inject CategoriasRS CategoriasRS
+@inject ImpuestosRS ImpuestosRS
+@inject AlcoholImpuestoRS AlcoholImpuestoRS
 
 <AuthorizeView Roles="ADMIN, MASTER" Context="authContext">
     <Authorized>
@@ -109,10 +111,10 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label-custom">Precio (S/) <span class="asterisk">*</span></label>
+                                    <label class="form-label-custom">Precio Base (S/) <span class="asterisk">*</span></label>
                                     <div class="input-container">
                                         <i class="bi bi-cash"></i>
-                                        <input type="number" step="0.01" placeholder="Ej: 120.50" @bind="productViewModel.precio" min="0">
+                                        <input type="number" step="0.01" placeholder="Ej: 120.50" @bind="productViewModel.precio" @bind:event="oninput" min="0">
                                     </div>
                                     <ValidationMessage For="@(() => productViewModel.precio)" class="validation-text" />
                                 </div>
@@ -139,22 +141,30 @@
                             </div>
 
                             <div class="row mb-3">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label-custom">% de Alcohol <span class="asterisk">*</span></label>
                                     <div class="input-container">
                                         <i class="bi bi-percent"></i>
-                                        <input type="number" step="0.1" placeholder="Ej: 40.0" @bind="productViewModel.porcentajeAlcohol" min="0" max="100">
+                                        <input type="number" step="0.1" placeholder="Ej: 40.0" @bind="productViewModel.porcentajeAlcohol" @bind:event="oninput" min="0" max="100">
                                     </div>
                                     <ValidationMessage For="@(() => productViewModel.porcentajeAlcohol)" class="validation-text" />
                                 </div>
 
-                                <div class="col-md-6">
-                                    <label class="form-label-custom">Descuento aplicado <span class="asterisk">*</span></label>
+                                <div class="col-md-4">
+                                    <label class="form-label-custom">Descuento (%) <span class="asterisk">*</span></label>
                                     <div class="input-container">
                                         <i class="bi bi-tag"></i>
-                                        <input type="number" step="0.01" placeholder="Ej: 0.0" @bind="productViewModel.descuento" min="0">
+                                        <input type="number" step="0.01" placeholder="Ej: 0.0" @bind="productViewModel.descuento" @bind:event="oninput" min="0">
                                     </div>
                                     <ValidationMessage For="@(() => productViewModel.descuento)" class="validation-text" />
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label-custom">Precio Final (S/)</label>
+                                    <div class="input-container" style="background-color: #f1f5f9; cursor: not-allowed;">
+                                        <i class="bi bi-currency-dollar"></i>
+                                        <input type="text" readonly value="@CalcularPrecioFinal().ToString("0.00")" style="background-color: transparent; border: none; cursor: not-allowed;">
+                                    </div>
                                 </div>
                             </div>
 
@@ -222,6 +232,8 @@
 
     private List<Marca> marcasDisponibles = new();
     private List<Categoria> categoriasDisponibles = new();
+    private List<Impuesto> impuestosActivos = new();
+    private List<AlcoholImpuesto> alcoholImpuestos = new();
 
     public class ImageItem
     {
@@ -241,6 +253,11 @@
         {
             marcasDisponibles = await MarcasRS.ListarTodasAsync() ?? new List<Marca>();
             categoriasDisponibles = await CategoriasRS.ListarTodasAsync() ?? new List<Categoria>();
+            
+            var todosImpuestos = await ImpuestosRS.ListarTodosAsync() ?? new List<Impuesto>();
+            impuestosActivos = todosImpuestos.Where(i => i.activo).ToList();
+            
+            alcoholImpuestos = await AlcoholImpuestoRS.ListarTodosAsync() ?? new List<AlcoholImpuesto>();
         }
         catch (Exception ex)
         {
@@ -295,6 +312,37 @@
         }
     }
 
+    private double CalcularPrecioFinal()
+    {
+        double precioBase = productViewModel.precio ?? 0;
+        double grados = productViewModel.porcentajeAlcohol ?? 0;
+        double descuento = productViewModel.descuento ?? 0;
+
+        double montoAlcohol = 0;
+        var alcImp = alcoholImpuestos.FirstOrDefault(a => grados >= a.minimo && grados <= a.maximo);
+        if (alcImp != null)
+        {
+            if (alcImp.porcentajePrecio == 1)
+                montoAlcohol = precioBase * (alcImp.valor / 100.0);
+            else
+                montoAlcohol = alcImp.valor;
+        }
+
+        double montoBaseTax = 0;
+        foreach (var imp in impuestosActivos)
+        {
+            if (imp.tipo == TipoImpuesto.PORCENTAJE)
+                montoBaseTax += precioBase * (imp.porcentaje / 100.0);
+            else
+                montoBaseTax += imp.porcentaje;
+        }
+
+        double precioConImpuestos = precioBase + montoAlcohol + montoBaseTax;
+        double precioFinal = precioConImpuestos - (precioConImpuestos * (descuento / 100.0));
+        
+        return Math.Round(Math.Max(0, precioFinal), 2);
+    }
+
     private async Task GuardarProducto()
     {
         if (isProcessing) return;
@@ -306,6 +354,7 @@
                 nombre = productViewModel.nombre,
                 descripcion = productViewModel.descripcion,
                 precio = productViewModel.precio ?? 0,
+                precioFinal = CalcularPrecioFinal(),
                 stock = productViewModel.stock ?? 0,
                 volumenLitros = productViewModel.volumenLitros ?? 0,
                 porcentajeAlcohol = productViewModel.porcentajeAlcohol ?? 0,
