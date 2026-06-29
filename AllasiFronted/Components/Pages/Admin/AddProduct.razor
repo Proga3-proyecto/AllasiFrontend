@@ -218,6 +218,7 @@
         public IBrowserFile File { get; set; } = default!;
         public string PreviewUrl { get; set; } = string.Empty;
         public bool IsPrincipal { get; set; } = false;
+        public byte[] FileContent { get; set; } = Array.Empty<byte>();
     }
 
     private List<ImageItem> imagenes = new();
@@ -243,13 +244,17 @@
             try
             {
                 var resizedImage = await file.RequestImageFileAsync(file.ContentType, 300, 300);
-                var buffer = new byte[resizedImage.Size];
-                await resizedImage.OpenReadStream().ReadAsync(buffer);
+                using var previewStream = new MemoryStream();
+                await resizedImage.OpenReadStream().CopyToAsync(previewStream);
+                var previewUrl = $"data:{file.ContentType};base64,{Convert.ToBase64String(previewStream.ToArray())}";
+                using var originalStream = new MemoryStream();
+                await file.OpenReadStream(maxFileSize).CopyToAsync(originalStream);
 
                 var nuevaImagen = new ImageItem
                 {
                     File = file,
-                    PreviewUrl = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer)}",
+                    PreviewUrl = previewUrl,
+                    FileContent = originalStream.ToArray(),
                     IsPrincipal = (imagenes.Count == 0)
                 };
 
@@ -304,15 +309,15 @@
                 {
                     try
                     {
-                        using var stream = img.File.OpenReadStream(maxFileSize);
-
+                        using var stream = new MemoryStream(img.FileContent);
+                        Imagen? imagen = await ProductosRS.SubirImagenAsync(producto.id, stream, img.File.Name, img.File.ContentType);
+                        if(imagen == null)
+                        {
+                            continue;
+                        }
                         if (img.IsPrincipal)
                         {
-                            await ProductosRS.SubirImagenPrincipalAsync(producto.id, stream, img.File.Name, img.File.ContentType);
-                        }
-                        else
-                        {
-                            await ProductosRS.SubirImagenAsync(producto.id, stream, img.File.Name, img.File.ContentType);
+                            await ProductosRS.SubirImagenPrincipalAsync(producto.id,imagen.id);
                         }
                     }
                     catch (Exception ex)

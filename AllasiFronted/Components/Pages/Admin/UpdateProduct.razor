@@ -363,14 +363,14 @@
                         {
                             using var stream = img.File!.OpenReadStream(maxFileSize);
 
-                            if (img.IsPrincipal)
-                            {
-                                await ProductosRS.SubirImagenPrincipalAsync(Id, stream, img.File!.Name, img.File!.ContentType);
-                            }
-                            else
-                            {
-                                await ProductosRS.SubirImagenAsync(Id, stream, img.File!.Name, img.File!.ContentType);
-                            }
+                            // if (img.IsPrincipal)
+                            // {
+                            //     await ProductosRS.SubirImagenPrincipalAsync(Id, stream, img.File!.Name, img.File!.ContentType);
+                            // }
+                            // else
+                            // {
+                            //     await ProductosRS.SubirImagenAsync(Id, stream, img.File!.Name, img.File!.ContentType);
+                            // }
                         }
                         catch (Exception ex)
                         {

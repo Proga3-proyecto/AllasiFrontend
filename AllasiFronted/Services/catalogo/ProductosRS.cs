@@ -121,7 +121,7 @@ namespace Progra3_Frontend.Services
             }
         }
 
-        public async Task<bool> SubirImagenAsync(int idProducto, Stream fileStream, string fileName, string contentType)
+        public async Task<Imagen?> SubirImagenAsync(int idProducto, Stream fileStream, string fileName, string contentType)
         {
             try
             {
@@ -132,13 +132,21 @@ namespace Progra3_Frontend.Services
                 content.Add(streamContent, "archivo", fileName);
 
                 var response = await _httpClient.PostAsync($"productos/{idProducto}/imagen", content);
-                if (response.IsSuccessStatusCode) _cachedProductos = null;
-                return response.IsSuccessStatusCode;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    _cachedProductos = null;
+                    return JsonSerializer.Deserialize<Imagen>(jsonResponse, _jsonOptions);
+                }
+
+                return null;
             }
+
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en SubirImagenAsync: {ex.Message}");
-                return false;
+                return null;
             }
         }
 
@@ -157,17 +165,17 @@ namespace Progra3_Frontend.Services
             }
         }
 
-        public async Task<bool> SubirImagenPrincipalAsync(int idProducto, Stream fileStream, string fileName, string contentType)
+        public async Task<bool> SubirImagenPrincipalAsync(int idProducto, int idImagen)
         {
             try
             {
-                using var content = new MultipartFormDataContent();
-                var streamContent = new StreamContent(fileStream);
-                streamContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+                //using var content = new MultipartFormDataContent();
+                //var streamContent = new StreamContent(fileStream);
+                //streamContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
 
-                content.Add(streamContent, "archivo", fileName);
+                //content.Add(streamContent, "archivo", fileName);
 
-                var response = await _httpClient.PostAsync($"productos/{idProducto}/imagenPrincipal", content);
+                var response = await _httpClient.PostAsync($"productos/{idProducto}/imagenPrincipal/${idImagen}", null);
                 if (response.IsSuccessStatusCode) _cachedProductos = null;
                 return response.IsSuccessStatusCode;
             }

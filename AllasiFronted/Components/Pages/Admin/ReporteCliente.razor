@@ -4,6 +4,10 @@
 @inject NavigationManager Navigation
 
 @using Microsoft.AspNetCore.Components.Authorization
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+
+@inject PedidosRS pedidosRS
 
 <AuthorizeView Roles="ADMIN" Context="authContext">
     <Authorized>
@@ -30,13 +34,14 @@
 
         </div>
 
+
         <div>
             <h2 class="report-title text-navy">
                 Reporte por Cliente
             </h2>
 
             <p class="report-subtitle">
-                Consulta el documento y la cantidad comprada por cada cliente.
+                Consulta el DNI y el total comprado de cada cliente.
             </p>
         </div>
 
@@ -54,15 +59,13 @@
                 <i class="bi bi-filter"></i>
 
                 <select @bind="CriterioOrden">
-
                     <option value="cantidad">
-                        Cantidad comprada
+                        Total comprado
                     </option>
 
                     <option value="nombre">
-                        Nombre del cliente
+                        Nombre
                     </option>
-
                 </select>
             </div>
 
@@ -76,7 +79,6 @@
                 <i class="bi bi-sort-down"></i>
 
                 <select @bind="TipoOrden">
-
                     <option value="descendente">
                         Mayor a menor
                     </option>
@@ -84,7 +86,6 @@
                     <option value="ascendente">
                         Menor a mayor
                     </option>
-
                 </select>
             </div>
 
@@ -100,19 +101,17 @@
 
                 <thead>
                     <tr>
-
                         <th class="text-start">
                             CLIENTE
                         </th>
 
                         <th class="text-center">
-                            DNI O RUC
+                            DNI
                         </th>
 
                         <th class="text-center">
-                            CANTIDAD COMPRADA
+                            TOTAL COMPRADO
                         </th>
-
                     </tr>
                 </thead>
 
@@ -130,7 +129,7 @@
                                          style="width: 36px;
                                         height: 36px;">
 
-                                        <i class="bi bi-person-fill"></i>
+                                        <i class="bi bi-person-circle"></i>
                                     </div>
 
                                     <span class="fw-bold text-navy">
@@ -144,7 +143,7 @@
                             <td class="text-center text-nowrap">
 
                                 <span class="fw-bold text-dark">
-                                    @cliente.Documento
+                                    @cliente.Dni
                                 </span>
 
                             </td>
@@ -152,7 +151,7 @@
                             <td class="text-center text-nowrap">
 
                                 <span class="fw-bold text-navy">
-                                    @cliente.CantidadComprada
+                                    S/ @cliente.TotalComprado.ToString("0.00")
                                 </span>
 
                             </td>
@@ -184,74 +183,34 @@
 
     private string TipoOrden { get; set; } = "descendente";
 
-    private List<ClienteReporte> Clientes { get; set; } =
-    [
-        new()
-        {
-            Nombre = "Carlos Mendoza Ruiz",
-            Documento = "74251863",
-            CantidadComprada = 36
-        },
-        new()
-        {
-            Nombre = "María Fernanda López",
-            Documento = "70649215",
-            CantidadComprada = 58
-        },
-        new()
-        {
-            Nombre = "Distribuidora San Miguel S.A.C.",
-            Documento = "20604578129",
-            CantidadComprada = 142
-        },
-        new()
-        {
-            Nombre = "José Antonio Ramírez",
-            Documento = "46821579",
-            CantidadComprada = 24
-        },
-        new()
-        {
-            Nombre = "Comercial Los Andes E.I.R.L.",
-            Documento = "20587346125",
-            CantidadComprada = 96
-        },
-        new()
-        {
-            Nombre = "Andrea Salazar Torres",
-            Documento = "73186420",
-            CantidadComprada = 47
-        },
-        new()
-        {
-            Nombre = "Bodega La Estrella S.A.C.",
-            Documento = "20617893452",
-            CantidadComprada = 119
-        },
-        new()
-        {
-            Nombre = "Luis Alberto Chávez",
-            Documento = "45271968",
-            CantidadComprada = 31
-        },
-        new()
-        {
-            Nombre = "Eventos del Pacífico S.A.C.",
-            Documento = "20596472831",
-            CantidadComprada = 83
-        },
-        new()
-        {
-            Nombre = "Valeria Paredes Gómez",
-            Documento = "76842159",
-            CantidadComprada = 41
-        }
-    ];
+    private List<ClienteReporte> Clientes { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        List<Pedido> pedidos = await pedidosRS.ListarTodosAsync();
+
+		Clientes = pedidos
+			.Where(pedido => pedido.cliente != null)
+			.GroupBy(pedido => pedido.cliente.idUsuario)
+			.Select(grupo => new ClienteReporte
+			{
+				Nombre = grupo.First().cliente.nombre + " " +
+						 grupo.First().cliente.apellidoCompleto,
+
+				Dni = grupo.First().cliente.dni,
+
+				TotalComprado = grupo.Sum(pedido => pedido.precioFinal)
+			}).ToList();
+
+    }
+
 
     private IEnumerable<ClienteReporte> ClientesOrdenados
     {
         get
         {
+            if (Clientes == null) return [];
+
             if (CriterioOrden == "nombre")
             {
                 return TipoOrden == "ascendente"
@@ -260,8 +219,8 @@
             }
 
             return TipoOrden == "ascendente"
-                ? Clientes.OrderBy(cliente => cliente.CantidadComprada)
-                : Clientes.OrderByDescending(cliente => cliente.CantidadComprada);
+                ? Clientes.OrderBy(cliente => cliente.TotalComprado)
+                : Clientes.OrderByDescending(cliente => cliente.TotalComprado);
         }
     }
 
@@ -269,8 +228,8 @@
     {
         public string Nombre { get; set; } = string.Empty;
 
-        public string Documento { get; set; } = string.Empty;
+        public string Dni { get; set; } = string.Empty;
 
-        public int CantidadComprada { get; set; }
+        public double TotalComprado { get; set; }
     }
 }
