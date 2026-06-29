@@ -79,7 +79,7 @@
         producto = await ProductosService.ObtenerPorIdAsync(id);
         if (producto == null) return;
         imagenes = producto.imagenes;
-        imagenes.Sort((a, b) => a.principal ? 1 : 0);
+        imagenes.Sort((a, b) => a.principal ? 0 : 1);
 
         currentImageId = imagenes[0].id;
     }

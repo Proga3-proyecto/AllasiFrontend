@@ -72,7 +72,7 @@
 
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold text-dark" style="font-size: 0.85rem;">NUEVA CONTRASEÑA (Dejar en blanco para no cambiar)</label>
-                                <InputText @bind-Value="usuarioForm.Contrasena" type="password" class="form-control custom-input" placeholder="••••••••" />
+                                <InputText @bind-Value="usuarioForm.Contrasena" class="form-control custom-input" placeholder="••••••••" />
                                 <ValidationMessage For="@(() => usuarioForm.Contrasena)" class="text-danger small mt-1" />
                             </div>
 

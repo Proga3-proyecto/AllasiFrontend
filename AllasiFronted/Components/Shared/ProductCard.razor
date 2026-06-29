@@ -43,8 +43,8 @@
 
     private string GetImageUrl()
     {
-        if (ProductoItem != null && ProductoItem.imagenes != null && ProductoItem.imagenes.Any()) return ProductoItem.ImagenUrl;
-        if (RecetaItem != null && RecetaItem.imagenes != null && RecetaItem.imagenes.Any()) return RecetaItem.imagenes[0].url;
+        if (ProductoItem != null && ProductoItem.imagenes != null && ProductoItem.imagenes.Any()) return  ProductoItem.imagenes.Find(i=>i.principal)?.url ?? "";
+        if (RecetaItem != null && RecetaItem.imagenes != null && RecetaItem.imagenes.Any()) return RecetaItem.imagenes.Find(i=>i.principal)?.url ?? "";
         return "/assets/placeholder-bottle.png"; // Fallback image
     }
 

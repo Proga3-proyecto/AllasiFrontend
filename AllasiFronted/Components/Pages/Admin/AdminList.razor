@@ -1,10 +1,11 @@
-@page "/admin"
+
 @page "/admin/admin-list"
 @using Microsoft.AspNetCore.Components.Authorization
 @layout AdminLayout
 
 @using Progra3_Frontend.Model
 @using Progra3_Frontend.Services
+@using System.Security.Claims
 
 @inject AdminsRS AdminsRS
 @inject NavigationManager Navigation
@@ -155,9 +156,11 @@
 
 @code {
     private List<Usuario> usuarios = new();
-
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
     protected override async Task OnInitializedAsync()
     {
+
         await CargarUsuarios();
     }
 
@@ -168,6 +171,18 @@
             usuarios.Clear();
 
             var administradores = await AdminsRS.ListarTodosAsync();
+            
+            
+            var authState = await AuthStateTask;
+            var _admin = authState.User;
+            var idClaim = _admin.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!int.TryParse(idClaim, out int adminId))
+                return;
+
+            administradores = administradores.Where(a  => a.idUsuario != adminId  && !a.is_master).ToList();
+
+
             if (administradores != null)
             {
                 foreach (var admin in administradores)
