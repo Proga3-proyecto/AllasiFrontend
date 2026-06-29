@@ -1,40 +1,181 @@
 .admin-container {
     width: 100%;
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
-    display: flex;
-    padding: 20px;
-    gap: 20px;
+    padding: 25px;
+    display: grid;
+    grid-template-columns: minmax(300px, 340px) minmax(0, 1fr);
+    align-items: start;
+    gap: 25px;
     box-sizing: border-box;
+    font-family: "Metrophobic", sans-serif;
 }
+
+/* =========================
+   MENÚ LATERAL
+   ========================= */
+
 .sidebar {
-    width: fit-content;
-    background-color: white;
-    border-radius: 10px;
-    overflow: hidden;
+    width: 100%;
+    min-width: 0;
     height: fit-content;
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-sizing: border-box;
+    box-shadow: 0 4px 14px rgba(16, 28, 69, 0.05);
 }
+
+    /* Opciones del menú lateral */
+    .sidebar a,
+    .sidebar .nav-link,
+    .sidebar .menu-item {
+        width: 100%;
+        min-height: 58px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        color: var(--color-text-main, #101c45);
+        background-color: #ffffff;
+        border: none;
+        border-bottom: 1px solid var(--color-border-light, #e5e7eb);
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: 500;
+        box-sizing: border-box;
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+        .sidebar a:last-child,
+        .sidebar .nav-link:last-child,
+        .sidebar .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar a:hover,
+        .sidebar .nav-link:hover,
+        .sidebar .menu-item:hover {
+            background-color: #f5f7fc;
+            color: var(--color-primary, #101c45);
+        }
+
+        /* Opción activa */
+        .sidebar a.active,
+        .sidebar .nav-link.active,
+        .sidebar .menu-item.active {
+            color: var(--color-primary, #101c45);
+            background-color: #eef3ff;
+            font-weight: 600;
+        }
+
+        /* Íconos del menú */
+        .sidebar a i,
+        .sidebar .nav-link i,
+        .sidebar .menu-item i {
+            width: 22px;
+            min-width: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.05rem;
+            color: var(--color-primary, #101c45);
+        }
+
+    /* Para elementos provenientes de otro componente Blazor */
+    .sidebar ::deep a,
+    .sidebar ::deep .nav-link,
+    .sidebar ::deep .menu-item {
+        width: 100%;
+        min-height: 58px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-sizing: border-box;
+    }
+
+/* =========================
+   CONTENIDO PRINCIPAL
+   ========================= */
 
 .admin-content {
-    flex: 1;
-    background-color: white;
+    width: 100%;
+    min-width: 0;
+    height: fit-content;
     padding: 30px;
-    border-radius: 10px;
-    padding-top:20px;
-    height:fit-content;
+    padding-top: 25px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-sizing: border-box;
+    overflow-x: auto;
+    box-shadow: 0 4px 14px rgba(16, 28, 69, 0.04);
 }
 
-/* Responsividad para móviles */
-@media (max-width: 768px) {
+/* =========================
+   PANTALLAS MEDIANAS
+   ========================= */
+
+@media screen and (max-width: 1200px) {
     .admin-container {
-        flex-direction: column;
-        padding: 10px;
-        gap: 15px;
+        grid-template-columns: minmax(270px, 300px) minmax(0, 1fr);
+        gap: 20px;
+        padding: 20px;
     }
+
+    .admin-content {
+        padding: 24px;
+    }
+}
+
+/* =========================
+   VENTANAS PEQUEÑAS
+   ========================= */
+
+@media screen and (max-width: 900px) {
+    .admin-container {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        padding: 15px;
+    }
+
     .sidebar {
         width: 100%;
     }
+
     .admin-content {
-        padding: 15px;
+        width: 100%;
+        padding: 20px;
     }
 }
+
+/* =========================
+   VENTANAS MUY PEQUEÑAS
+   ========================= */
+
+@media screen and (max-width: 550px) {
+    .admin-container {
+        padding: 10px;
+        gap: 12px;
+    }
+
+    .sidebar {
+        border-radius: 9px;
+    }
+
+        .sidebar a,
+        .sidebar .nav-link,
+        .sidebar .menu-item {
+            min-height: 52px;
+            padding: 14px 16px;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+
+    .admin-content {
+        padding: 15px;
+        border-radius: 9px;
+    }
+}
+
