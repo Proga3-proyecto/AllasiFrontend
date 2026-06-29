@@ -4,199 +4,224 @@
 @inject NavigationManager Navigation
 
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.JSInterop
 @using Progra3_Frontend.Model
 @using Progra3_Frontend.Services
+@using QuestPDF.Fluent
+@using QuestPDF.Helpers
+@using QuestPDF.Infrastructure
 
 @inject PedidosRS pedidosRS
+@inject IJSRuntime JS
 
 <AuthorizeView Roles="ADMIN" Context="authContext">
     <Authorized>
         <div class="product-report-page container-fluid mt-3 mb-4">
 
-            <div class="report-header">
+    <div class="report-header">
 
-                <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2">
 
-                    <button type="button"
-                            class="btn navy-bg"
-                            @onclick='() => Navigation.NavigateTo("/admin/report-list")'>
+            <button type="button"
+                    class="btn navy-bg"
+                    @onclick='() => Navigation.NavigateTo("/admin/report-list")'>
 
-                        <i class="bi bi-arrow-left me-1"></i>
-                        Regresar
-                    </button>
+                <i class="bi bi-arrow-left me-1"></i>
+                Regresar
+            </button>
 
-                    <button type="button"
-                            class="btn navy-bg">
+            <button type="button"
+                    class="btn navy-bg"
+                    @onclick="ExportarPdf">
 
-                        <i class="bi bi-download me-1"></i>
-                        Exportar
-                    </button>
+                <i class="bi bi-download me-1"></i>
+                Exportar PDF
+            </button>
 
-                </div>
-
-
-                <div>
-                    <h2 class="report-title text-navy">
-                        Reporte por Producto
-                    </h2>
-
-                    <p class="report-subtitle">
-                        Consulta el precio y la cantidad vendida de cada producto.
-                    </p>
-                </div>
+        </div>
 
 
-            </div>
+        <div>
+            <h2 class="report-title text-navy">
+                Reporte por Producto
+            </h2>
 
-            <div class="filter-panel"
-                 style="grid-template-columns: 1fr 1fr;">
+            <p class="report-subtitle">
+                Consulta el precio y la cantidad vendida de cada producto.
+            </p>
+        </div>
 
-                <div class="filter-group">
 
-                    <label>Ordenar por</label>
+    </div>
 
-                    <div class="input-container">
-                        <i class="bi bi-filter"></i>
+    <div class="filter-panel"
+         style="grid-template-columns: 1fr 1fr;">
 
-                        <select @bind="CriterioOrden">
-                            <option value="cantidad">
-                                Cantidad vendida
-                            </option>
+        <div class="filter-group">
 
-                            <option value="precio">
-                                Precio
-                            </option>
-                        </select>
-                    </div>
+            <label>Ordenar por</label>
 
-                </div>
+            <div class="input-container">
+                <i class="bi bi-filter"></i>
 
-                <div class="filter-group">
+                <select @bind="CriterioOrden">
+                    <option value="cantidad">
+                        Cantidad vendida
+                    </option>
 
-                    <label>Tipo de orden</label>
-
-                    <div class="input-container">
-                        <i class="bi bi-sort-down"></i>
-
-                        <select @bind="TipoOrden">
-                            <option value="descendente">
-                                Mayor a menor
-                            </option>
-
-                            <option value="ascendente">
-                                Menor a mayor
-                            </option>
-                        </select>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="table-container">
-
-                <div class="table-responsive">
-
-                    <table class="table custom-table table-borderless align-middle w-100">
-
-                        <thead>
-                            <tr>
-                                <th class="text-start">
-                                    PRODUCTO
-                                </th>
-
-                                <th class="text-center">
-                                    PRECIO
-                                </th>
-
-                                <th class="text-center">
-                                    CANTIDAD VENDIDA
-                                </th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-
-                            @foreach (var producto in ProductosOrdenados)
-                            {
-                                <tr>
-
-                                    <td class="text-start">
-
-                                        <div class="d-flex align-items-center gap-2">
-
-                                            <div class="summary-icon"
-                                                 style="width: 36px;
-                                                height: 36px;">
-
-                                                <i class="fa-light fa-martini-glass"></i>
-                                            </div>
-
-                                            <span class="fw-bold text-navy">
-                                                @producto.Nombre
-                                            </span>
-
-                                        </div>
-
-                                    </td>
-
-                                    <td class="text-center text-nowrap">
-
-                                        <span class="fw-bold text-dark">
-                                            S/ @producto.Precio.ToString("0.00")
-                                        </span>
-
-                                    </td>
-
-                                    <td class="text-center text-nowrap">
-
-                                        <span class="fw-bold text-navy">
-                                            @producto.CantidadVendida
-                                        </span>
-
-                                    </td>
-
-                                </tr>
-                            }
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
+                    <option value="precio">
+                        Precio
+                    </option>
+                </select>
             </div>
 
         </div>
+
+        <div class="filter-group">
+
+            <label>Tipo de orden</label>
+
+            <div class="input-container">
+                <i class="bi bi-sort-down"></i>
+
+                <select @bind="TipoOrden">
+                    <option value="descendente">
+                        Mayor a menor
+                    </option>
+
+                    <option value="ascendente">
+                        Menor a mayor
+                    </option>
+                </select>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="table-container">
+
+        <div class="table-responsive">
+
+            <table class="table custom-table table-borderless align-middle w-100">
+
+                <thead>
+                    <tr>
+                        <th class="text-start">
+                            PRODUCTO
+                        </th>
+
+                        <th class="text-center">
+                            PRECIO
+                        </th>
+
+                        <th class="text-center">
+                            CANTIDAD VENDIDA
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var producto in ProductosOrdenados)
+                    {
+                        <tr>
+
+                            <td class="text-start">
+
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <div class="summary-icon"
+                                         style="width: 36px;
+                                        height: 36px;">
+
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="18"
+                                             height="18"
+                                             fill="currentColor"
+                                             viewBox="0 0 16 16">
+
+                                            <path d="M1 2h14L9 8.8V14h3v1H4v-1h3V8.8L1 2zm2.2 1 4.8 5.4L12.8 3H3.2z" />
+                                        </svg>
+
+                                    </div>
+
+                                    <span class="fw-bold text-navy">
+                                        @producto.Nombre
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+                            <td class="text-center text-nowrap">
+
+                                <span class="fw-bold text-dark">
+                                    S/ @producto.Precio.ToString("0.00")
+                                </span>
+
+                            </td>
+
+                            <td class="text-center text-nowrap">
+
+                                <span class="fw-bold text-navy">
+                                    @producto.CantidadVendida
+                                </span>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
 
 
     </Authorized>
     <NotAuthorized>
         <div class="container mt-5">
             <h2>Acceso denegado</h2>
-            <p>No tienes permisos para acceder a esta pÃ¡gina.</p>
+            <p>No tienes permisos para acceder a esta página.</p>
         </div>
     </NotAuthorized>
 </AuthorizeView>
+
 @code {
     private string CriterioOrden { get; set; } = "cantidad";
 
     private string TipoOrden { get; set; } = "descendente";
 
-    private List<ProductoReporte> Productos { get; set; }
+    private List<ProductoReporte> Productos { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
         List<Pedido> pedidos = await pedidosRS.ListarTodosAsync();
 
-        Productos = pedidos.Select(pedido => new ProductoReporte
-        {
-            Nombre = pedido.cliente.nombre,
-            Precio = pedido.precioFinal,
-            CantidadVendida =
-        pedido.detallesProductos.Sum(dp => dp.cantidad) +
-        pedido.detallesRecetas.Sum(dr => dr.cantidad)
-        }).ToList();
+        Productos = pedidos
+            .SelectMany(pedido => pedido.detallesProductos)
+            .Where(detalle => detalle.productoSnapshot != null)
+            .GroupBy(detalle => new
+            {
+                detalle.productoSnapshot.nombre,
+                detalle.productoSnapshot.precioFinalVenta
+            })
+            .Select(grupo => new ProductoReporte
+            {
+                Nombre = grupo.Key.nombre,
+
+                Precio = grupo.Key.precioFinalVenta,
+
+                CantidadVendida = grupo.Sum(
+                    detalle => detalle.cantidad
+                )
+            }).ToList();
 
     }
 
@@ -205,14 +230,14 @@
     {
         get
         {
+            if (Productos == null) return [];
+
             if (CriterioOrden == "precio")
             {
                 return TipoOrden == "ascendente"
                     ? Productos.OrderBy(producto => producto.Precio)
                     : Productos.OrderByDescending(producto => producto.Precio);
             }
-
-            if (Productos == null) return [];
 
             return TipoOrden == "ascendente"
                 ? Productos.OrderBy(producto => producto.CantidadVendida)
@@ -227,5 +252,116 @@
         public double Precio { get; set; }
 
         public int CantidadVendida { get; set; }
+    }
+
+
+    public async Task ExportarPdf()
+    {
+        QuestPDF.Settings.License = LicenseType.Community;
+
+        List<ProductoReporte> productosExportar =
+            ProductosOrdenados.ToList();
+
+        int totalUnidades = productosExportar.Sum(
+            producto => producto.CantidadVendida
+        );
+
+        byte[] pdf = Document.Create(container =>
+        {
+            container.Page(page =>
+            {
+                page.Margin(30);
+
+                page.Header()
+                    .Text("Reporte por Producto")
+                    .FontSize(20)
+                    .Bold();
+
+                page.Content().Column(col =>
+                {
+                    col.Spacing(10);
+
+                    col.Item().Text(
+                        $"Total de productos: {productosExportar.Count}"
+                    );
+
+                    col.Item().Text(
+                        $"Total de unidades vendidas: {totalUnidades}"
+                    );
+
+                    col.Item()
+                        .PaddingTop(15)
+                        .Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn();
+                                columns.ConstantColumn(100);
+                                columns.ConstantColumn(120);
+                            });
+
+                            table.Header(header =>
+                            {
+                                header.Cell()
+                                    .Background(Colors.Blue.Darken3)
+                                    .Padding(6)
+                                    .Text("Producto")
+                                    .FontColor(Colors.White)
+                                    .Bold();
+
+                                header.Cell()
+                                    .Background(Colors.Blue.Darken3)
+                                    .Padding(6)
+                                    .Text("Precio")
+                                    .FontColor(Colors.White)
+                                    .Bold();
+
+                                header.Cell()
+                                    .Background(Colors.Blue.Darken3)
+                                    .Padding(6)
+                                    .Text("Cantidad vendida")
+                                    .FontColor(Colors.White)
+                                    .Bold();
+                            });
+
+                            foreach (ProductoReporte producto in productosExportar)
+                            {
+                                table.Cell()
+                                    .BorderBottom(1)
+                                    .BorderColor(Colors.Grey.Lighten2)
+                                    .Padding(6)
+                                    .Text(producto.Nombre);
+
+                                table.Cell()
+                                    .BorderBottom(1)
+                                    .BorderColor(Colors.Grey.Lighten2)
+                                    .Padding(6)
+                                    .Text($"S/ {producto.Precio:0.00}");
+
+                                table.Cell()
+                                    .BorderBottom(1)
+                                    .BorderColor(Colors.Grey.Lighten2)
+                                    .Padding(6)
+                                    .Text(producto.CantidadVendida.ToString());
+                            }
+                        });
+                });
+
+                page.Footer()
+                    .AlignCenter()
+                    .Text(text =>
+                    {
+                        text.Span("Página ");
+                        text.CurrentPageNumber();
+                    });
+            });
+        }).GeneratePdf();
+
+        await JS.InvokeVoidAsync(
+            "descargarArchivo",
+            "ReporteProductos.pdf",
+            "application/pdf",
+            Convert.ToBase64String(pdf)
+        );
     }
 }
