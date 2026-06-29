@@ -33,6 +33,13 @@
                 Icon = "bi bi-person-badge",
                 Text = "Administradores"
             });
+
+            items.Add(new NavItem
+            {
+                Href = "/admin/taxes",
+                Icon = "bi bi-percent",
+                Text = "Impuestos"
+            });
         }
 
         items.Add(new NavItem
@@ -68,6 +75,13 @@
             Href = "/admin/report-list",
             Icon = "bi bi-bar-chart-line",
             Text = "Reportes"
+        });
+
+        items.Add(new NavItem
+        {
+            Href = "/admin/change-password",
+            Icon = "bi bi-shield-lock",
+            Text = "Seguridad"
         });
     }
 }
