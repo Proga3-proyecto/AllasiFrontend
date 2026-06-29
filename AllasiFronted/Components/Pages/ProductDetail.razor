@@ -18,20 +18,30 @@
     {
         <div class="detail-grid">
             <div class="image-gallery">
-                <div class="main-image-container">
-                    <button class="nav-btn prev-btn" @onclick="PrevImage"><i class="bi bi-chevron-left"></i></button>
-                    <img src="@producto.imagenes[currentImage].url" alt="@producto.nombre" class="main-image" />
-                    <button class="nav-btn next-btn" @onclick="NextImage"><i class="bi bi-chevron-right"></i></button>
-                </div>
-                <div class="thumbnails">
-
-                    @foreach (Imagen imagen in producto.imagenes)
-                    {
-                        <div class="thumbnail @(imagen.id == currentImageId ? "active" : "")" @onclick="()=>SelectImage(imagen.id)">
-                            <img src="@imagen.url" alt="@producto.nombre" />
+                @if (producto.imagenes != null && producto.imagenes.Count > 0)
+                {
+                    <div class="main-image-container">
+                        <button class="nav-btn prev-btn" @onclick="PrevImage"><i class="bi bi-chevron-left"></i></button>
+                        <img src="@producto.imagenes[currentImage].url" alt="@producto.nombre" class="main-image" />
+                        <button class="nav-btn next-btn" @onclick="NextImage"><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                    <div class="thumbnails">
+                        @foreach (Imagen imagen in producto.imagenes)
+                        {
+                            <div class="thumbnail @(imagen.id == currentImageId ? "active" : "")" @onclick="()=>SelectImage(imagen.id)">
+                                <img src="@imagen.url" alt="@producto.nombre" />
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="main-image-container">
+                        <div style="padding: 2rem; text-align: center; color: #666; background: #f9f9f9; border-radius: 8px;">
+                            Sin imagen disponible
                         </div>
-                    }
-                </div>
+                    </div>
+                }
             </div>
 
             <div class="product-info">
@@ -89,19 +99,23 @@
         producto = await ProductosService.ObtenerPorIdAsync(id);
         if (producto == null) return;
         imagenes = producto.imagenes;
-        imagenes.Sort((a, b) => a.principal ? 0 : 1);
-
-        currentImageId = imagenes[0].id;
+        if (imagenes != null && imagenes.Count > 0)
+        {
+            imagenes.Sort((a, b) => a.principal ? 0 : 1);
+            currentImageId = imagenes[0].id;
+        }
     }
 
     private void NextImage()
     {
+        if (imagenes == null || imagenes.Count == 0) return;
         currentImage = (currentImage + 1) % imagenes.Count;
         currentImageId = imagenes[currentImage].id;
     }
 
     private void PrevImage()
     {
+        if (imagenes == null || imagenes.Count == 0) return;
         currentImage--;
         if (currentImage < 0)
         {
