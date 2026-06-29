@@ -76,13 +76,24 @@
 
                 <tbody class="text-start">
 
-                    @if (!RecetasFiltradas.Any())
+                    @if (isLoading)
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <div class="d-flex flex-column align-items-center justify-content-center">
+                                    <span class="spinner-border text-navy mb-2" role="status" aria-hidden="true" style="width: 2rem; height: 2rem;"></span>
+                                    <span>Cargando recetas...</span>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else if (!RecetasFiltradas.Any())
                     {
                         <tr>
                             <td colspan="6"
                                 class="text-center py-4 text-muted">
                                 <em>
-                                    No hay recetas registradas o cargando datos...
+                                    No hay recetas registradas.
                                 </em>
                             </td>
                         </tr>
@@ -151,14 +162,28 @@
 
                                 <td class="text-center text-nowrap">
 
-                                    <button class="btn btn-outline-custom btn-sm me-2"
+                                    <button class="btn btn-outline-custom btn-sm me-2" disabled="@(processingItemId != null)"
                                             @onclick="() => EditarReceta(receta.id)">
-                                        Modificar
+                                        @if (processingItemId == receta.id && processingAction == "Modificar")
+                                        {
+                                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                        }
+                                        else
+                                        {
+                                            <span>Modificar</span>
+                                        }
                                     </button>
 
-                                    <button class="btn btn-danger btn-sm"
+                                    <button class="btn btn-danger btn-sm" disabled="@(processingItemId != null)"
                                             @onclick="() => EliminarReceta(receta.id)">
-                                        Eliminar
+                                        @if (processingItemId == receta.id && processingAction == "Eliminar")
+                                        {
+                                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                        }
+                                        else
+                                        {
+                                            <span>Eliminar</span>
+                                        }
                                     </button>
 
                                 </td>
@@ -228,10 +253,15 @@
 @code {
     private List<Receta> recetas = new();
     private string TextoBusqueda { get; set; } = string.Empty;
+    private bool isLoading = true;
+    private int? processingItemId = null;
+    private string processingAction = "";
 
     protected override async Task OnInitializedAsync()
     {
+        isLoading = true;
         await CargarRecetas();
+        isLoading = false;
     }
 
     private async Task CargarRecetas()
@@ -270,15 +300,23 @@
                 ) ?? false)
             );
 
-    private void EditarReceta(int idReceta)
+    private async Task EditarReceta(int idReceta)
     {
+        processingItemId = idReceta;
+        processingAction = "Modificar";
+        StateHasChanged();
+        await Task.Delay(150);
         Navigation.NavigateTo(
             $"/admin/update-recipe/{idReceta}"
         );
+        processingItemId = null;
+        processingAction = "";
     }
 
     private async Task EliminarReceta(int idReceta)
     {
+        processingItemId = idReceta;
+        processingAction = "Eliminar";
         try
         {
             bool exito =
@@ -294,6 +332,11 @@
             Console.WriteLine(
                 $"Error al eliminar la receta: {ex.Message}"
             );
+        }
+        finally
+        {
+            processingItemId = null;
+            processingAction = "";
         }
     }
 

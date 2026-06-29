@@ -63,7 +63,17 @@
                 </div>
             }
 
-            <button type="submit">Ingresar</button>
+            @if (isProcessing)
+            {
+                <button type="button" disabled style="opacity: 0.7; cursor: not-allowed;">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="margin-right: 8px;"></span>
+                    Ingresando...
+                </button>
+            }
+            else
+            {
+                <button type="submit">Ingresar</button>
+            }
         </form>
 
         <div class="footer-register">
@@ -79,6 +89,7 @@
     private string error = "";
 
     bool hidePassword = true;
+    private bool isProcessing = false;
 
     void changeVisibility()
     {
@@ -87,46 +98,51 @@
 
     async Task OnSumit()
     {
+        if (isProcessing) return;
+        isProcessing = true;
         error = "";
 
-        var usuario =
-            await AuthService.Login(login);
-
-        if (usuario == null)
+        try
         {
-            error =
-                "No se pudo conectar con el servidor";
+            var usuario =
+                await AuthService.Login(login);
 
-            return;
-        }
-
-        if (usuario.Exito)
-        {
-            await AuthProvider.Login(
-                usuario.IdUsuario,
-                usuario.Nombre,
-                usuario.Rol);
-
-            // Console.WriteLine($"Exito: {usuario.Exito}");
-            // Console.WriteLine($"Usuario: {usuario.Nombre}");
-            // Console.WriteLine($"Rol: '{usuario.Rol}'");
-
-            string userRole = usuario.Rol?.Trim().ToUpper();
-            if (userRole == "ADMIN" || userRole == "MASTER")
+            if (usuario == null)
             {
-                Navigation.NavigateTo("/admin");
+                error =
+                    "No se pudo conectar con el servidor";
+
+                return;
             }
-            else
+
+            if (usuario.Exito)
             {
-                Navigation.NavigateTo("/");
+                await AuthProvider.Login(
+                    usuario.IdUsuario,
+                    usuario.Nombre,
+                    usuario.Rol);
+
+                string userRole = usuario.Rol?.Trim().ToUpper();
+                if (userRole == "ADMIN" || userRole == "MASTER")
+                {
+                    Navigation.NavigateTo("/admin");
+                }
+                else
+                {
+                    Navigation.NavigateTo("/");
+                }
+            }
+
+            if (!usuario.Exito)
+            {
+                error = usuario.Mensaje;
+
+                return;
             }
         }
-
-        if (!usuario.Exito)
+        finally
         {
-            error = usuario.Mensaje;
-
-            return;
+            isProcessing = false;
         }
     }
 }

@@ -76,9 +76,18 @@
                         <button type="button" class="btn btn-filter-inactive fw-medium" style="border-radius: 6px; padding: 6px 18px; font-size: 0.85rem;" @onclick="Cancelar">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn navy-bg d-flex align-items-center gap-2 fw-medium" style="border-radius: 6px; padding: 6px 18px; font-size: 0.85rem;">
-                            <i class="bi bi-save"></i> Guardar usuario
-                        </button>
+                        @if (isProcessing)
+                        {
+                            <button type="button" class="btn navy-bg d-flex align-items-center gap-2 fw-medium" disabled style="border-radius: 6px; padding: 6px 18px; font-size: 0.85rem; opacity: 0.7; cursor: not-allowed;">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn navy-bg d-flex align-items-center gap-2 fw-medium" style="border-radius: 6px; padding: 6px 18px; font-size: 0.85rem;">
+                                <i class="bi bi-save"></i> Guardar usuario
+                            </button>
+                        }
                     </div>
                 </EditForm>
 
@@ -122,9 +131,12 @@
     }
 
     private UsuarioFormModel usuarioForm = new() { Rol = "Administrador" };
+    private bool isProcessing = false;
 
     private async Task GuardarUsuario()
     {
+        if (isProcessing) return;
+        isProcessing = true;
         try
         {
             EstadoUsuario estadoEnum = usuarioForm.Estado == "Activo" ? EstadoUsuario.ACTIVA : EstadoUsuario.INACTIVA;
@@ -159,6 +171,10 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Error al insertar el nuevo usuario en el sistema: {ex.Message}");
+        }
+        finally
+        {
+            isProcessing = false;
         }
     }
 
