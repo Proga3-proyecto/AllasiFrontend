@@ -17,14 +17,23 @@
 
     <div class="dashboard-toolbar">
 
-        <button type="button"
-                class="btn-regresar"
-                @onclick="RegresarDashboard">
+        <div class="dashboard-actions">
 
-            <i class="bi bi-arrow-left"></i>
-            Regresar
+            <button type="button"
+                    class="btn-regresar"
+                    @onclick="RegresarDashboard">
+                <i class="bi bi-arrow-left"></i>
+                Regresar
+            </button>
 
-        </button>
+            <button type="button"
+                    class="btn-exportar"
+                    @onclick="ExportarGraficoAsync">
+                <i class="bi bi-download"></i>
+                Exportar
+            </button>
+
+        </div>
 
         <div class="dashboard-filter">
 
