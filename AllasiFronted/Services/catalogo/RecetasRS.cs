@@ -121,7 +121,7 @@ namespace Progra3_Frontend.Services
             }
         }
 
-        public async Task<bool> SubirImagenAsync(int idReceta, Stream fileStream, string fileName, string contentType)
+        public async Task<Imagen?> SubirImagenAsync(int idReceta, Stream fileStream, string fileName, string contentType)
         {
             try
             {
@@ -132,27 +132,43 @@ namespace Progra3_Frontend.Services
                 content.Add(streamContent, "archivo", fileName);
 
                 var response = await _httpClient.PostAsync($"recetas/{idReceta}/subir", content);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    _cachedRecetas = null;
+                    return JsonSerializer.Deserialize<Imagen>(jsonResponse, _jsonOptions);
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en SubirImagenAsync: {ex.Message}");
+                return null;
+            }
+        }
+
+        public async Task<bool> EliminarImagenAsync(int idReceta, int idImagen)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"recetas/{idReceta}/imagen/{idImagen}");
                 if (response.IsSuccessStatusCode) _cachedRecetas = null;
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error en SubirImagenAsync: {ex.Message}");
+                Console.WriteLine($"Error en EliminarImagenAsync: {ex.Message}");
                 return false;
             }
         }
 
-        public async Task<bool> SubirImagenPrincipalAsync(int idReceta, Stream fileStream, string fileName, string contentType)
+        public async Task<bool> SubirImagenPrincipalAsync(int idReceta, int idImagen)
         {
             try
             {
-                using var content = new MultipartFormDataContent();
-                var streamContent = new StreamContent(fileStream);
-                streamContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
-
-                content.Add(streamContent, "archivo", fileName);
-
-                var response = await _httpClient.PostAsync($"recetas/{idReceta}/subirPrincipal", content);
+                var response = await _httpClient.PutAsync($"recetas/{idReceta}/imagenPrincipal/{idImagen}", null);
                 if (response.IsSuccessStatusCode) _cachedRecetas = null;
                 return response.IsSuccessStatusCode;
             }

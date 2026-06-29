@@ -402,6 +402,7 @@
         public int Id { get; set; }
         public string PreviewUrl { get; set; } = string.Empty;
         public bool IsPrincipal { get; set; } = false;
+        public byte[] FileContent { get; set; } = Array.Empty<byte>();
     }
 
     private List<ImageItem> imagenes = new();
@@ -522,13 +523,17 @@
             try
             {
                 var resizedImage = await file.RequestImageFileAsync(file.ContentType, 300, 300);
-                var buffer = new byte[resizedImage.Size];
-                await resizedImage.OpenReadStream().ReadAsync(buffer);
+                using var previewStream = new MemoryStream();
+                await resizedImage.OpenReadStream().CopyToAsync(previewStream);
+                var previewUrl = $"data:{file.ContentType};base64,{Convert.ToBase64String(previewStream.ToArray())}";
+                using var originalStream = new MemoryStream();
+                await file.OpenReadStream(maxFileSize).CopyToAsync(originalStream);
 
                 var nuevaImagen = new ImageItem
                 {
                     File = file,
-                    PreviewUrl = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer)}",
+                    PreviewUrl = previewUrl,
+                    FileContent = originalStream.ToArray(),
                     IsPrincipal = (imagenes.Count == 0) 
                 };
 
@@ -620,18 +625,29 @@
                 {
                     foreach (var img in imagenes)
                     {
-                        if (img.IsExisting) continue;
-                        try
+                        if (img.IsExisting)
                         {
-                            using var stream = img.File!.OpenReadStream(maxFileSize);
-
                             if (img.IsPrincipal)
                             {
-                                await RecetasRS.SubirImagenPrincipalAsync(Id, stream, img.File!.Name, img.File!.ContentType);
+                                try
+                                {
+                                    await RecetasRS.SubirImagenPrincipalAsync(Id, img.Id);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"Error actualizando imagen principal existente: {ex.Message}");
+                                }
                             }
-                            else
+                            continue;
+                        }
+                        try
+                        {
+                            using var stream = new MemoryStream(img.FileContent);
+                            Imagen? imagenDB = await RecetasRS.SubirImagenAsync(Id, stream, img.File!.Name, img.File!.ContentType);
+                            
+                            if (imagenDB != null && img.IsPrincipal)
                             {
-                                await RecetasRS.SubirImagenAsync(Id, stream, img.File!.Name, img.File!.ContentType);
+                                await RecetasRS.SubirImagenPrincipalAsync(Id, imagenDB.id);
                             }
                         }
                         catch (Exception ex)
