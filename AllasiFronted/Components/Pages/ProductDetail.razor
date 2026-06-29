@@ -4,6 +4,8 @@
 @inject NavigationManager NavigationManager
 @inject ProductosRS ProductosService
 @inject CarritoStateService CarritoService
+@inject ToastService ToastService
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Producto - Allasi Licores</PageTitle>
 
@@ -123,8 +125,15 @@
         quantity++;
     }
 
-    private void AddToCart()
+    private async Task AddToCart()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity == null || !authState.User.Identity.IsAuthenticated)
+        {
+            ToastService.ShowToast("No se puede agregar al carrito si no estás registrado.", "warning");
+            return;
+        }
+
         if (producto != null)
         {
             CarritoService.AgregarProducto(producto, quantity);

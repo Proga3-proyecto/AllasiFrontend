@@ -1,0 +1,60 @@
+@using Progra3_Frontend.Services
+@inject ToastService ToastService
+@implements IDisposable
+
+@if (isVisible)
+{
+    <div class="toast-popup @type">
+        <div class="toast-content">
+            @if (type == "error")
+            {
+                <i class="bi bi-x-circle toast-icon"></i>
+            }
+            else if (type == "success")
+            {
+                <i class="bi bi-check-circle toast-icon"></i>
+            }
+            else if (type == "warning")
+            {
+                <i class="bi bi-exclamation-triangle toast-icon"></i>
+            }
+            else
+            {
+                <i class="bi bi-info-circle toast-icon"></i>
+            }
+            <span>@message</span>
+        </div>
+    </div>
+}
+
+@code {
+    private bool isVisible = false;
+    private string message = "";
+    private string type = "error";
+
+    protected override void OnInitialized()
+    {
+        ToastService.OnShow += ShowToast;
+        ToastService.OnHide += HideToast;
+    }
+
+    private void ShowToast(string msg, string toastType)
+    {
+        message = msg;
+        type = toastType;
+        isVisible = true;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void HideToast()
+    {
+        isVisible = false;
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ToastService.OnShow -= ShowToast;
+        ToastService.OnHide -= HideToast;
+    }
+}
