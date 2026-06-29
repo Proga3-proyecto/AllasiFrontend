@@ -1,0 +1,216 @@
+@page "/user/my-addresses"
+@using AllasiFrontend.Components.Shared.ui
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject ClientesRS ClientesService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ConfirmDialogService DialogService
+@layout UserLayout
+
+<div class="profile-page-container">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-navy mb-1" style="font-size: 1.35rem;">Mis direcciones</h2>
+        <p class="text-muted mb-2" style="font-size: 0.85rem;">Administra tus direcciones de entrega.</p>
+    </div>
+
+    <div class="profile-form-card shadow-sm">
+        @if (isLoading)
+        {
+            <div class="text-center">
+                <p>Cargando direcciones...</p>
+            </div>
+        }
+        else if (currentClient == null)
+        {
+            <div class="text-center">
+                <p>No se pudo cargar la información del usuario.</p>
+            </div>
+        }
+        else
+        {
+            <h3 class="fw-bold text-navy mb-3 pb-2" style="font-size: 1rem; border-bottom: 1px solid #e2e8f0;">Direcciones Guardadas</h3>
+
+            @if (currentClient.direcciones == null || !currentClient.direcciones.Any())
+            {
+                <div class="alert alert-info">No tienes direcciones guardadas.</div>
+            }
+            else
+            {
+                <div class="addresses-list mb-4">
+                    @foreach (var dir in currentClient.direcciones)
+                    {
+                        <div class="address-item p-3 mb-2 d-flex justify-content-between align-items-center" style="border: 1px solid #e2e8f0; border-radius: 6px;">
+                            <div>
+                                <i class="bi bi-geo-alt-fill text-navy me-2"></i>
+                                <span>@dir.direccion</span>
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger" @onclick="() => EliminarDireccion(dir)">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </button>
+                        </div>
+                    }
+                </div>
+            }
+
+            <h3 class="fw-bold text-navy mb-3 pb-2 mt-4" style="font-size: 1rem; border-bottom: 1px solid #e2e8f0;">Agregar Nueva Dirección</h3>
+
+            <div class="grid mb-4">
+                <Input Label="Nueva Dirección"
+                       @bind-Value="nuevaDireccion"
+                       type="text"
+                       TextArea
+                       rows="2"
+                       placeholder="Ej: Av. Principal 123, Distrito" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(mensajeMensaje))
+            {
+                <div class="alert alert-success mt-3" style="color: green;">@mensajeMensaje</div>
+            }
+            @if (!string.IsNullOrEmpty(errorMensaje))
+            {
+                <div class="alert alert-danger mt-3" style="color: red;">@errorMensaje</div>
+            }
+
+            <div class="boton-container pt-3 mt-2" style="border-top: 1px solid rgba(170,170,170,0.15);">
+                <Button Text="Agregar Dirección" OnClick="AgregarDireccion" Class="navy-bg px-4 py-2" style="border-radius: 6px; font-weight: 500; font-size: 0.85rem;" />
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .profile-page-container {
+        padding: 20px;
+    }
+    .profile-form-card {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+    }
+    .text-navy {
+        color: var(--color-primary);
+    }
+    .navy-bg {
+        background-color: var(--color-primary);
+        color: white;
+    }
+    .address-item {
+        transition: all 0.2s ease;
+    }
+    .address-item:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+
+@code {
+    private Cliente? currentClient;
+    private bool isLoading = true;
+    private string mensajeMensaje = "";
+    private string errorMensaje = "";
+    private string nuevaDireccion = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (!user.Identity?.IsAuthenticated ?? true)
+                return;
+
+            var idClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(idClaim, out int userId))
+                return;
+
+            currentClient = await ClientesService.GetClienteAsync(userId);
+            if (currentClient != null && currentClient.direcciones == null)
+            {
+                currentClient.direcciones = new List<ClienteDireccion>();
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMensaje = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task AgregarDireccion()
+    {
+        mensajeMensaje = "";
+        errorMensaje = "";
+
+        if (string.IsNullOrWhiteSpace(nuevaDireccion))
+        {
+            errorMensaje = "La dirección no puede estar vacía.";
+            return;
+        }
+
+        if (currentClient == null) return;
+
+        bool confirm = await DialogService.ConfirmAsync("Confirmar", "¿Deseas agregar esta dirección?", DialogType.Info);
+        if (!confirm) return;
+
+        currentClient.direcciones ??= new List<ClienteDireccion>();
+        currentClient.direcciones.Add(new ClienteDireccion { direccion = nuevaDireccion.Trim() });
+
+        try
+        {
+            var resultado = await ClientesService.ActualizarAsync(currentClient);
+            if (resultado)
+            {
+                mensajeMensaje = "Dirección agregada correctamente.";
+                nuevaDireccion = "";
+            }
+            else
+            {
+                errorMensaje = "No se pudo guardar la dirección.";
+                currentClient.direcciones.RemoveAt(currentClient.direcciones.Count - 1);
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMensaje = ex.Message;
+            currentClient.direcciones.RemoveAt(currentClient.direcciones.Count - 1);
+        }
+    }
+
+    private async Task EliminarDireccion(ClienteDireccion dir)
+    {
+        mensajeMensaje = "";
+        errorMensaje = "";
+        if (currentClient == null) return;
+
+        bool confirm = await DialogService.ConfirmAsync("Confirmar", "¿Estás seguro de eliminar esta dirección?", DialogType.Warning);
+        if (!confirm) return;
+
+        var removedDir = dir;
+        currentClient.direcciones.Remove(dir);
+
+        try
+        {
+            var resultado = await ClientesService.ActualizarAsync(currentClient);
+            if (resultado)
+            {
+                mensajeMensaje = "Dirección eliminada correctamente.";
+            }
+            else
+            {
+                errorMensaje = "No se pudo eliminar la dirección.";
+                currentClient.direcciones.Add(removedDir);
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMensaje = ex.Message;
+            currentClient.direcciones.Add(removedDir);
+        }
+    }
+}

@@ -5,6 +5,8 @@
 @inject NavigationManager NavigationManager
 @inject RecetasRS RecetasService
 @inject CarritoStateService CarritoService
+@inject ToastService ToastService
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Receta - Allasi Licores</PageTitle>
 
@@ -98,8 +100,15 @@
         NavigationManager.NavigateTo($"/receta/{id}/preparacion");
     }
 
-    private void AddToCart()
+    private async Task AddToCart()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity == null || !authState.User.Identity.IsAuthenticated)
+        {
+            ToastService.ShowToast("No se puede agregar al carrito si no estás registrado.", "warning");
+            return;
+        }
+
         if (receta != null)
         {
             CarritoService.AgregarReceta(receta, 1);

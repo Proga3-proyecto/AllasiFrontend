@@ -6,6 +6,7 @@
 @inject PedidosRS PedidosService
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthStateProvider
+@inject ClientesRS ClientesService
 
 <PageTitle>Finalizar Compra - Allasi Licores</PageTitle>
 
@@ -42,7 +43,24 @@
                     <form @onsubmit="RealizarPago">
                         <div class="form-group">
                             <label for="direccion">Dirección de Entrega</label>
-                            <input type="text" id="direccion" class="form-control" @bind="direccion" required placeholder="Ej: Av. Principal 123" />
+                            <div style="display: flex; gap: 10px;">
+                                <select id="direccion" class="form-control" @bind="direccion" required>
+                                    @if (savedAddresses.Count == 0)
+                                    {
+                                        <option value="" disabled selected>No tienes direcciones guardadas</option>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var dir in savedAddresses)
+                                        {
+                                            <option value="@dir">@dir</option>
+                                        }
+                                    }
+                                </select>
+                                <button type="button" class="btn btn-outline-primary" @onclick="AbrirModalDireccion" style="white-space: nowrap; height: fit-content; align-self: center;">
+                                    <i class="bi bi-plus-lg"></i> Agregar
+                                </button>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="referencia">Referencia (Opcional)</label>
@@ -128,6 +146,29 @@
     </div>
 </div>
 
+@if (showAddressModal)
+{
+    <div class="custom-modal-overlay" @onclick="CerrarModalDireccion">
+        <div class="custom-modal-content" @onclick:stopPropagation="true">
+            <div class="custom-modal-header">
+                <h5 class="custom-modal-title">Agregar nueva dirección</h5>
+                <button type="button" class="custom-modal-close" aria-label="Close" @onclick="CerrarModalDireccion">&times;</button>
+            </div>
+            <div class="custom-modal-body">
+                <input type="text" class="form-control" @bind="nuevaDireccionCheckout" placeholder="Ej: Av. Principal 123, Distrito" />
+                @if (!string.IsNullOrEmpty(addressModalError))
+                {
+                    <div class="text-danger mt-2" style="font-size: 0.85rem;">@addressModalError</div>
+                }
+            </div>
+            <div class="custom-modal-footer">
+                <button type="button" class="btn-cancel" @onclick="CerrarModalDireccion">Cancelar</button>
+                <button type="button" class="btn-save" @onclick="GuardarNuevaDireccion">Guardar</button>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private string direccion = "";
     private string referencia = "";
@@ -135,6 +176,12 @@
     private bool isProcessing = false;
     private string errorMessage = "";
     private int? userId = null;
+    private Cliente? currentClient = null;
+    private List<string> savedAddresses = new();
+    
+    private bool showAddressModal = false;
+    private string nuevaDireccionCheckout = "";
+    private string addressModalError = "";
 
     private double Subtotal => CarritoService.ObtenerTotal();
     private double Delivery => Subtotal > 0 ? 15.00 : 0.00;
@@ -150,7 +197,71 @@
             if (int.TryParse(userIdClaim, out int uid))
             {
                 userId = uid;
+                currentClient = await ClientesService.GetClienteAsync(uid);
+                if (currentClient?.direcciones != null)
+                {
+                    savedAddresses = currentClient.direcciones.Select(d => d.direccion).ToList();
+                    if (savedAddresses.Any())
+                    {
+                        direccion = savedAddresses.First();
+                    }
+                }
             }
+        }
+    }
+
+    private void AbrirModalDireccion()
+    {
+        nuevaDireccionCheckout = "";
+        addressModalError = "";
+        showAddressModal = true;
+    }
+
+    private void CerrarModalDireccion()
+    {
+        showAddressModal = false;
+    }
+
+    private async Task GuardarNuevaDireccion()
+    {
+        addressModalError = "";
+        if (string.IsNullOrWhiteSpace(nuevaDireccionCheckout))
+        {
+            addressModalError = "La dirección no puede estar vacía.";
+            return;
+        }
+
+        if (currentClient != null)
+        {
+            try
+            {
+                currentClient.direcciones ??= new List<ClienteDireccion>();
+                currentClient.direcciones.Add(new ClienteDireccion { direccion = nuevaDireccionCheckout.Trim() });
+                
+                var resultado = await ClientesService.ActualizarAsync(currentClient);
+                if (resultado)
+                {
+                    savedAddresses.Add(nuevaDireccionCheckout.Trim());
+                    direccion = nuevaDireccionCheckout.Trim();
+                    showAddressModal = false;
+                }
+                else
+                {
+                    addressModalError = "Error al guardar la dirección.";
+                    currentClient.direcciones.RemoveAt(currentClient.direcciones.Count - 1);
+                }
+            }
+            catch (Exception ex)
+            {
+                addressModalError = "Error de red: " + ex.Message;
+                currentClient.direcciones.RemoveAt(currentClient.direcciones.Count - 1);
+            }
+        }
+        else
+        {
+            savedAddresses.Add(nuevaDireccionCheckout.Trim());
+            direccion = nuevaDireccionCheckout.Trim();
+            showAddressModal = false;
         }
     }
 
@@ -173,6 +284,13 @@
         
         try
         {
+            if (currentClient != null && !savedAddresses.Contains(direccion.Trim(), StringComparer.OrdinalIgnoreCase))
+            {
+                currentClient.direcciones ??= new List<ClienteDireccion>();
+                currentClient.direcciones.Add(new ClienteDireccion { direccion = direccion.Trim() });
+                await ClientesService.ActualizarAsync(currentClient);
+            }
+
             // Construir el objeto Pedido
             var nuevoPedido = new Pedido
             {

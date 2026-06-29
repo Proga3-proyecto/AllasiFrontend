@@ -2,6 +2,8 @@
 @using Progra3_Frontend.Services
 @inject NavigationManager NavigationManager
 @inject CarritoStateService CarritoService
+@inject ToastService ToastService
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
 
 <div class="product-card" @onclick="NavigateToDetail" style="cursor: pointer;">
     @if (Rank > 0)
@@ -75,8 +77,15 @@
         return 0.00;
     }
 
-    private void AddToCart()
+    private async Task AddToCart()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity == null || !authState.User.Identity.IsAuthenticated)
+        {
+            ToastService.ShowToast("No se puede agregar al carrito si no estás registrado.", "warning");
+            return;
+        }
+
         if (ProductoItem != null)
         {
             CarritoService.AgregarProducto(ProductoItem, 1);

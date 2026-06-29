@@ -1,4 +1,4 @@
-﻿.container {
+.container {
     display: flex;
     min-height: 100vh; /* min-height evita que el formulario se corte si la pantalla es muy bajita */
     justify-content: center;
@@ -205,3 +205,45 @@ section {
     width:100%;
     background:none;
 }
+
+/* Estilos para el indicador de fuerza de la contraseña */
+.password-strength-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 5px;
+    width: 100%;
+}
+
+.password-strength-bars {
+    display: flex;
+    gap: 4px;
+    height: 6px;
+    width: 100%;
+}
+
+.strength-bar {
+    flex: 1;
+    border-radius: 3px;
+    background-color: #e0e0e0;
+    transition: background-color 0.3s ease;
+}
+
+.strength-bar.weak { background-color: #ff4d4d; }
+.strength-bar.fair { background-color: #ffa64d; }
+.strength-bar.good { background-color: #ffd24d; }
+.strength-bar.strong { background-color: #99e699; }
+.strength-bar.very-strong { background-color: #33cc33; }
+
+.strength-text {
+    font-size: 11px;
+    font-weight: 600;
+    text-align: right;
+}
+
+.text-weak { color: #ff4d4d; }
+.text-fair { color: #ffa64d; }
+.text-good { color: #ffd24d; }
+.text-strong { color: #99e699; }
+.text-very-strong { color: #33cc33; }
+.text-empty { color: #999; }
