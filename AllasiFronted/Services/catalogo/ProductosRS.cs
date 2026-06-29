@@ -175,7 +175,7 @@ namespace Progra3_Frontend.Services
 
                 //content.Add(streamContent, "archivo", fileName);
 
-                var response = await _httpClient.PostAsync($"productos/{idProducto}/imagenPrincipal/${idImagen}", null);
+                var response = await _httpClient.PutAsync($"productos/{idProducto}/imagenPrincipal/{idImagen}", null);
                 if (response.IsSuccessStatusCode) _cachedProductos = null;
                 return response.IsSuccessStatusCode;
             }
