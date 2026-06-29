@@ -1,4 +1,4 @@
-@using AllasiFrontend.Components.Shared.ui.SidebarNav
+﻿@using AllasiFrontend.Components.Shared.ui.SidebarNav
 @layout MainLayout
 @inherits LayoutComponentBase
 
@@ -18,6 +18,8 @@
     List<NavItem> items = [
             new (){Href="/user",Icon="bi-person",Text="Mi perfil" },
             new (){Href="/user/my-orders",Icon="bi-briefcase",Text="Mis pedidos" },
-            new (){Href="/user/change-password",Icon="bi-lock",Text="Cambiar contrase�a" },
+            new (){Href="/user/my-addresses",Icon="bi-geo-alt",Text="Mis direcciones" },
+            new (){Href="/user/change-password",Icon="bi-lock",Text="Cambiar contraseña" },
     ];
 }
+

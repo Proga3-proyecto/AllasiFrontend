@@ -74,10 +74,21 @@
                         <label>Contraseña</label>
                         <div class="input-container" style="position: relative;">
                             <i class="bi bi-lock-fill"></i>
-                            <InputText @bind-Value="formUser.Password" type="@(showPassword ? "text" : "password")" placeholder="Crea una contraseña" style="padding-right: 35px; width: 100%;" />
+                            <input @bind-Value="formUser.Password" @bind-Value:event="oninput" type="@(showPassword ? "text" : "password")" placeholder="Crea una contraseña" style="padding-right: 35px; width: 100%;" />
                             <i class="bi @(showPassword ? "bi-eye-slash" : "bi-eye") text-muted" style="position: absolute; right: 15px; cursor: pointer;" @onclick="() => showPassword = !showPassword"></i>
                         </div>
                         <ValidationMessage For="@(() => formUser.Password)" />
+                        
+                        <div class="password-strength-container">
+                            <div class="password-strength-bars">
+                                <div class="strength-bar @GetStrengthBarClass(1)"></div>
+                                <div class="strength-bar @GetStrengthBarClass(2)"></div>
+                                <div class="strength-bar @GetStrengthBarClass(3)"></div>
+                                <div class="strength-bar @GetStrengthBarClass(4)"></div>
+                                <div class="strength-bar @GetStrengthBarClass(5)"></div>
+                            </div>
+                            <span class="strength-text @GetStrengthTextClass()">@GetStrengthText()</span>
+                        </div>
                     </div>
 
                     <div class="form-input">
@@ -151,6 +162,64 @@
     private bool showPassword = false;
     private bool showConfirmPassword = false;
 
+    private int PasswordScore => CalculatePasswordScore(formUser.Password);
+
+    private int CalculatePasswordScore(string? password)
+    {
+        if (string.IsNullOrEmpty(password)) return 0;
+        int score = 0;
+        if (password.Length >= 8) score++;
+        if (password.Any(char.IsUpper)) score++;
+        if (password.Any(char.IsLower)) score++;
+        if (password.Any(char.IsDigit)) score++;
+        if (password.Any(ch => !char.IsLetterOrDigit(ch))) score++;
+        return score;
+    }
+
+    private string GetStrengthBarClass(int barIndex)
+    {
+        var score = PasswordScore;
+        if (barIndex > score) return "";
+
+        return score switch
+        {
+            1 => "weak",
+            2 => "fair",
+            3 => "good",
+            4 => "strong",
+            5 => "very-strong",
+            _ => ""
+        };
+    }
+
+    private string GetStrengthTextClass()
+    {
+        return PasswordScore switch
+        {
+            0 => "text-empty",
+            1 => "text-weak",
+            2 => "text-fair",
+            3 => "text-good",
+            4 => "text-strong",
+            5 => "text-very-strong",
+            _ => "text-empty"
+        };
+    }
+
+    private string GetStrengthText()
+    {
+        return PasswordScore switch
+        {
+            0 => "Nivel de seguridad",
+            1 => "Muy Débil",
+            2 => "Débil",
+            3 => "Aceptable",
+            4 => "Fuerte",
+            5 => "Muy Fuerte",
+            _ => ""
+        };
+    }
+
     private async Task CrearCuenta()
     {
         if (isProcessing) return;
@@ -223,6 +292,7 @@
 
         [Required(ErrorMessage = "Debe ingresar una contraseña")]
         [MinLength(8, ErrorMessage = "La contraseña debe tener mínimo 8 caracteres")]
+        [ContrasenaFuerte(ErrorMessage = "La contraseña debe ser más segura (mínimo nivel fuerte). Usa mayúsculas, números o símbolos.")]
         public string Password { get; set; } = "";
 
         [Required(ErrorMessage = "Debe repetir la contraseña")]
@@ -245,6 +315,28 @@
                 if (edad < 18)
                 {
                     return new ValidationResult(ErrorMessage ?? "Debe ser mayor de edad.");
+                }
+            }
+            return ValidationResult.Success;
+        }
+    }
+
+    public class ContrasenaFuerteAttribute : ValidationAttribute
+    {
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+        {
+            if (value is string password)
+            {
+                int score = 0;
+                if (password.Length >= 8) score++;
+                if (password.Any(char.IsUpper)) score++;
+                if (password.Any(char.IsLower)) score++;
+                if (password.Any(char.IsDigit)) score++;
+                if (password.Any(ch => !char.IsLetterOrDigit(ch))) score++;
+
+                if (score < 4)
+                {
+                    return new ValidationResult(ErrorMessage ?? "La contraseña debe ser más segura (nivel fuerte).");
                 }
             }
             return ValidationResult.Success;
