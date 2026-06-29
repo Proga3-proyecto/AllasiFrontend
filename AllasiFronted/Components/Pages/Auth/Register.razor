@@ -225,10 +225,10 @@
     {
         if (isProcessing) return;
        if (PasswordScore < 4) 
-    {
-        errorMessage = "La contraseña no cumple con todos los requisitos de seguridad.";
-        return;
-    }
+        {
+            errorMessage = "La contraseña no cumple con todos los requisitos de seguridad.";
+             return;
+         }
         isProcessing = true;
         errorMessage = null;
 
