@@ -99,3 +99,41 @@ window.destruirGraficoBarras = canvasId => {
         grafico.destroy();
     }
 };
+
+window.exportarGrafico = (canvasId, nombreArchivo) => {
+    const canvasOriginal = document.getElementById(canvasId);
+
+    if (!canvasOriginal) {
+        console.error(`No se encontró el gráfico: ${canvasId}`);
+        return;
+    }
+
+    // Canvas temporal para agregar fondo blanco
+    const canvasExportacion = document.createElement("canvas");
+
+    canvasExportacion.width = canvasOriginal.width;
+    canvasExportacion.height = canvasOriginal.height;
+
+    const contexto = canvasExportacion.getContext("2d");
+
+    // Fondo blanco
+    contexto.fillStyle = "#ffffff";
+    contexto.fillRect(
+        0,
+        0,
+        canvasExportacion.width,
+        canvasExportacion.height
+    );
+
+    // Copiar la gráfica encima del fondo blanco
+    contexto.drawImage(canvasOriginal, 0, 0);
+
+    const enlace = document.createElement("a");
+
+    enlace.href = canvasExportacion.toDataURL("image/png", 1.0);
+    enlace.download = nombreArchivo || "dashboard-ventas.png";
+
+    document.body.appendChild(enlace);
+    enlace.click();
+    enlace.remove();
+};
