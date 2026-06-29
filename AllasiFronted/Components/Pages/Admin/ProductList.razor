@@ -287,6 +287,7 @@
 
         processingItemId = idProducto;
         processingAction = "Eliminar";
+        StateHasChanged();
         try
         {
             bool exito = await ProductosRS.EliminarAsync(idProducto);
