@@ -1,69 +1,83 @@
 .banner-carousel {
     position: relative;
-    width: 100%;
-    height: 400px;
-    /*background-color: var(--color-primary, #101c45);*/
-    border-radius: 12px;
-    overflow: hidden;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
-    color: #ffffff;
-    font-family: "Metrophobic", sans-serif;
+    width: 94vw;
+    max-width: none;
+    height: 350px;
+    /* Espacio respecto a la cabecera */
+    margin-top: -10px;
     margin-bottom: 40px;
+    padding: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-sizing: border-box;
+    color: #ffffff;
+    background-color: #101c45;
+    font-family: "Metrophobic", sans-serif;
 }
 
+/* Texto que aparece en la primera imagen */
 .banner-content {
-    flex: 1;
-    padding: 60px;
-    z-index: 2;
     position: relative;
+    z-index: 3;
+    width: 55%;
+    max-width: 750px;
+    padding: 60px 80px;
+    box-sizing: border-box;
 }
 
-.banner-content h1 {
-    font-size: 2.2rem;
-    font-weight: 700;
-    margin-bottom: 15px;
-    line-height: 1.2;
-    letter-spacing: 0.5px;
-}
+    .banner-content h1 {
+        margin: 0 0 15px;
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: 0.5px;
+    }
 
-.banner-content p {
-    font-size: 1.1rem;
-    margin-bottom: 30px;
-    opacity: 0.9;
-    line-height: 1.5;
-}
+    .banner-content p {
+        margin: 0 0 30px;
+        font-size: 1.1rem;
+        line-height: 1.5;
+        opacity: 0.9;
+    }
 
+/* Botón */
 .btn-ver-productos {
     display: inline-block;
-    background-color: #ffffff;
-    color: var(--color-primary, #101c45);
     padding: 12px 28px;
     border-radius: 25px;
+    background-color: #ffffff;
+    color: var(--color-primary, #101c45);
     text-decoration: none;
-    font-weight: 600;
     font-size: 1rem;
+    font-weight: 600;
     transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
-.btn-ver-productos:hover {
-  /*  background-color: #f0f0f0;*/
-    transform: translateY(-2px);
-}
+    .btn-ver-productos:hover {
+        background-color: #f0f0f0;
+        transform: translateY(-2px);
+    }
 
+/* Contenedor de las imágenes */
 .banner-image {
     position: absolute;
-    top: 0;
-    right: 0;
+    inset: 0;
+    z-index: 1;
     width: 100%;
     height: 100%;
-    z-index: 1;
+    overflow: hidden;
+    background-color: #101c45;
 }
 
+/* Imágenes del carrusel */
 .carousel-img {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0;
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -72,96 +86,47 @@
     transition: opacity 0.8s ease-in-out;
 }
 
-.carousel-img.active {
-    opacity: 1;
-}
+    .carousel-img.active {
+        opacity: 1;
+    }
 
-/* Pseudo-element for gradient overlay to blend image with background */
+
+
+    .carousel-img.active {
+        opacity: 1;
+    }
+
+/* Degradado para que el texto sea visible */
 .banner-image::before {
-    content: '';
+    content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to right, var(--color-primary, #101c45) 0%, transparent 100%);
+    inset: 0;
     z-index: 2;
+    pointer-events: none;
+    background: linear-gradient( to right, rgba(16, 28, 69, 0.95) 0%, rgba(16, 28, 69, 0.72) 35%, rgba(16, 28, 69, 0.15) 70%, transparent 100% );
 }
 
-.carousel-control {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.4);
-    color: white;
-    border: none;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.2rem;
-    cursor: pointer;
-    z-index: 10;
-    transition: background-color 0.2s;
-}
-
-.carousel-control:hover {
-    background-color: rgba(0, 0, 0, 0.7);
-}
-
-.carousel-control.prev {
-    left: 20px;
-}
-
-.carousel-control.next {
-    right: 20px;
-}
-
+/* Indicadores inferiores */
 .carousel-indicators {
     position: absolute;
     bottom: 20px;
     left: 50%;
-    transform: translateX(-50%);
+    z-index: 10;
     display: flex;
     gap: 10px;
-    z-index: 10;
+    transform: translateX(-50%);
 }
 
 .indicator {
     width: 30px;
     height: 4px;
-    background-color: rgba(255, 255, 255, 0.4);
     border-radius: 2px;
+    background-color: rgba(255, 255, 255, 0.4);
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.indicator.active {
-    background-color: #ffffff;
-}
-
-@media (max-width: 768px) {
-    .banner-carousel {
-        height: auto;
-        min-height: 400px;
-        flex-direction: column;
-        justify-content: center;
-        text-align: center;
+    .indicator.active {
+        background-color: #ffffff;
+        transform: scaleX(1.1);
     }
-    
-    .banner-content {
-        padding: 40px 20px;
-        width: 100%;
-    }
-    
-    .banner-image {
-        width: 100%;
-        opacity: 0.3; /* Make it subtle in background */
-    }
-    
-    .banner-image::before {
-        background: linear-gradient(to top, var(--color-primary, #101c45) 0%, transparent 100%);
-    }
-}
