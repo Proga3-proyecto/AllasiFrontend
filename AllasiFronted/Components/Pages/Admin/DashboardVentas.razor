@@ -1,0 +1,266 @@
+﻿@page "/admin/dashboard-sales"
+@layout AdminLayout
+
+@attribute [Authorize(Roles = "ADMIN,MASTER")]
+@implements IAsyncDisposable
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.JSInterop
+@using Progra3_Frontend.Model
+@using Progra3_Frontend.Services
+
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+@inject PedidosRS pedidosRS
+
+<div class="dashboard-sales-page">
+
+    <div class="dashboard-toolbar">
+
+        <button type="button"
+                class="btn-regresar"
+                @onclick="RegresarDashboard">
+
+            <i class="bi bi-arrow-left"></i>
+            Regresar
+
+        </button>
+
+        <div class="dashboard-filter">
+
+            <label for="mesSeleccionado">
+                Mostrar ventas de:
+            </label>
+
+            <select id="mesSeleccionado"
+                    value="@mesSeleccionado"
+                    @onchange="CambiarMes">
+
+                <option value="0">Todos los meses</option>
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="loading-dashboard">
+
+            <div class="spinner-border text-primary"
+                 role="status">
+            </div>
+
+            <p>Cargando ventas...</p>
+
+        </div>
+    }
+    else if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <div class="alert alert-danger">
+            @errorMessage
+        </div>
+    }
+    else
+    {
+        <div class="chart-container">
+
+            <canvas id="@CanvasId"></canvas>
+
+        </div>
+    }
+
+</div>
+
+@code {
+    private const string CanvasId = "graficoVentas";
+
+    private int mesSeleccionado = 0;
+    private int anioActual = DateTime.Now.Year;
+
+    private bool isLoading = true;
+    private bool graficoPendiente;
+
+    private string errorMessage = string.Empty;
+
+    private List<VentaMensual> ventas = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarVentasAsync();
+    }
+
+    private async Task CargarVentasAsync()
+    {
+        isLoading = true;
+        errorMessage = string.Empty;
+
+        try
+        {
+            List<Pedido> pedidos =
+                await pedidosRS.ListarTodosAsync();
+
+            /*
+             * Se generan siempre los doce meses.
+             * Los meses sin ventas tendrán un total de cero.
+             */
+            ventas = Enumerable.Range(1, 12)
+                .Select(numeroMes => new VentaMensual
+                {
+                    NumeroMes = numeroMes,
+
+                    Mes = ObtenerNombreMes(numeroMes),
+
+                    TotalVendido = pedidos
+                        .Where(pedido =>
+                            pedido.fechaPedido.HasValue &&
+                            pedido.fechaPedido.Value.Year == anioActual &&
+                            pedido.fechaPedido.Value.Month == numeroMes)
+                        .Sum(pedido => pedido.precioFinal)
+                })
+                .ToList();
+
+            /*
+             * Indica que la gráfica debe dibujarse
+             * después de que aparezca el canvas.
+             */
+            graficoPendiente = true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"Error al cargar las ventas: {ex.Message}"
+            );
+
+            errorMessage =
+                "No se pudieron cargar los datos de ventas.";
+
+            ventas = new List<VentaMensual>();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        /*
+         * Se ejecuta cuando los datos ya cargaron
+         * y el canvas ya existe en la página.
+         */
+        if (graficoPendiente && !isLoading)
+        {
+            graficoPendiente = false;
+
+            await DibujarGraficoAsync();
+        }
+    }
+
+    private async Task CambiarMes(ChangeEventArgs args)
+    {
+        if (!int.TryParse(
+                args.Value?.ToString(),
+                out mesSeleccionado))
+        {
+            mesSeleccionado = 0;
+        }
+
+        await DibujarGraficoAsync();
+    }
+
+    private async Task DibujarGraficoAsync()
+    {
+        List<VentaMensual> ventasFiltradas =
+            mesSeleccionado == 0
+                ? ventas
+                : ventas
+                    .Where(venta =>
+                        venta.NumeroMes == mesSeleccionado)
+                    .ToList();
+
+        string[] labels = ventasFiltradas
+            .Select(venta => venta.Mes)
+            .ToArray();
+
+        double[] data = ventasFiltradas
+            .Select(venta => venta.TotalVendido)
+            .ToArray();
+
+        await JS.InvokeVoidAsync(
+            "dibujarGraficoBarras",
+            CanvasId,
+            labels,
+            data,
+            $"Total vendido por mes - {anioActual}"
+        );
+    }
+
+    private static string ObtenerNombreMes(int numeroMes)
+    {
+        string[] meses =
+        {
+            "",
+            "Enero",
+            "Febrero",
+            "Marzo",
+            "Abril",
+            "Mayo",
+            "Junio",
+            "Julio",
+            "Agosto",
+            "Septiembre",
+            "Octubre",
+            "Noviembre",
+            "Diciembre"
+        };
+
+        return meses[numeroMes];
+    }
+
+    private void RegresarDashboard()
+    {
+        Navigation.NavigateTo("/admin/dashboard");
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync(
+                "destruirGraficoBarras",
+                CanvasId
+            );
+        }
+        catch (JSDisconnectedException)
+        {
+            // La conexión con el navegador ya terminó.
+        }
+        catch (InvalidOperationException)
+        {
+            // El JavaScript ya no está disponible.
+        }
+    }
+
+    private sealed class VentaMensual
+    {
+        public int NumeroMes { get; set; }
+
+        public string Mes { get; set; } = string.Empty;
+
+        public double TotalVendido { get; set; }
+    }
+}
