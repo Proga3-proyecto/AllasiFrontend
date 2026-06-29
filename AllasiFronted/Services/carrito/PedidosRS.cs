@@ -105,6 +105,22 @@ namespace Progra3_Frontend.Services
             }
         }
 
+        public async Task<bool> ActualizarEstadoAsync(int id, EstadoPedido nuevoEstado)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(new HttpMethod("PATCH"), $"pedidos/{id}/estado?nuevoEstado={nuevoEstado}");
+                var response = await _httpClient.SendAsync(request);
+                if (response.IsSuccessStatusCode) _cachedPedidos = null;
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en ActualizarEstado: {ex.Message}");
+                return false;
+            }
+        }
+
         public async Task<bool> EliminarAsync(int id)
         {
             try

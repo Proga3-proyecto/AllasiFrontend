@@ -100,9 +100,22 @@
                                             <div class="text-muted" style="font-size: 0.75rem;">@(order.fechaPedido?.ToString("hh:mm tt") ?? "--:--")</div>
                                         </td>
                                         <td>
-                                            <span class="fw-bold @(order.estado.ToString() == "ENTREGADO" ? "text-success" : (order.estado.ToString() == "CANCELADO" ? "text-danger" : "text-warning"))" style="font-size: 0.82rem;">
-                                                @order.estado
-                                            </span>
+                                            @if (updatingOrders.Contains(order.id))
+                                            {
+                                                <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                            }
+                                            else
+                                            {
+                                                <select class="badge bg-@(GetStatusColor(order.estado))" 
+                                                        style="font-size: 0.82rem; border: none; cursor: pointer; outline: none; padding: 0.35em 0.65em;"
+                                                        value="@order.estado" 
+                                                        @onchange="@(async (e) => await ActualizarEstadoFila(order, e))">
+                                                    @foreach (var estado in Enum.GetValues(typeof(EstadoPedido)))
+                                                    {
+                                                        <option value="@estado" class="bg-white text-dark">@estado</option>
+                                                    }
+                                                </select>
+                                            }
                                         </td>
                                         <td>
                                             <span class="fw-bold text-dark">S/ @order.precioFinal.ToString("0.00")</span>
@@ -166,6 +179,7 @@
 
 @code {
     private List<Pedido> pedidos = new();
+    private HashSet<int> updatingOrders = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -244,5 +258,44 @@
             PageSize = newSize;
             CurrentPage = 1;
         }
+    }
+
+    private async Task ActualizarEstadoFila(Pedido order, ChangeEventArgs e)
+    {
+        if (e.Value != null && Enum.TryParse(typeof(EstadoPedido), e.Value.ToString(), out var nuevoEstadoObj))
+        {
+            var nuevoEstado = (EstadoPedido)nuevoEstadoObj;
+            if (order.estado == nuevoEstado) return;
+            
+            updatingOrders.Add(order.id);
+            StateHasChanged();
+            
+            var estadoAnterior = order.estado;
+            order.estado = nuevoEstado;
+            
+            bool exito = await PedidosRS.ActualizarEstadoAsync(order.id, nuevoEstado);
+            
+            if (!exito)
+            {
+                order.estado = estadoAnterior; // Revertir en caso de error
+            }
+            
+            updatingOrders.Remove(order.id);
+            StateHasChanged();
+        }
+    }
+
+    private string GetStatusColor(EstadoPedido status)
+    {
+        return status switch
+        {
+            EstadoPedido.PENDIENTE => "warning text-dark",
+            EstadoPedido.EN_PREPARACION => "info text-dark",
+            EstadoPedido.EN_CAMINO => "primary",
+            EstadoPedido.ENTREGADO => "success",
+            EstadoPedido.CANCELADO => "danger",
+            EstadoPedido.RECHAZADO => "dark",
+            _ => "secondary"
+        };
     }
 }

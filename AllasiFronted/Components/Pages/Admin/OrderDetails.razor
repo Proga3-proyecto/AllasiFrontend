@@ -1,4 +1,4 @@
-﻿@page "/admin/order-details/{OrderId:int}"
+@page "/admin/order-details/{OrderId:int}"
 @using Microsoft.AspNetCore.Components.Authorization
 @layout AdminLayout
 
@@ -98,9 +98,21 @@
                                 <i class="bi bi-arrow-left-right info-icon mt-1 text-primary me-3"></i>
                                 <div>
                                     <div class="info-label text-muted small">Estado Actual:</div>
-                                    <div class="info-value">
-                                        <span class="badge bg-@(GetStatusColor(Order.estado))">@Order.estado</span>
+                                    <div class="info-value d-flex align-items-center gap-2 mt-1">
+                                        <select class="badge bg-@(GetStatusColor(Order.estado))" @bind="Order.estado" style="font-size: 0.85rem; border: none; cursor: pointer; outline: none;">
+                                            @foreach (var estado in Enum.GetValues(typeof(EstadoPedido)))
+                                            {
+                                                <option value="@estado" class="bg-white text-dark">@estado</option>
+                                            }
+                                        </select>
+                                        <button class="btn btn-sm btn-outline-primary py-0 px-2" @onclick="GuardarEstado" disabled="@isSaving" title="Guardar cambios">
+                                            @if(isSaving) { <span class="spinner-border spinner-border-sm" style="width: 0.8rem; height: 0.8rem;"></span> } else { <i class="bi bi-save"></i> }
+                                        </button>
                                     </div>
+                                    @if (!string.IsNullOrEmpty(mensajeEstado))
+                                    {
+                                        <div class="small mt-1 @(mensajeEstado.Contains("Error") ? "text-danger" : "text-success")">@mensajeEstado</div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -280,6 +292,8 @@
 
     private Pedido? Order { get; set; }
     private bool isLoading = true;
+    private bool isSaving = false;
+    private string mensajeEstado = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -297,6 +311,34 @@
         {
             isLoading = false;
         }
+    }
+
+    private async Task GuardarEstado()
+    {
+        if (Order == null) return;
+        
+        isSaving = true;
+        mensajeEstado = string.Empty;
+        StateHasChanged();
+        
+        bool exito = await PedidosRS.ActualizarEstadoAsync(Order.id, Order.estado);
+        
+        if (exito)
+        {
+            mensajeEstado = "Estado actualizado exitosamente.";
+        }
+        else
+        {
+            mensajeEstado = "Error al actualizar el estado.";
+        }
+        
+        isSaving = false;
+        StateHasChanged();
+        
+        // Ocultar mensaje después de unos segundos
+        await Task.Delay(3000);
+        mensajeEstado = string.Empty;
+        StateHasChanged();
     }
 
     private string GetStatusColor(EstadoPedido status)
