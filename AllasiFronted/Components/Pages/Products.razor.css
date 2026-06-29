@@ -1,95 +1,24 @@
-.products-page {
-    position: relative;
-    left: 50%;
-    width: 100vw;
-    max-width: none;
-    margin-left: -50vw;
-    font-family: "Metrophobic", sans-serif;
-    color: var(--color-text-main, #101c45);
-    overflow-x: hidden;
-}
-
-    .products-page,
-    .products-page * {
-        box-sizing: border-box;
-    }
-
-/* =========================
-   BANNER DE CATEGORÍA
-   ========================= */
-
-.category-banner {
-    position: relative;
-    width: 100%;
-    height: 250px;
-    background-image: url('../../../assets/banner/banner.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
-    .category-banner::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background-color: rgba(16, 28, 69, 0.6);
-        z-index: 1;
-    }
-
-.banner-content {
-    position: relative;
-    z-index: 2;
-    color: #ffffff;
-}
-
-.banner-title {
-    margin: 0;
-    font-size: 2.5rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-}
-
-.banner-separator {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    margin: 10px 0;
-}
-
-    .banner-separator .line {
-        width: 30px;
-        height: 1px;
-        background-color: #ffffff;
-    }
-
-.banner-icon {
-    font-size: 1.2rem;
-}
-
-.banner-subtitle {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 300;
-}
-
 /* =========================
    CONTENEDOR PRINCIPAL
    ========================= */
 
 .products-container {
     width: 100%;
-    margin: 40px 0;
+    max-width: 1600px;
+    margin: 40px auto;
     padding: 0 30px;
     display: grid;
-    grid-template-columns: 280px minmax(0, 1fr);
+    grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
     gap: 40px;
     align-items: start;
+    box-sizing: border-box;
 }
+
+    /* Evita que el filtro o los productos desborden */
+    .products-container > * {
+        min-width: 0;
+        max-width: 100%;
+    }
 
 /* =========================
    FILTROS
@@ -98,36 +27,49 @@
 .products-sidebar {
     position: sticky;
     top: 100px;
+    width: 100%;
+    min-width: 0;
+    max-width: 280px;
+    box-sizing: border-box;
 }
 
 .filter-card {
+    width: 100%;
+    min-width: 0;
     padding: 24px;
     background-color: #ffffff;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    box-sizing: border-box;
 }
 
 .filter-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
     margin-bottom: 20px;
     padding-bottom: 15px;
     border-bottom: 1px solid var(--color-border-light, #e5e7eb);
 }
 
     .filter-header h3 {
+        min-width: 0;
         margin: 0;
         color: var(--color-primary, #101c45);
         font-size: 1.1rem;
         font-weight: 700;
+        overflow-wrap: anywhere;
     }
 
     .filter-header i {
+        flex-shrink: 0;
         color: var(--color-text-muted, #7a859b);
     }
 
 .filter-section {
+    width: 100%;
+    min-width: 0;
     margin-bottom: 20px;
     padding-bottom: 15px;
     border-bottom: 1px solid var(--color-border-light, #e5e7eb);
@@ -143,18 +85,22 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
     margin-bottom: 15px;
     cursor: pointer;
 }
 
     .filter-section-header h4 {
+        min-width: 0;
         margin: 0;
         color: var(--color-primary, #101c45);
         font-size: 0.95rem;
         font-weight: 600;
+        overflow-wrap: anywhere;
     }
 
     .filter-section-header i {
+        flex-shrink: 0;
         color: var(--color-text-muted, #7a859b);
         font-size: 0.8rem;
     }
@@ -164,13 +110,16 @@
    ========================= */
 
 .price-inputs {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
     gap: 10px;
 }
 
     .price-inputs input {
         width: 100%;
         min-width: 0;
+        max-width: 100%;
         padding: 10px;
         border: 1px solid var(--color-border-light, #e5e7eb);
         border-radius: 8px;
@@ -178,6 +127,7 @@
         color: var(--color-text-main, #101c45);
         font-family: inherit;
         font-size: 0.9rem;
+        box-sizing: border-box;
     }
 
         .price-inputs input::placeholder {
@@ -193,13 +143,14 @@
    ========================= */
 
 .btn-clear-filters {
-    width: 100%;
-    margin-top: 15px;
-    padding: 12px;
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    min-width: 0;
     gap: 8px;
+    margin-top: 15px;
+    padding: 12px;
     background-color: var(--color-primary, #101c45);
     color: #ffffff;
     border: none;
@@ -215,6 +166,7 @@
     }
 
     .btn-clear-filters i {
+        flex-shrink: 0;
         font-size: 0.9rem;
     }
 
@@ -223,10 +175,11 @@
    ========================= */
 
 .products-main {
-    width: 100%;
-    min-width: 0;
     display: flex;
     flex-direction: column;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .products-status {
@@ -244,18 +197,37 @@
 }
 
 /* =========================
-   CUADRÍCULA DE PRODUCTOS
+   CUADRÍCULA RESPONSIVE
    ========================= */
 
 .products-grid {
+    display: grid;
     width: 100%;
     min-width: 0;
+    max-width: 100%;
     min-height: 100vh;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, 300px);
-    justify-content: start;
+    grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
     gap: 20px;
+    align-items: stretch;
+    box-sizing: border-box;
 }
+
+    /* Evita que las tarjetas se superpongan */
+    .products-grid > * {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Para componentes hijos de Blazor con CSS aislado */
+    .products-grid ::deep .product-card {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        margin: 0;
+        box-sizing: border-box;
+    }
 
 /* =========================
    MARCAS
@@ -264,6 +236,8 @@
 .brand-option {
     display: flex;
     align-items: center;
+    width: 100%;
+    min-width: 0;
     gap: 10px;
     margin-bottom: 10px;
     color: var(--color-text-main, #101c45);
@@ -271,6 +245,7 @@
 }
 
     .brand-option input[type="checkbox"] {
+        flex-shrink: 0;
         width: 16px;
         height: 16px;
         accent-color: var(--color-primary, #101c45);
@@ -278,70 +253,104 @@
     }
 
     .brand-option label {
+        min-width: 0;
         cursor: pointer;
+        overflow-wrap: anywhere;
     }
 
 .brand-list-container {
+    width: 100%;
     max-height: 220px;
     padding-right: 8px;
     overflow-y: auto;
+    overflow-x: hidden;
 }
-
-    .brand-list-container::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .brand-list-container::-webkit-scrollbar-track {
-        background-color: #f3f4f6;
-        border-radius: 4px;
-    }
-
-    .brand-list-container::-webkit-scrollbar-thumb {
-        background-color: #d1d5db;
-        border-radius: 4px;
-    }
-
-        .brand-list-container::-webkit-scrollbar-thumb:hover {
-            background-color: var(--color-primary, #101c45);
-        }
 
 /* =========================
-   PAGINACIÓN
+   PANTALLAS WEB MEDIANAS
    ========================= */
 
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    margin-top: 40px;
+@media screen and (max-width: 1200px) {
+    .products-container {
+        grid-template-columns: minmax(220px, 240px) minmax(0, 1fr);
+        gap: 25px;
+        padding: 0 20px;
+    }
+
+    .products-sidebar {
+        max-width: 240px;
+    }
+
+    .filter-card {
+        padding: 18px;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
+        gap: 16px;
+    }
 }
 
-.btn-page {
-    padding: 8px 16px;
-    background-color: var(--color-bg-surface, #ffffff);
-    color: var(--color-text-main, #101c45);
-    border: 1px solid var(--color-border-light, #e5e7eb);
-    border-radius: 8px;
-    font-family: inherit;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
+/* =========================
+   VENTANA WEB PEQUEÑA
+   El filtro pasa arriba
+   ========================= */
+
+@media screen and (max-width: 900px) {
+    .products-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 25px;
+        padding: 0 20px;
+    }
+
+    .products-sidebar {
+        position: static;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .filter-card {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .products-main {
+        width: 100%;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px;
+    }
 }
 
-    .btn-page:hover:not(:disabled) {
-        color: var(--color-primary, #101c45);
-        border-color: var(--color-primary, #101c45);
+/* =========================
+   VENTANA MUY ANGOSTA
+   ========================= */
+
+@media screen and (max-width: 600px) {
+    .products-container {
+        margin: 25px auto;
+        padding: 0 12px;
     }
 
-    .btn-page.active {
-        background-color: var(--color-primary, #101c45);
-        color: #ffffff;
-        border-color: var(--color-primary, #101c45);
+    .filter-card {
+        padding: 16px;
+        border-radius: 10px;
     }
 
-    .btn-page:disabled {
-        background-color: #f8f9fc;
-        color: var(--color-text-muted, #7a859b);
-        cursor: not-allowed;
+    .price-inputs {
+        grid-template-columns: minmax(0, 1fr);
     }
+
+    .products-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+    }
+}
+
