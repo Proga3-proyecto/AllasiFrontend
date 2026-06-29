@@ -1,5 +1,3 @@
-@implements IDisposable
-
 <div class="banner-carousel">
 
     @if (currentIndex == 0)
@@ -14,10 +12,6 @@
                 Descubre nuestra selección de licores premium<br />
                 y encuentra tu favorito.
             </p>
-
-            <a href="/products/all" class="btn-ver-productos">
-                Ver productos
-            </a>
         </div>
     }
 
@@ -33,56 +27,28 @@
     <div class="carousel-indicators">
         @for (int i = 0; i < images.Length; i++)
         {
-            var index = i;
+            int index = i;
 
             <span class="indicator @(i == currentIndex ? "active" : "")"
                   @onclick="() => SetImage(index)">
             </span>
         }
     </div>
+
 </div>
 
 @code {
     private int currentIndex = 0;
 
-    private string[] images = new[]
+    private readonly string[] images =
     {
         "/assets/inicio.png",
         "/assets/banner/banner1.webp",
         "/assets/banner/banner2.webp"
     };
 
-    private System.Threading.Timer? timer;
-
-    protected override void OnInitialized()
-    {
-        timer = new System.Threading.Timer(_ =>
-        {
-            InvokeAsync(() =>
-            {
-                NextImage();
-                StateHasChanged();
-            });
-        }, null, 5000, 5000);
-    }
-
-    private void NextImage()
-    {
-        currentIndex = (currentIndex + 1) % images.Length;
-    }
-
-    private void PrevImage()
-    {
-        currentIndex = (currentIndex - 1 + images.Length) % images.Length;
-    }
-
     private void SetImage(int index)
     {
         currentIndex = index;
-    }
-
-    public void Dispose()
-    {
-        timer?.Dispose();
     }
 }
