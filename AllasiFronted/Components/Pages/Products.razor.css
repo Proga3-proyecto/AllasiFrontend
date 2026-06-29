@@ -399,6 +399,11 @@
         width: 100%;
         min-width: 0;
     }
+
+    /* Centra los productos al achicar */
+    .products-grid {
+        justify-content: center;
+    }
 }
 
 /* Ajustes del filtro en ventanas más angostas */
@@ -421,6 +426,12 @@
         .price-inputs input {
             width: 100%;
         }
+
+    /* Un producto centrado */
+    .products-grid {
+        grid-template-columns: minmax(0, 300px);
+        justify-content: center;
+    }
 
     .pagination {
         flex-wrap: wrap;
