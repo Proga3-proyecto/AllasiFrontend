@@ -66,16 +66,6 @@ namespace Progra3_Frontend.Services
             Productos.Clear();
             if (productosBackend != null)
             {
-                //foreach (var group in productosBackend.GroupBy(p => p.id))
-                //{
-                //    var p = group.First();
-                //    Productos.Add(new DetalleProducto
-                //    {
-                //        producto = p,
-                //        cantidad = group.Count(),
-                //        montoTotal = group.Count() * p.precioFinal
-                //    });
-                //}
                 foreach (DetalleProducto detalle in productosBackend)
                 {
                     Productos.Add(detalle);
@@ -91,34 +81,10 @@ namespace Progra3_Frontend.Services
                     Recetas.Add(detalle);
                 }
 
-                //foreach (var group in recetasBackend.GroupBy(r => r.id))
-                //{
-                //    var r = group.First();
-                //    Recetas.Add(new DetalleReceta
-                //    {
-                //        receta = r,
-                //        cantidad = group.Count(),
-                //        montoTotal = group.Count() * r.precioFinal
-                //    });
-                //}
             }
             NotifyStateChanged();
         }
 
-        //private async Task SincronizarBackendAsync()
-        //{
-        //    if (!_userId.HasValue) return;
-
-        //    var clientes = await _clientesRS.ListarTodosAsync();
-        //    var cliente = clientes.FirstOrDefault(c => c.idUsuario == _userId.Value);
-
-        //    if (cliente != null)
-        //    {
-        //        cliente.carritoProductos = Productos;
-        //        cliente.carritoRecetas = Recetas;
-        //        await _clientesRS.ActualizarAsync(cliente);
-        //    }
-        //}
 
         public void AgregarProducto(Producto producto, int cantidad = 1)
         {
