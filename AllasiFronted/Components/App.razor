@@ -20,8 +20,16 @@
 </head>
 <body class="scrollbar">
     <Routes @rendermode="InteractiveServer" />
+
     <ReconnectModal />
-    <script src="@Assets["_framework/blazor.web.js"]"></script>
+
+    <!-- 1. Primero carga Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
+
+    <!-- 2. Después carga tu archivo que utiliza Chart -->
     <script src="@Assets["js/descargarPDF.js"]"></script>
+
+    <!-- 3. Finalmente inicia Blazor -->
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
 </body>
 </html>
