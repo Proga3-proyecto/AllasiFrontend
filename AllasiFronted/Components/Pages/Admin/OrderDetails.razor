@@ -99,15 +99,22 @@
                                 <div>
                                     <div class="info-label text-muted small">Estado Actual:</div>
                                     <div class="info-value d-flex align-items-center gap-2 mt-1">
-                                        <select class="badge bg-@(GetStatusColor(Order.estado))" @bind="Order.estado" style="font-size: 0.85rem; border: none; cursor: pointer; outline: none;">
-                                            @foreach (var estado in Enum.GetValues(typeof(EstadoPedido)))
-                                            {
-                                                <option value="@estado" class="bg-white text-dark">@estado</option>
-                                            }
-                                        </select>
-                                        <button class="btn btn-sm btn-outline-primary py-0 px-2" @onclick="GuardarEstado" disabled="@isSaving" title="Guardar cambios">
-                                            @if(isSaving) { <span class="spinner-border spinner-border-sm" style="width: 0.8rem; height: 0.8rem;"></span> } else { <i class="bi bi-save"></i> }
-                                        </button>
+                                        @if(isSaving)
+                                        {
+                                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                        }
+                                        else
+                                        {
+                                            <select class="badge bg-@(GetStatusColor(Order.estado))" 
+                                                    style="font-size: 0.85rem; border: none; cursor: pointer; outline: none;"
+                                                    value="@Order.estado"
+                                                    @onchange="GuardarEstadoOnchange">
+                                                @foreach (var estado in Enum.GetValues(typeof(EstadoPedido)))
+                                                {
+                                                    <option value="@estado" class="bg-white text-dark">@estado</option>
+                                                }
+                                            </select>
+                                        }
                                     </div>
                                     @if (!string.IsNullOrEmpty(mensajeEstado))
                                     {
@@ -312,32 +319,42 @@
         }
     }
 
-    private async Task GuardarEstado()
+    private async Task GuardarEstadoOnchange(ChangeEventArgs e)
     {
         if (Order == null) return;
         
-        isSaving = true;
-        mensajeEstado = string.Empty;
-        StateHasChanged();
-        
-        bool exito = await PedidosRS.ActualizarEstadoAsync(Order.id, Order.estado);
-        
-        if (exito)
+        if (e.Value != null && Enum.TryParse(typeof(EstadoPedido), e.Value.ToString(), out var nuevoEstadoObj))
         {
-            mensajeEstado = "Estado actualizado exitosamente.";
+            var nuevoEstado = (EstadoPedido)nuevoEstadoObj;
+            if (Order.estado == nuevoEstado) return;
+            
+            isSaving = true;
+            mensajeEstado = string.Empty;
+            StateHasChanged();
+            
+            var estadoAnterior = Order.estado;
+            Order.estado = nuevoEstado;
+            
+            bool exito = await PedidosRS.ActualizarEstadoAsync(Order.id, Order.estado);
+            
+            if (exito)
+            {
+                mensajeEstado = "Estado actualizado exitosamente.";
+            }
+            else
+            {
+                Order.estado = estadoAnterior; // Revertir en caso de error
+                mensajeEstado = "Error al actualizar el estado.";
+            }
+            
+            isSaving = false;
+            StateHasChanged();
+            
+            // Ocultar mensaje después de unos segundos
+            await Task.Delay(3000);
+            mensajeEstado = string.Empty;
+            StateHasChanged();
         }
-        else
-        {
-            mensajeEstado = "Error al actualizar el estado.";
-        }
-        
-        isSaving = false;
-        StateHasChanged();
-        
-        // Ocultar mensaje después de unos segundos
-        await Task.Delay(3000);
-        mensajeEstado = string.Empty;
-        StateHasChanged();
     }
 
     private string GetStatusColor(EstadoPedido status)
