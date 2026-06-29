@@ -10,34 +10,133 @@
 .best-sellers-section {
     width: 100%;
     margin: 40px 0;
+    box-sizing: border-box;
 }
 
 .section-title {
     margin: 0 0 30px;
     color: var(--color-primary, #101c45);
-    font-size: 1.8rem;
+    font-size: clamp(1.4rem, 3vw, 1.8rem);
     font-weight: 700;
     text-align: center;
     letter-spacing: 1px;
 }
 
+/* =========================
+   CONTENEDOR DE PRODUCTOS
+   ========================= */
+
 .products-grid {
     display: grid;
     width: 100%;
+    max-width: 100%;
+    /* Cuatro productos por fila */
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 20px;
+    align-items: stretch;
     box-sizing: border-box;
 }
 
-/* Ventana mediana: 3 productos */
+    /* Evita que cualquier componente hijo desborde la columna */
+    .products-grid > * {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+/* =========================
+   TARJETA DEL PRODUCTO
+   ========================= */
+
+.product-card {
+    display: flex;
+    flex-direction: column;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 100%;
+    margin: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+/*
+   Para Blazor con CSS aislado:
+   permite modificar .product-card si está dentro
+   de otro componente Razor.
+*/
+.products-grid ::deep .product-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 100%;
+    margin: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+    /* Imagen del producto */
+    .product-card img,
+    .products-grid ::deep .product-card img {
+        display: block;
+        width: 100% !important;
+        min-width: 0;
+        max-width: 100% !important;
+        height: 250px;
+        object-fit: contain;
+        object-position: center;
+        box-sizing: border-box;
+    }
+
+/* Contenido de la tarjeta */
+.product-card-content,
+.products-grid ::deep .product-card-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+/* Evita que textos largos ensanchen las tarjetas */
+.product-card h1,
+.product-card h2,
+.product-card h3,
+.product-card h4,
+.product-card p,
+.product-card span,
+.product-card a,
+.products-grid ::deep .product-card h1,
+.products-grid ::deep .product-card h2,
+.products-grid ::deep .product-card h3,
+.products-grid ::deep .product-card h4,
+.products-grid ::deep .product-card p,
+.products-grid ::deep .product-card span,
+.products-grid ::deep .product-card a {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* =========================
+   WEB RESPONSIVE
+   ========================= */
+
+/* Ventana web mediana: 3 productos */
 @media screen and (max-width: 1200px) {
     .products-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
-/* Ventana pequeña: 2 productos */
-@media screen and (max-width: 850px) {
+/* Ventana web pequeña: 2 productos */
+@media screen and (max-width: 900px) {
     .home-container {
         padding: 15px;
     }
@@ -47,22 +146,19 @@
         gap: 15px;
     }
 
-    .section-title {
-        font-size: 1.5rem;
-    }
+        .product-card img,
+        .products-grid ::deep .product-card img {
+            height: 220px;
+        }
 }
 
-/* Ventana muy pequeña: 1 producto */
-@media screen and (max-width: 550px) {
+/* Ventana extremadamente angosta: 1 producto */
+@media screen and (max-width: 600px) {
     .home-container {
         padding: 10px;
     }
 
     .products-grid {
         grid-template-columns: minmax(0, 1fr);
-    }
-
-    .best-sellers-section {
-        margin: 25px 0;
     }
 }
