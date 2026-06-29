@@ -272,4 +272,14 @@
 
         public double TotalVendido { get; set; }
     }
+
+
+    private async Task ExportarGraficoAsync()
+    {
+        await JS.InvokeVoidAsync(
+            "exportarGrafico",
+            CanvasId,
+            $"dashboard-ventas-{anioActual}.png"
+        );
+    }
 }
