@@ -1,165 +1,214 @@
-﻿.dashboard-sales-page {
+/* =========================================================
+   DashboardSales.razor.css
+   ========================================================= */
+
+.dashboard-sales-page {
     width: 100%;
     padding: 20px;
     box-sizing: border-box;
     font-family: "Metrophobic", sans-serif;
 }
 
-/* Encabezado */
+    /* =========================================================
+   BARRA SUPERIOR
+   ========================================================= */
 
-.dashboard-header {
-    width: 100%;
-    margin-bottom: 45px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 25px;
-}
-
-    .dashboard-header h2 {
-        margin: 0 0 8px;
-        color: var(--color-primary, #101c45);
-        font-size: 2rem;
-        font-weight: 700;
-    }
-
-    .dashboard-header p {
-        margin: 0;
-        color: var(--color-text-light, #6b7280);
-        font-size: 0.95rem;
-    }
-
-/* Filtro */
-
-.dashboard-filter {
-    min-width: 230px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-    .dashboard-filter label {
-        color: var(--color-primary, #101c45);
-        font-size: 0.9rem;
-        font-weight: 600;
-    }
-
-    .dashboard-filter select {
+    .dashboard-sales-page .dashboard-toolbar {
         width: 100%;
-        padding: 11px 14px;
-        background-color: #ffffff;
-        color: var(--color-primary, #101c45);
-        border: 1px solid #dfe3eb;
-        border-radius: 8px;
-        outline: none;
-        font-family: inherit;
-        font-size: 0.9rem;
-        cursor: pointer;
+        margin-bottom: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 20px;
     }
 
-        .dashboard-filter select:focus {
-            border-color: var(--color-primary, #101c45);
-            box-shadow: 0 0 0 3px rgba(16, 28, 69, 0.08);
+    /* Regresar y Exportar */
+
+    .dashboard-sales-page .dashboard-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        /* Botones casi pegados */
+        gap: 4px;
+    }
+
+    /* =========================================================
+   BOTONES
+   ========================================================= */
+
+    .dashboard-sales-page .btn-regresar,
+    .dashboard-sales-page .btn-exportar {
+        width: auto;
+        margin: 0;
+        padding: 6px 14px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 7px;
+        background-color: var(--color-primary, #101c45);
+        color: #ffffff;
+        border: 1px solid var(--color-primary, #101c45);
+        border-radius: 6px;
+        font-family: "Metrophobic", sans-serif;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: filter 0.2s ease, transform 0.2s ease;
+    }
+
+        .dashboard-sales-page .btn-regresar:hover,
+        .dashboard-sales-page .btn-exportar:hover {
+            background-color: var(--color-primary, #101c45);
+            color: #ffffff;
+            filter: brightness(0.9);
+            transform: translateY(-1px);
         }
 
-/* Gráfica */
+        .dashboard-sales-page .btn-regresar:focus,
+        .dashboard-sales-page .btn-exportar:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(16, 28, 69, 0.15);
+        }
 
-.chart-container {
-    position: relative;
-    width: 100%;
-    height: 650px;
-    padding: 25px;
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
-    box-shadow: 0 5px 18px rgba(16, 28, 69, 0.06);
-    box-sizing: border-box;
-}
+        .dashboard-sales-page .btn-regresar i,
+        .dashboard-sales-page .btn-exportar i {
+            color: #ffffff;
+            font-size: 0.85rem;
+        }
 
-    .chart-container canvas {
-        width: 100% !important;
-        height: 100% !important;
+    /* =========================================================
+   FILTRO DE MESES
+   ========================================================= */
+
+    .dashboard-sales-page .dashboard-filter {
+        min-width: 230px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
     }
 
-/* Pantalla mediana */
+        .dashboard-sales-page .dashboard-filter label {
+            color: var(--color-primary, #101c45);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .dashboard-sales-page .dashboard-filter select {
+            width: 100%;
+            padding: 11px 14px;
+            background-color: #ffffff;
+            color: var(--color-primary, #101c45);
+            border: 1px solid #dfe3eb;
+            border-radius: 8px;
+            outline: none;
+            font-family: inherit;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+            .dashboard-sales-page .dashboard-filter select:focus {
+                border-color: var(--color-primary, #101c45);
+                box-shadow: 0 0 0 3px rgba(16, 28, 69, 0.08);
+            }
+
+    /* =========================================================
+   GRÁFICA
+   ========================================================= */
+
+    .dashboard-sales-page .chart-container {
+        position: relative;
+        width: 100%;
+        height: 650px;
+        padding: 25px;
+        background-color: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        box-shadow: 0 5px 18px rgba(16, 28, 69, 0.06);
+        box-sizing: border-box;
+    }
+
+        .dashboard-sales-page .chart-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+    /* =========================================================
+   CARGA
+   ========================================================= */
+
+    .dashboard-sales-page .loading-dashboard {
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        color: var(--color-primary, #101c45);
+    }
+
+    /* =========================================================
+   MENSAJE DE ERROR
+   ========================================================= */
+
+    .dashboard-sales-page .alert {
+        width: 100%;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+/* =========================================================
+   PANTALLA MEDIANA
+   ========================================================= */
 
 @media screen and (max-width: 900px) {
     .dashboard-sales-page {
         padding: 15px;
     }
 
-    .dashboard-header {
-        align-items: stretch;
-        flex-direction: column;
-    }
+        .dashboard-sales-page .dashboard-toolbar {
+            align-items: stretch;
+            flex-direction: column;
+            gap: 18px;
+        }
 
-    .dashboard-filter {
-        width: 100%;
-        min-width: 0;
-    }
+        .dashboard-sales-page .dashboard-actions {
+            justify-content: flex-start;
+            gap: 4px;
+        }
 
-    .chart-container {
-        height: 550px;
-        padding: 20px;
-    }
+        .dashboard-sales-page .dashboard-filter {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .dashboard-sales-page .chart-container {
+            height: 550px;
+            padding: 20px;
+        }
 }
 
-/* Pantalla pequeña */
+/* =========================================================
+   PANTALLA PEQUEÑA
+   ========================================================= */
 
 @media screen and (max-width: 600px) {
     .dashboard-sales-page {
         padding: 10px;
     }
 
-    .dashboard-header h2 {
-        font-size: 1.6rem;
-    }
+        .dashboard-sales-page .dashboard-actions {
+            width: 100%;
+            gap: 4px;
+        }
 
-    .chart-container {
-        height: 450px;
-        padding: 15px;
-    }
-}
+        .dashboard-sales-page .btn-regresar,
+        .dashboard-sales-page .btn-exportar {
+            flex: 1;
+        }
 
-/*Agregado*/
-.dashboard-toolbar {
-    width: 100%;
-    margin-bottom: 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 20px;
-}
-
-.btn-regresar {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    gap: 9px;
-    padding: 11px 20px;
-    background-color: var(--color-primary, #101c45);
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    font-family: "Metrophobic", sans-serif;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-    .btn-regresar:hover {
-        background-color: var(--color-primary-hover, #1c2e6b);
-        transform: translateY(-2px);
-    }
-
-    .btn-regresar i {
-        font-size: 1rem;
-    }
-
-.dashboard-filter {
-    min-width: 230px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+        .dashboard-sales-page .chart-container {
+            height: 450px;
+            padding: 15px;
+        }
 }
