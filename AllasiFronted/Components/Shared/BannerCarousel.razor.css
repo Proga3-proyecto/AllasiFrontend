@@ -7,7 +7,6 @@
     width: 94vw;
     max-width: none;
     height: 350px;
-    /* Espacio respecto a la cabecera */
     margin-top: -10px;
     margin-bottom: 40px;
     padding: 0;
@@ -15,11 +14,11 @@
     overflow: hidden;
     box-sizing: border-box;
     color: #ffffff;
-    background-color: #101c45;
+    background-color: transparent;
     font-family: "Metrophobic", sans-serif;
 }
 
-/* Texto que aparece en la primera imagen */
+/* Texto del primer banner */
 .banner-content {
     position: relative;
     z-index: 3;
@@ -27,6 +26,8 @@
     max-width: 750px;
     padding: 60px 80px;
     box-sizing: border-box;
+    /* Ayuda a leer el texto sin oscurecer la imagen */
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.75);
 }
 
     .banner-content h1 {
@@ -41,19 +42,21 @@
         margin: 0 0 30px;
         font-size: 1.1rem;
         line-height: 1.5;
-        opacity: 0.9;
+        opacity: 1;
     }
 
 /* Botón */
 .btn-ver-productos {
     display: inline-block;
     padding: 12px 28px;
+    border: none;
     border-radius: 25px;
     background-color: #ffffff;
     color: var(--color-primary, #101c45);
     text-decoration: none;
     font-size: 1rem;
     font-weight: 600;
+    cursor: pointer;
     transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
@@ -62,7 +65,7 @@
         transform: translateY(-2px);
     }
 
-/* Contenedor de las imágenes */
+/* Contenedor de imágenes */
 .banner-image {
     position: absolute;
     inset: 0;
@@ -70,7 +73,9 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: #101c45;
+    background-color: transparent;
+    opacity: 1;
+    filter: none;
 }
 
 /* Imágenes del carrusel */
@@ -83,50 +88,155 @@
     object-fit: cover;
     object-position: center;
     opacity: 0;
-    transition: opacity 0.8s ease-in-out;
+    visibility: hidden;
+    filter: none;
+    transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
 }
 
+    /* Banner visible */
     .carousel-img.active {
         opacity: 1;
+        visibility: visible;
     }
 
-
-
-    .carousel-img.active {
-        opacity: 1;
-    }
-
-/* Degradado para que el texto sea visible */
-.banner-image::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-    background: linear-gradient( to right, rgba(16, 28, 69, 0.95) 0%, rgba(16, 28, 69, 0.72) 35%, rgba(16, 28, 69, 0.15) 70%, transparent 100% );
+/* Quita completamente el degradado oscuro */
+.banner-image::before,
+.banner-image::after {
+    content: none;
+    display: none;
+    background: none;
+    background-image: none;
+    opacity: 0;
 }
 
-/* Indicadores inferiores */
+/* Contenedor de las barras inferiores */
 .carousel-indicators {
     position: absolute;
     bottom: 20px;
     left: 50%;
     z-index: 10;
     display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 10px;
     transform: translateX(-50%);
 }
 
+/* Barra normal */
 .indicator {
+    display: block;
     width: 30px;
     height: 4px;
+    padding: 0;
+    margin: 0;
+    border: none;
     border-radius: 2px;
     background-color: rgba(255, 255, 255, 0.4);
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease, width 0.3s ease;
 }
 
+    /* Barra del banner que está visible */
     .indicator.active {
+        width: 38px;
+        background-color: #ffffff;
+        transform: scaleX(1.05);
+    }
+
+    /* Barra al colocar el mouse encima */
+    .indicator:hover {
         background-color: #ffffff;
         transform: scaleX(1.1);
     }
+
+    /* Quita el borde que puede aparecer al hacer clic */
+    .indicator:focus {
+        outline: none;
+    }
+
+    /* Mantiene resaltada la barra al navegar con teclado */
+    .indicator:focus-visible {
+        background-color: #ffffff;
+        outline: 2px solid rgba(255, 255, 255, 0.7);
+        outline-offset: 4px;
+    }
+
+/* Pantallas web medianas */
+@media screen and (max-width: 1100px) {
+    .banner-carousel {
+        width: calc(100vw - 40px);
+        height: 320px;
+    }
+
+    .banner-content {
+        width: 65%;
+        padding: 45px 55px;
+    }
+
+        .banner-content h1 {
+            font-size: 1.9rem;
+        }
+}
+
+/* Pantallas web pequeñas */
+@media screen and (max-width: 850px) {
+    .banner-carousel {
+        width: calc(100vw - 30px);
+        height: 280px;
+    }
+
+    .banner-content {
+        width: 75%;
+        padding: 35px;
+    }
+
+        .banner-content h1 {
+            font-size: 1.65rem;
+        }
+
+        .banner-content p {
+            font-size: 1rem;
+        }
+}
+
+/* Pantallas muy angostas */
+@media screen and (max-width: 550px) {
+    .banner-carousel {
+        width: calc(100vw - 20px);
+        height: 220px;
+        border-radius: 8px;
+    }
+
+    .banner-content {
+        width: 100%;
+        padding: 20px;
+    }
+
+        .banner-content h1 {
+            font-size: 1.3rem;
+        }
+
+        .banner-content p {
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+        }
+
+    .btn-ver-productos {
+        padding: 9px 18px;
+        font-size: 0.85rem;
+    }
+
+    .carousel-indicators {
+        bottom: 12px;
+        gap: 8px;
+    }
+
+    .indicator {
+        width: 24px;
+        height: 4px;
+    }
+
+        .indicator.active {
+            width: 32px;
+        }
+}
