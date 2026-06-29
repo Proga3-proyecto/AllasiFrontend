@@ -277,179 +277,458 @@
         public int CantidadVendida { get; set; }
     }
 
-
 	public async Task ExportarPdf()
 	{
-		QuestPDF.Settings.License = LicenseType.Community;
-
-		List<ProductoReporte> productosExportar =
-			ProductosOrdenados.ToList();
-
-		int totalUnidades = productosExportar.Sum(
-			producto => producto.CantidadVendida
-		);
-
-		byte[] pdf = Document.Create(container =>
-		{
-			container.Page(page =>
-			{
-				page.Margin(30);
-
-				page.Header()
-					.Text("Reporte por Producto")
-					.FontSize(20)
-					.Bold();
-
-				page.Content().Column(col =>
-				{
-					col.Spacing(10);
-
-					col.Item().Text(
-						$"Total de productos: {productosExportar.Count}"
-					);
-
-					col.Item().Text(
-						$"Total de unidades vendidas: {totalUnidades}"
-					);
-
-					// PRIMERO LA TABLA
-					col.Item()
-						.PaddingTop(15)
-						.Text("Detalle de productos")
-						.FontSize(14)
-						.Bold();
-
-					col.Item()
-						.Table(table =>
-						{
-							table.ColumnsDefinition(columns =>
-							{
-								columns.RelativeColumn();
-								columns.ConstantColumn(100);
-								columns.ConstantColumn(120);
-							});
-
-							table.Header(header =>
-							{
-								header.Cell()
-									.Background(Colors.Blue.Darken3)
-									.Padding(6)
-									.Text("Producto")
-									.FontColor(Colors.White)
-									.Bold();
-
-								header.Cell()
-									.Background(Colors.Blue.Darken3)
-									.Padding(6)
-									.Text("Precio")
-									.FontColor(Colors.White)
-									.Bold();
-
-								header.Cell()
-									.Background(Colors.Blue.Darken3)
-									.Padding(6)
-									.Text("Cantidad vendida")
-									.FontColor(Colors.White)
-									.Bold();
-							});
-
-							foreach (ProductoReporte producto in productosExportar)
-							{
-								table.Cell()
-									.BorderBottom(1)
-									.BorderColor(Colors.Grey.Lighten2)
-									.Padding(6)
-									.Text(producto.Nombre);
-
-								table.Cell()
-									.BorderBottom(1)
-									.BorderColor(Colors.Grey.Lighten2)
-									.Padding(6)
-									.Text($"S/ {producto.Precio:0.00}");
-
-								table.Cell()
-									.BorderBottom(1)
-									.BorderColor(Colors.Grey.Lighten2)
-									.Padding(6)
-									.Text(
-										producto.CantidadVendida.ToString()
-									);
-							}
-						});
-
-					// DESPUÉS LA GRÁFICA DE BARRAS
-					List<ProductoReporte> productosGrafica = productosExportar
-						.OrderByDescending(
-							producto => producto.CantidadVendida
-						)
-						.Take(10)
-						.ToList();
-
-					int cantidadMaxima = productosGrafica.Any()
-						? productosGrafica.Max(
-							producto => producto.CantidadVendida
-						)
-						: 1;
-
-					col.Item()
-						.PaddingTop(20)
-						.Text("Productos con más unidades vendidas")
-						.FontSize(14)
-						.Bold();
-
-					foreach (ProductoReporte producto in productosGrafica)
-					{
-						float porcentaje = cantidadMaxima > 0
-							? (float)producto.CantidadVendida /
-							  cantidadMaxima * 100
-							: 0;
-
-						porcentaje = Math.Max(porcentaje, 1f);
-
-						float restante = Math.Max(
-							100f - porcentaje,
-							1f
-						);
-
-						col.Item()
-							.PaddingVertical(4)
-							.Column(grafica =>
-							{
-								grafica.Item()
-									.Text(
-										$"{producto.Nombre}: " +
-										$"{producto.CantidadVendida} unidades"
-									);
-
-								grafica.Item()
-									.Height(18)
-									.Row(fila =>
-									{
-										fila.RelativeItem(porcentaje)
-											.Background(Colors.Blue.Medium);
-
-										fila.RelativeItem(restante)
-											.Background(Colors.Grey.Lighten3);
-									});
-							});
-					}
-				});
-
-				page.Footer()
-					.AlignCenter()
-					.Text(text =>
-					{
-						text.Span("Página ");
-						text.CurrentPageNumber();
-					});
-			});
-		}).GeneratePdf();
-
-		await JS.InvokeVoidAsync(
-			"descargarArchivo",
-			"ReporteProductos.pdf",
-			"application/pdf",
-			Convert.ToBase64String(pdf)
-		);
+	    QuestPDF.Settings.License = LicenseType.Community;
+	
+	    List<ProductoReporte> productosExportar =
+	        ProductosOrdenados.ToList();
+	
+	    int totalUnidades = productosExportar.Sum(
+	        producto => producto.CantidadVendida
+	    );
+	
+	    List<ProductoReporte> productosGrafica = productosExportar
+	        .OrderByDescending(producto => producto.CantidadVendida)
+	        .Take(10)
+	        .ToList();
+	
+	    int cantidadMaxima = productosGrafica.Count > 0
+	        ? productosGrafica.Max(
+	            producto => producto.CantidadVendida
+	        )
+	        : 1;
+	
+	    string fechaGeneracion =
+	        DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+	
+	    const string azulPrincipal = "#101C45";
+	    const string azulClaro = "#EEF2FF";
+	    const string textoPrincipal = "#1E293B";
+	    const string textoSecundario = "#64748B";
+	    const string fondoAlterno = "#F8FAFC";
+	    const string bordeGris = "#E2E8F0";
+	    const string fondoBarra = "#DDE3EC";
+	
+	    byte[] pdf = Document.Create(document =>
+	    {
+	        document.Page(page =>
+	        {
+	            page.Size(PageSizes.A4);
+	            page.Margin(30);
+	            page.PageColor(Colors.White);
+	
+	            page.DefaultTextStyle(style => style
+	                .FontSize(9)
+	                .FontColor(textoPrincipal)
+	            );
+	
+	            /* =========================================
+	               ENCABEZADO
+	               ========================================= */
+	
+	            page.Header().Column(header =>
+	            {
+	                header.Item().Row(row =>
+	                {
+	                    row.RelativeItem().Column(title =>
+	                    {
+	                        title.Item()
+	                            .Text("Reporte por Producto")
+	                            .FontSize(21)
+	                            .FontColor(azulPrincipal)
+	                            .Bold();
+	
+	                        title.Item()
+	                            .PaddingTop(3)
+	                            .Text(
+	                                "Resumen de productos y unidades vendidas"
+	                            )
+	                            .FontSize(9)
+	                            .FontColor(textoSecundario);
+	                    });
+	
+	                    row.ConstantItem(170).Column(info =>
+	                    {
+	                        info.Item()
+	                            .AlignRight()
+	                            .Text("Fecha de generación")
+	                            .FontSize(8)
+	                            .FontColor(textoSecundario);
+	
+	                        info.Item()
+	                            .PaddingTop(3)
+	                            .AlignRight()
+	                            .Text(fechaGeneracion)
+	                            .FontSize(9)
+	                            .SemiBold();
+	                    });
+	                });
+	
+	                header.Item()
+	                    .PaddingTop(12)
+	                    .LineHorizontal(2)
+	                    .LineColor(azulPrincipal);
+	            });
+	
+	            /* =========================================
+	               CONTENIDO
+	               ========================================= */
+	
+	            page.Content()
+	                .PaddingTop(18)
+	                .PaddingBottom(15)
+	                .Column(column =>
+	                {
+	                    column.Spacing(14);
+	
+	                    /* Tarjetas de resumen */
+	
+	                    column.Item().Row(row =>
+	                    {
+	                        row.RelativeItem()
+	                            .PaddingRight(6)
+	                            .Background(azulClaro)
+	                            .Border(1)
+	                            .BorderColor(bordeGris)
+	                            .Padding(14)
+	                            .Column(card =>
+	                            {
+	                                card.Item()
+	                                    .Text("TOTAL DE PRODUCTOS")
+	                                    .FontSize(8)
+	                                    .FontColor(textoSecundario)
+	                                    .SemiBold();
+	
+	                                card.Item()
+	                                    .PaddingTop(5)
+	                                    .Text(
+	                                        productosExportar.Count.ToString()
+	                                    )
+	                                    .FontSize(18)
+	                                    .FontColor(azulPrincipal)
+	                                    .Bold();
+	                            });
+	
+	                        row.RelativeItem()
+	                            .PaddingLeft(6)
+	                            .Background(azulClaro)
+	                            .Border(1)
+	                            .BorderColor(bordeGris)
+	                            .Padding(14)
+	                            .Column(card =>
+	                            {
+	                                card.Item()
+	                                    .Text("TOTAL DE UNIDADES VENDIDAS")
+	                                    .FontSize(8)
+	                                    .FontColor(textoSecundario)
+	                                    .SemiBold();
+	
+	                                card.Item()
+	                                    .PaddingTop(5)
+	                                    .Text(totalUnidades.ToString())
+	                                    .FontSize(18)
+	                                    .FontColor(azulPrincipal)
+	                                    .Bold();
+	                            });
+	                    });
+	
+	                    /* Título de la tabla */
+	
+	                    column.Item()
+	                        .PaddingTop(5)
+	                        .Column(title =>
+	                        {
+	                            title.Item()
+	                                .Text("Detalle de productos")
+	                                .FontSize(14)
+	                                .FontColor(azulPrincipal)
+	                                .Bold();
+	
+	                            title.Item()
+	                                .PaddingTop(2)
+	                                .Text(
+	                                    "Listado de productos, precios y unidades vendidas"
+	                                )
+	                                .FontSize(8)
+	                                .FontColor(textoSecundario);
+	                        });
+	
+	                    /* Tabla */
+	
+	                    column.Item()
+	                        .Border(1)
+	                        .BorderColor(bordeGris)
+	                        .Table(table =>
+	                        {
+	                            table.ColumnsDefinition(columns =>
+	                            {
+	                                columns.RelativeColumn();
+	                                columns.ConstantColumn(105);
+	                                columns.ConstantColumn(125);
+	                            });
+	
+	                            table.Header(header =>
+	                            {
+	                                header.Cell()
+	                                    .Background(azulPrincipal)
+	                                    .PaddingVertical(8)
+	                                    .PaddingHorizontal(7)
+	                                    .Text("PRODUCTO")
+	                                    .FontSize(8)
+	                                    .FontColor(Colors.White)
+	                                    .Bold();
+	
+	                                header.Cell()
+	                                    .Background(azulPrincipal)
+	                                    .PaddingVertical(8)
+	                                    .PaddingHorizontal(7)
+	                                    .AlignRight()
+	                                    .Text("PRECIO")
+	                                    .FontSize(8)
+	                                    .FontColor(Colors.White)
+	                                    .Bold();
+	
+	                                header.Cell()
+	                                    .Background(azulPrincipal)
+	                                    .PaddingVertical(8)
+	                                    .PaddingHorizontal(7)
+	                                    .AlignCenter()
+	                                    .Text("CANTIDAD VENDIDA")
+	                                    .FontSize(8)
+	                                    .FontColor(Colors.White)
+	                                    .Bold();
+	                            });
+	
+	                            for (
+	                                int indice = 0;
+	                                indice < productosExportar.Count;
+	                                indice++
+	                            )
+	                            {
+	                                ProductoReporte producto =
+	                                    productosExportar[indice];
+	
+	                                string fondoFila = indice % 2 == 0
+	                                    ? Colors.White
+	                                    : fondoAlterno;
+	
+	                                table.Cell()
+	                                    .Background(fondoFila)
+	                                    .BorderBottom(1)
+	                                    .BorderColor(bordeGris)
+	                                    .PaddingVertical(7)
+	                                    .PaddingHorizontal(7)
+	                                    .Text(producto.Nombre ?? "");
+	
+	                                table.Cell()
+	                                    .Background(fondoFila)
+	                                    .BorderBottom(1)
+	                                    .BorderColor(bordeGris)
+	                                    .PaddingVertical(7)
+	                                    .PaddingHorizontal(7)
+	                                    .AlignRight()
+	                                    .Text($"S/ {producto.Precio:N2}");
+	
+	                                table.Cell()
+	                                    .Background(fondoFila)
+	                                    .BorderBottom(1)
+	                                    .BorderColor(bordeGris)
+	                                    .PaddingVertical(7)
+	                                    .PaddingHorizontal(7)
+	                                    .AlignCenter()
+	                                    .Text(
+	                                        producto.CantidadVendida.ToString()
+	                                    )
+	                                    .SemiBold();
+	                            }
+	
+	                            /* Fila de totales */
+	
+	                            table.Cell()
+	                                .ColumnSpan(2)
+	                                .Background(azulClaro)
+	                                .PaddingVertical(9)
+	                                .PaddingHorizontal(7)
+	                                .AlignRight()
+	                                .Text("TOTAL DE UNIDADES")
+	                                .FontColor(azulPrincipal)
+	                                .Bold();
+	
+	                            table.Cell()
+	                                .Background(azulClaro)
+	                                .PaddingVertical(9)
+	                                .PaddingHorizontal(7)
+	                                .AlignCenter()
+	                                .Text(totalUnidades.ToString())
+	                                .FontColor(azulPrincipal)
+	                                .Bold();
+	                        });
+	
+	                    /* Gráfica */
+	
+	                    if (productosGrafica.Count > 0)
+	                    {
+	                        column.Item()
+	                            .PaddingTop(10)
+	                            .Column(title =>
+	                            {
+	                                title.Item()
+	                                    .Text(
+	                                        "Productos con más unidades vendidas"
+	                                    )
+	                                    .FontSize(14)
+	                                    .FontColor(azulPrincipal)
+	                                    .Bold();
+	
+	                                title.Item()
+	                                    .PaddingTop(2)
+	                                    .Text(
+	                                        "Los 10 productos con mayor cantidad de unidades vendidas"
+	                                    )
+	                                    .FontSize(8)
+	                                    .FontColor(textoSecundario);
+	                            });
+	
+	                        column.Item()
+	                            .Background(fondoAlterno)
+	                            .Border(1)
+	                            .BorderColor(bordeGris)
+	                            .Padding(15)
+	                            .Column(chart =>
+	                            {
+	                                chart.Spacing(10);
+	
+	                                foreach (
+	                                    ProductoReporte producto
+	                                    in productosGrafica
+	                                )
+	                                {
+	                                    float porcentaje =
+	                                        cantidadMaxima > 0
+	                                            ? (float)
+	                                              producto.CantidadVendida /
+	                                              cantidadMaxima *
+	                                              100
+	                                            : 0;
+	
+	                                    porcentaje = Math.Clamp(
+	                                        porcentaje,
+	                                        1f,
+	                                        100f
+	                                    );
+	
+	                                    float restante = Math.Max(
+	                                        100f - porcentaje,
+	                                        0f
+	                                    );
+	
+	                                    chart.Item().Column(bar =>
+	                                    {
+	                                        bar.Item().Row(row =>
+	                                        {
+	                                            row.RelativeItem()
+	                                                .Text(
+	                                                    producto.Nombre ?? ""
+	                                                )
+	                                                .FontSize(8)
+	                                                .SemiBold();
+	
+	                                            row.ConstantItem(110)
+	                                                .AlignRight()
+	                                                .Text(
+	                                                    $"{producto.CantidadVendida} unidades"
+	                                                )
+	                                                .FontSize(8)
+	                                                .FontColor(azulPrincipal)
+	                                                .Bold();
+	                                        });
+	
+	                                        bar.Item()
+	                                            .PaddingTop(4)
+	                                            .Height(13)
+	                                            .Row(row =>
+	                                            {
+	                                                row.RelativeItem(
+	                                                        porcentaje
+	                                                    )
+	                                                    .Background(
+	                                                        azulPrincipal
+	                                                    );
+	
+	                                                if (restante > 0)
+	                                                {
+	                                                    row.RelativeItem(
+	                                                            restante
+	                                                        )
+	                                                        .Background(
+	                                                            fondoBarra
+	                                                        );
+	                                                }
+	                                            });
+	                                    });
+	                                }
+	                            });
+	                    }
+	                    else
+	                    {
+	                        column.Item()
+	                            .PaddingTop(10)
+	                            .Background(fondoAlterno)
+	                            .Border(1)
+	                            .BorderColor(bordeGris)
+	                            .Padding(15)
+	                            .AlignCenter()
+	                            .Text(
+	                                "No existen datos para generar la gráfica."
+	                            )
+	                            .FontColor(textoSecundario);
+	                    }
+	                });
+	
+	            /* =========================================
+	               PIE DE PÁGINA
+	               ========================================= */
+	
+	            page.Footer().Column(footer =>
+	            {
+	                footer.Item()
+	                    .LineHorizontal(1)
+	                    .LineColor(bordeGris);
+	
+	                footer.Item()
+	                    .PaddingTop(7)
+	                    .Row(row =>
+	                    {
+	                        row.RelativeItem()
+	                            .Text("Reporte por Producto")
+	                            .FontSize(8)
+	                            .FontColor(textoSecundario);
+	
+	                        row.RelativeItem()
+	                            .AlignRight()
+	                            .Text(text =>
+	                            {
+	                                text.DefaultTextStyle(style => style
+	                                    .FontSize(8)
+	                                    .FontColor(textoSecundario)
+	                                );
+	
+	                                text.Span("Página ");
+	                                text.CurrentPageNumber();
+	                                text.Span(" de ");
+	                                text.TotalPages();
+	                            });
+	                    });
+	            });
+	        });
+	    }).GeneratePdf();
+	
+	    await JS.InvokeVoidAsync(
+	        "descargarArchivo",
+	        $"ReporteProductos_{DateTime.Now:yyyyMMdd_HHmm}.pdf",
+	        "application/pdf",
+	        Convert.ToBase64String(pdf)
+	    );
 	}
 }
