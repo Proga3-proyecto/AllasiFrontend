@@ -8,6 +8,8 @@
 @inject ClientesRS clienteRS
 @inject CustomAuthenticationStateProvider AuthProvider
 @inject ConfirmDialogService DialogService
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Env
+
 
 <div class="container">
     <section>
@@ -21,7 +23,7 @@
             <div class="hr"></div>
         </div>
 
-        <EditForm Model="formUser" OnValidSubmit="CrearCuenta" class="form-body">
+        <EditForm Model="formUser" OnValidSubmit="CrearCuenta" OnInvalidSubmit="HandleInvalidSubmit" class="form-body">
             <DataAnnotationsValidator />
             
             @if (!string.IsNullOrEmpty(errorMessage))
@@ -90,6 +92,23 @@
                             </div>
                             <span class="strength-text @GetStrengthTextClass()">@GetStrengthText()</span>
                         </div>
+                        
+                        <div class="requirements-box mt-2 p-2 bg-light" style="border-radius: 8px; width: 100%;">
+                            <div class="row g-1" style="font-size: 0.75rem;">
+                                <div class="col-sm-6">
+                                    <i class="bi @(hasMinLength ? "bi-check-circle-fill text-success" : "bi-x-circle text-danger") me-1"></i> Mínimo 8 caracteres
+                                </div>
+                                <div class="col-sm-6">
+                                    <i class="bi @(hasNumber ? "bi-check-circle-fill text-success" : "bi-x-circle text-danger") me-1"></i> Al menos un número
+                                </div>
+                                <div class="col-sm-6">
+                                    <i class="bi @(hasUpper ? "bi-check-circle-fill text-success" : "bi-x-circle text-danger") me-1"></i> Al menos una mayúscula
+                                </div>
+                                <div class="col-sm-6">
+                                    <i class="bi @(hasSpecial ? "bi-check-circle-fill text-success" : "bi-x-circle text-danger") me-1"></i> Al menos un carácter especial
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-input">
@@ -155,15 +174,103 @@
     </section>
 </div>
 
+@if (showTermsModal)
+{
+    <div class="custom-modal-backdrop" style="z-index: 10000;" @onclick="CancelTerms">
+        <div class="custom-modal-dialog" @onclick:stopPropagation="true">
+            <div class="custom-modal-content">
+                <div class="custom-modal-icon icon-bg-info">
+                    <i class="bi bi-info-circle"></i>
+                </div>
+                <h3 class="custom-modal-title">Términos y Condiciones</h3>
+                <p class="custom-modal-message">
+                    ¿Aceptas los términos y condiciones?
+                    <br /><br />
+                    <a href="javascript:void(0)" style="color:#0ea5e9; text-decoration:underline; font-weight:bold;" @onclick="ShowDocument">Ver términos y condiciones</a>
+                </p>
+                <div class="custom-modal-actions">
+                    <button class="btn-custom-cancel" @onclick="CancelTerms">Cancelar</button>
+                    <button class="btn-custom-confirm btn-confirm-info" @onclick="ConfirmTerms">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .custom-modal-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .custom-modal-dialog { background-color: #ffffff; border-radius: 24px; width: 90%; max-width: 400px; padding: 32px 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); text-align: center; }
+        .custom-modal-icon { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 20px auto; }
+        .icon-bg-info { background-color: #e0f2fe; color: #0ea5e9; }
+        .custom-modal-title { font-size: 1.35rem; font-weight: 700; color: #0f172a; margin-bottom: 12px; }
+        .custom-modal-message { font-size: 0.95rem; color: #64748b; margin-bottom: 30px; line-height: 1.5; }
+        .custom-modal-actions { display: flex; gap: 12px; justify-content: center; }
+        .btn-custom-cancel, .btn-custom-confirm { padding: 12px 20px; border-radius: 14px; font-weight: 600; font-size: 0.95rem; border: none; cursor: pointer; flex: 1; }
+        .btn-custom-cancel { background-color: #f1f5f9; color: #475569; }
+        .btn-confirm-info { background-color: #0ea5e9; color: white; }
+    </style>
+}
+
+@if (showDocumentModal)
+{
+    <div class="custom-modal-backdrop" style="z-index: 10001;" @onclick="HideDocument">
+        <div class="custom-modal-dialog" style="max-width: 800px; width: 90%; height: 80vh; display: flex; flex-direction: column;" @onclick:stopPropagation="true">
+            <div class="custom-modal-content" style="flex: 1; display: flex; flex-direction: column; height: 100%;">
+                <h3 class="custom-modal-title" style="margin-bottom: 15px;">Términos y Condiciones y Política de Privacidad</h3>
+                <div style="flex: 1; overflow: hidden; border-radius: 8px; border: 1px solid #e2e8f0; height: calc(100% - 100px); background: #f8fafc; text-align: left; overflow-y: auto;">
+                    @((MarkupString)termsHtmlContent)
+                </div>
+                <div class="custom-modal-actions" style="margin-top: 20px;">
+                    <button class="btn-custom-confirm btn-confirm-info" style="width: 100%; max-width: 200px; margin: 0 auto;" @onclick="HideDocument">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private RegistroUsuario formUser = new();
     
     private string? errorMessage;
+    private string termsHtmlContent = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var path = System.IO.Path.Combine(Env.WebRootPath, "docs", "Terminos_y_Condiciones.html");
+            if (System.IO.File.Exists(path))
+            {
+                termsHtmlContent = await System.IO.File.ReadAllTextAsync(path);
+            }
+            else
+            {
+                termsHtmlContent = "<p style='padding: 20px;'>No se encontraron los términos y condiciones.</p>";
+            }
+        }
+        catch
+        {
+            termsHtmlContent = "<p style='padding: 20px;'>Error al cargar los términos y condiciones.</p>";
+        }
+    }
+
     private bool isProcessing = false;
     private bool showPassword = false;
     private bool showConfirmPassword = false;
+    private bool showTermsModal = false;
+    private bool showDocumentModal = false;
 
     private int PasswordScore => CalculatePasswordScore(formUser.Password);
+
+    private string PasswordToCheck => formUser.Password ?? "";
+    private bool hasMinLength => PasswordToCheck.Length >= 8;
+    private bool hasNumber => PasswordToCheck.Any(char.IsDigit);
+    private bool hasUpper => PasswordToCheck.Any(char.IsUpper);
+    private bool hasSpecial => PasswordToCheck.Any(ch => !char.IsLetterOrDigit(ch));
+
+    private void HandleInvalidSubmit()
+    {
+        errorMessage = "Por favor, complete correctamente todos los campos y cumpla los requisitos de seguridad de la contraseña.";
+    }
 
     private int CalculatePasswordScore(string? password)
     {
@@ -221,26 +328,35 @@
         };
     }
 
-    private async Task CrearCuenta()
+    private void CrearCuenta()
     {
+        errorMessage = null;
         if (isProcessing) return;
        if (PasswordScore < 4) 
         {
             errorMessage = "La contraseña no cumple con todos los requisitos de seguridad.";
              return;
          }
+        showTermsModal = true;
+    }
+
+    private void ShowDocument() => showDocumentModal = true;
+    private void HideDocument() => showDocumentModal = false;
+
+    private void CancelTerms()
+    {
+        showTermsModal = false;
+        isProcessing = false;
+    }
+
+    private async Task ConfirmTerms()
+    {
+        showTermsModal = false;
         isProcessing = true;
         errorMessage = null;
 
         try
         {
-            bool esMayor = await DialogService.ConfirmAsync("Verificación de edad", "¿Confirmas ser mayor de edad?", DialogType.Info);
-            if (!esMayor)
-            {
-                Navigation.NavigateTo("/underage");
-                return;
-            }
-
             Cliente cliente = new();
         cliente.dni = formUser.Dni;
         cliente.correo = formUser.Email;
