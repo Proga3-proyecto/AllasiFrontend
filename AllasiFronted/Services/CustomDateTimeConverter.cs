@@ -15,7 +15,12 @@ namespace Progra3_Frontend.Services
             }
             if (reader.TokenType == JsonTokenType.String)
             {
-                if (DateTime.TryParse(reader.GetString(), out DateTime date))
+                var dateStr = reader.GetString();
+                if (!string.IsNullOrEmpty(dateStr) && dateStr.Contains("T") && dateStr.Length >= 19)
+                {
+                    dateStr = dateStr.Substring(0, 19);
+                }
+                if (DateTime.TryParse(dateStr, out DateTime date))
                 {
                     return date;
                 }
@@ -25,7 +30,15 @@ namespace Progra3_Frontend.Services
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+            if (value.Kind == DateTimeKind.Utc)
+            {
+                writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+            }
+            else
+            {
+                // Send without timezone offset to prevent backend from shifting the time
+                writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ss"));
+            }
         }
     }
 
@@ -44,7 +57,12 @@ namespace Progra3_Frontend.Services
             }
             if (reader.TokenType == JsonTokenType.String)
             {
-                if (DateTime.TryParse(reader.GetString(), out DateTime date))
+                var dateStr = reader.GetString();
+                if (!string.IsNullOrEmpty(dateStr) && dateStr.Contains("T") && dateStr.Length >= 19)
+                {
+                    dateStr = dateStr.Substring(0, 19);
+                }
+                if (DateTime.TryParse(dateStr, out DateTime date))
                 {
                     return date;
                 }
@@ -56,7 +74,14 @@ namespace Progra3_Frontend.Services
         {
             if (value.HasValue)
             {
-                writer.WriteStringValue(value.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+                if (value.Value.Kind == DateTimeKind.Utc)
+                {
+                    writer.WriteStringValue(value.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+                }
+                else
+                {
+                    writer.WriteStringValue(value.Value.ToString("yyyy-MM-ddTHH:mm:ss"));
+                }
             }
             else
             {
