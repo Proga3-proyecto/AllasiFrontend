@@ -34,7 +34,7 @@
                     <div class="col-md-3">
                         <label class="form-label-custom text-muted mb-1" style="font-size: 0.85rem;">Cliente</label>
                         <div class="position-relative">
-                            <input type="text" class="form-control custom-input pe-5" placeholder="Buscar cliente..." @bind="InputCliente" />
+                            <input type="text" class="form-control custom-input pe-5" placeholder="Buscar cliente..." @bind="InputCliente" @bind:event="oninput" />
                             <i class="bi bi-search position-absolute" style="top: 50%; right: 12px; transform: translateY(-50%); color: #94a3b8;"></i>
                         </div>
                     </div>
@@ -48,9 +48,6 @@
                     </div>
 
                     <div class="col-md-2 d-flex gap-2">
-                        <button class="btn navy-bg px-3 py-2 flex-grow-1 d-flex align-items-center justify-content-center gap-2" style="border-radius: 6px; font-weight: 500;" @onclick="AplicarFiltros">
-                            <i class="bi bi-funnel"></i> Filtrar
-                        </button>
                         <button class="btn btn-outline-custom px-3 py-2 flex-grow-1 d-flex align-items-center justify-content-center gap-2" style="border-radius: 6px; font-weight: 500;" @onclick="LimpiarFiltros">
                             <i class="bi bi-arrow-clockwise"></i> Limpiar
                         </button>
@@ -226,39 +223,48 @@
         }
     }
 
-    private string InputEstado { get; set; } = "Todos";
-    private string InputCliente { get; set; } = string.Empty;
-    private DateTime? InputFechaDesde { get; set; }
-    private DateTime? InputFechaHasta { get; set; }
+    private string _inputEstado = "Todos";
+    private string InputEstado
+    {
+        get => _inputEstado;
+        set { _inputEstado = value; CurrentPage = 1; }
+    }
 
-    private string AppliedEstado { get; set; } = "Todos";
-    private string AppliedCliente { get; set; } = string.Empty;
-    private DateTime? AppliedFechaDesde { get; set; }
-    private DateTime? AppliedFechaHasta { get; set; }
+    private string _inputCliente = string.Empty;
+    private string InputCliente
+    {
+        get => _inputCliente;
+        set { _inputCliente = value; CurrentPage = 1; }
+    }
+
+    private DateTime? _inputFechaDesde;
+    private DateTime? InputFechaDesde
+    {
+        get => _inputFechaDesde;
+        set { _inputFechaDesde = value; CurrentPage = 1; }
+    }
+
+    private DateTime? _inputFechaHasta;
+    private DateTime? InputFechaHasta
+    {
+        get => _inputFechaHasta;
+        set { _inputFechaHasta = value; CurrentPage = 1; }
+    }
 
     private int CurrentPage { get; set; } = 1;
     private int PageSize { get; set; } = 10;
 
     private IEnumerable<Pedido> FilteredOrders => pedidos.Where(o =>
-        (AppliedEstado == "Todos" || o.estado.ToString() == AppliedEstado) &&
-        (string.IsNullOrWhiteSpace(AppliedCliente) ||
-         (o.cliente != null && (o.cliente.nombre + " " + o.cliente.apellidoCompleto).Contains(AppliedCliente, StringComparison.OrdinalIgnoreCase))) &&
-        (!AppliedFechaDesde.HasValue || (o.fechaPedido.HasValue && o.fechaPedido.Value.Date >= AppliedFechaDesde.Value.Date)) &&
-        (!AppliedFechaHasta.HasValue || (o.fechaPedido.HasValue && o.fechaPedido.Value.Date <= AppliedFechaHasta.Value.Date))
+        (InputEstado == "Todos" || o.estado.ToString() == InputEstado) &&
+        (string.IsNullOrWhiteSpace(InputCliente) ||
+         (o.cliente != null && (o.cliente.nombre + " " + o.cliente.apellidoCompleto).Contains(InputCliente, StringComparison.OrdinalIgnoreCase))) &&
+        (!InputFechaDesde.HasValue || (o.fechaPedido.HasValue && o.fechaPedido.Value.Date >= InputFechaDesde.Value.Date)) &&
+        (!InputFechaHasta.HasValue || (o.fechaPedido.HasValue && o.fechaPedido.Value.Date <= InputFechaHasta.Value.Date))
     );
 
     private int TotalPages => Math.Max(1, (int)Math.Ceiling((double)FilteredOrders.Count() / PageSize));
 
     private IEnumerable<Pedido> GetPagedOrders() => FilteredOrders.Skip((CurrentPage - 1) * PageSize).Take(PageSize);
-
-    private void AplicarFiltros()
-    {
-        AppliedEstado = InputEstado;
-        AppliedCliente = InputCliente;
-        AppliedFechaDesde = InputFechaDesde;
-        AppliedFechaHasta = InputFechaHasta;
-        CurrentPage = 1;
-    }
 
     private void LimpiarFiltros()
     {
@@ -266,7 +272,6 @@
         InputCliente = string.Empty;
         InputFechaDesde = null;
         InputFechaHasta = null;
-        AplicarFiltros();
     }
 
     private void ChangePage(int page) => CurrentPage = page;
