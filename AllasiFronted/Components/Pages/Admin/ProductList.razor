@@ -81,11 +81,22 @@
                             </tr>
                         </thead>
                         <tbody class="text-start">
-                            @if (!productos.Any())
+                            @if (isLoading)
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center py-5 text-muted">
+                                        <div class="d-flex flex-column align-items-center justify-content-center">
+                                            <span class="spinner-border text-navy mb-2" role="status" aria-hidden="true" style="width: 2rem; height: 2rem;"></span>
+                                            <span>Cargando productos...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            else if (!productos.Any())
                             {
                                 <tr>
                                     <td colspan="7" class="text-center py-4 text-muted">
-                                        <em>No hay productos registrados o cargando datos...</em>
+                                        <em>No hay productos registrados.</em>
                                     </td>
                                 </tr>
                             }
@@ -153,11 +164,25 @@
                                         </td>
 
                                         <td class="text-center text-nowrap">
-                                            <button class="btn btn-outline-custom btn-sm me-2" @onclick="() => EditarProducto(product.id)">
-                                                Modificar
+                                            <button class="btn btn-outline-custom btn-sm me-2" disabled="@(processingItemId != null)" @onclick="() => EditarProducto(product.id)">
+                                                @if (processingItemId == product.id && processingAction == "Modificar")
+                                                {
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                }
+                                                else
+                                                {
+                                                    <span>Modificar</span>
+                                                }
                                             </button>
-                                            <button class="btn btn-danger btn-sm" @onclick="() => EliminarProducto(product.id)">
-                                                Eliminar
+                                            <button class="btn btn-danger btn-sm" disabled="@(processingItemId != null)" @onclick="() => EliminarProducto(product.id)">
+                                                @if (processingItemId == product.id && processingAction == "Eliminar")
+                                                {
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                }
+                                                else
+                                                {
+                                                    <span>Eliminar</span>
+                                                }
                                             </button>
                                         </td>
                                     </tr>
@@ -213,10 +238,15 @@
 
 @code {
     private List<Producto> productos = new();
+    private bool isLoading = true;
+    private int? processingItemId = null;
+    private string processingAction = "";
 
     protected override async Task OnInitializedAsync()
     {
+        isLoading = true;
         await CargarProductos();
+        isLoading = false;
     }
 
     private async Task CargarProductos()
@@ -238,13 +268,21 @@
         }
     }
 
-    private void EditarProducto(int idProducto)
+    private async Task EditarProducto(int idProducto)
     {
+        processingItemId = idProducto;
+        processingAction = "Modificar";
+        StateHasChanged();
+        await Task.Delay(150);
         Navigation.NavigateTo($"/admin/update-product/{idProducto}");
+        processingItemId = null;
+        processingAction = "";
     }
 
     private async Task EliminarProducto(int idProducto)
     {
+        processingItemId = idProducto;
+        processingAction = "Eliminar";
         try
         {
             bool exito = await ProductosRS.EliminarAsync(idProducto);
@@ -256,6 +294,11 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Error al eliminar el producto: {ex.Message}");
+        }
+        finally
+        {
+            processingItemId = null;
+            processingAction = "";
         }
     }
 

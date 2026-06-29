@@ -1,4 +1,4 @@
-﻿@page "/register"
+@page "/register"
 @using System.ComponentModel.DataAnnotations
 @using Progra3_Frontend.Model
 @using Progra3_Frontend.Services
@@ -118,9 +118,19 @@
                 </div>
             </div>
 
-            <button type="submit" class="register-button">
-                Crear Cuenta
-            </button>
+            @if (isProcessing)
+            {
+                <button type="button" class="register-button" disabled style="opacity: 0.7; cursor: not-allowed;">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="margin-right: 8px;"></span>
+                    Creando Cuenta...
+                </button>
+            }
+            else
+            {
+                <button type="submit" class="register-button">
+                    Crear Cuenta
+                </button>
+            }
 
             <div class="footer-link">
                 <span class="label">¿Ya tienes cuenta?</span>
@@ -134,10 +144,16 @@
     private RegistroUsuario formUser = new();
     
     private string? errorMessage;
+    private bool isProcessing = false;
 
     private async Task CrearCuenta()
     {
+        if (isProcessing) return;
+        isProcessing = true;
         errorMessage = null;
+
+        try
+        {
 
         Cliente cliente = new();
         cliente.dni = formUser.Dni;
@@ -162,6 +178,11 @@
                 "CLIENTE"
             );
             Navigation.NavigateTo("/");
+        }
+        }
+        finally
+        {
+            isProcessing = false;
         }
     }
 

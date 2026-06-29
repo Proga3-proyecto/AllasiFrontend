@@ -176,9 +176,19 @@
                         <button type="button" class="btn btn-outline-custom" style="border-radius: 6px; font-size: 0.82rem; padding: 6px 14px;" @onclick='() => Navigation.NavigateTo("/admin/product-list")'>
                             Cancelar
                         </button>
-                        <button type="submit" class="btn navy-bg" style="border-radius: 6px; font-weight: 500; font-size: 0.82rem; padding: 6px 14px;">
-                            Guardar producto
-                        </button>
+                        @if (isProcessing)
+                        {
+                            <button type="button" class="btn navy-bg" disabled style="border-radius: 6px; font-weight: 500; font-size: 0.82rem; padding: 6px 14px; opacity: 0.7; cursor: not-allowed;">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="margin-right: 8px;"></span>
+                                Guardando...
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn navy-bg" style="border-radius: 6px; font-weight: 500; font-size: 0.82rem; padding: 6px 14px;">
+                                Guardar producto
+                            </button>
+                        }
                     </div>
 
                 </EditForm>
@@ -223,6 +233,7 @@
 
     private List<ImageItem> imagenes = new();
     private long maxFileSize = 1024 * 1024 * 5;
+    private bool isProcessing = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -286,6 +297,8 @@
 
     private async Task GuardarProducto()
     {
+        if (isProcessing) return;
+        isProcessing = true;
         try
         {
             Producto nuevoProducto = new Producto
@@ -338,6 +351,10 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Error de inserción: {ex.Message}");
+        }
+        finally
+        {
+            isProcessing = false;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@page "/user/my-orders"
+@page "/user/my-orders"
 @using Progra3_Frontend.Model
 @using Progra3_Frontend.Services
 @using Microsoft.AspNetCore.Components.Authorization
@@ -21,8 +21,11 @@
     <div class="pedido-card">
         @if (isLoading)
         {
-            <div class="text-center">
-                <p>Cargando pedidos...</p>
+            <div class="text-center py-5 text-muted">
+                <div class="d-flex flex-column align-items-center justify-content-center">
+                    <span class="spinner-border text-navy mb-2" role="status" aria-hidden="true" style="width: 2rem; height: 2rem;"></span>
+                    <span>Cargando pedidos...</span>
+                </div>
             </div>
         }
         else if (pedidos == null || !pedidos.Any())

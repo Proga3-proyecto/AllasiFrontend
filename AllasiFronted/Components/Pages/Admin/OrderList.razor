@@ -70,11 +70,22 @@
                             </tr>
                         </thead>
                         <tbody class="text-start">
-                            @if (!pedidos.Any())
+                            @if (isLoading)
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center py-5 text-muted">
+                                        <div class="d-flex flex-column align-items-center justify-content-center">
+                                            <span class="spinner-border text-navy mb-2" role="status" aria-hidden="true" style="width: 2rem; height: 2rem;"></span>
+                                            <span>Cargando pedidos...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            else if (!pedidos.Any())
                             {
                                 <tr>
                                     <td colspan="6" class="text-center py-4 text-muted">
-                                        <em>No hay pedidos registrados o cargando datos...</em>
+                                        <em>No hay pedidos registrados.</em>
                                     </td>
                                 </tr>
                             }
@@ -121,8 +132,15 @@
                                             <span class="fw-bold text-dark">S/ @order.precioFinal.ToString("0.00")</span>
                                         </td>
                                         <td class="text-center text-nowrap">
-                                            <button class="btn btn-outline-custom btn-sm" @onclick='() => Navigation.NavigateTo($"/admin/order-details/{order.id}")'>
-                                                <i class="bi bi-eye"></i> Detalles
+                                            <button class="btn btn-outline-custom btn-sm" disabled="@(processingItemId != null)" @onclick='() => VerDetalles(order.id)'>
+                                                @if (processingItemId == order.id)
+                                                {
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-eye"></i> <span>Detalles</span>
+                                                }
                                             </button>
                                         </td>
                                     </tr>
@@ -180,10 +198,14 @@
 @code {
     private List<Pedido> pedidos = new();
     private HashSet<int> updatingOrders = new();
+    private bool isLoading = true;
+    private int? processingItemId = null;
 
     protected override async Task OnInitializedAsync()
     {
+        isLoading = true;
         await CargarPedidos();
+        isLoading = false;
     }
 
     private async Task CargarPedidos()
@@ -297,5 +319,14 @@
             EstadoPedido.RECHAZADO => "dark",
             _ => "secondary"
         };
+    }
+
+    private async Task VerDetalles(int orderId)
+    {
+        processingItemId = orderId;
+        StateHasChanged();
+        await Task.Delay(150);
+        Navigation.NavigateTo($"/admin/order-details/{orderId}");
+        processingItemId = null;
     }
 }

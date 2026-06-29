@@ -1,4 +1,4 @@
-﻿@page "/admin/report-client"
+@page "/admin/report-client"
 @layout AdminLayout
 
 @inject NavigationManager Navigation
@@ -125,49 +125,69 @@
                 </thead>
 
                 <tbody>
-
-                    @foreach (var cliente in ClientesOrdenados)
+                    @if (isLoading)
                     {
                         <tr>
-
-                            <td class="text-start">
-
-                                <div class="d-flex align-items-center gap-2">
-
-                                    <div class="summary-icon"
-                                         style="width: 36px;
-                                        height: 36px;">
-
-                                        <i class="bi bi-person-circle"></i>
-                                    </div>
-
-                                    <span class="fw-bold text-navy">
-                                        @cliente.Nombre
-                                    </span>
-
+                            <td colspan="3" class="text-center py-5 text-muted">
+                                <div class="d-flex flex-column align-items-center justify-content-center">
+                                    <span class="spinner-border text-navy mb-2" role="status" aria-hidden="true" style="width: 2rem; height: 2rem;"></span>
+                                    <span>Cargando reporte...</span>
                                 </div>
-
                             </td>
-
-                            <td class="text-center text-nowrap">
-
-                                <span class="fw-bold text-dark">
-                                    @cliente.Dni
-                                </span>
-
-                            </td>
-
-                            <td class="text-center text-nowrap">
-
-                                <span class="fw-bold text-navy">
-                                    S/ @cliente.TotalComprado.ToString("0.00")
-                                </span>
-
-                            </td>
-
                         </tr>
                     }
+                    else if (!ClientesOrdenados.Any())
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center py-4 text-muted">
+                                <em>No se encontraron datos.</em>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var cliente in ClientesOrdenados)
+                        {
+                            <tr>
 
+                                <td class="text-start">
+
+                                    <div class="d-flex align-items-center gap-2">
+
+                                        <div class="summary-icon"
+                                             style="width: 36px;
+                                            height: 36px;">
+
+                                            <i class="bi bi-person-circle"></i>
+                                        </div>
+
+                                        <span class="fw-bold text-navy">
+                                            @cliente.Nombre
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+                                <td class="text-center text-nowrap">
+
+                                    <span class="fw-bold text-dark">
+                                        @cliente.Dni
+                                    </span>
+
+                                </td>
+
+                                <td class="text-center text-nowrap">
+
+                                    <span class="fw-bold text-navy">
+                                        S/ @cliente.TotalComprado.ToString("0.00")
+                                    </span>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
                 </tbody>
 
             </table>
@@ -193,9 +213,11 @@
     private string TipoOrden { get; set; } = "descendente";
 
     private List<ClienteReporte> Clientes { get; set; }
+    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
+        isLoading = true;
         List<Pedido> pedidos = await pedidosRS.ListarTodosAsync();
 
 		Clientes = pedidos
@@ -211,6 +233,7 @@
 				TotalComprado = grupo.Sum(pedido => pedido.precioFinal)
 			}).ToList();
 
+        isLoading = false;
     }
 
 

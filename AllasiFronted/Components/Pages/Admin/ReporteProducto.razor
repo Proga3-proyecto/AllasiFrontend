@@ -1,4 +1,4 @@
-﻿@page "/admin/report-product"
+@page "/admin/report-product"
 @layout AdminLayout
 
 @inject NavigationManager Navigation
@@ -122,57 +122,77 @@
                 </thead>
 
                 <tbody>
-
-                    @foreach (var producto in ProductosOrdenados)
+                    @if (isLoading)
                     {
                         <tr>
+                            <td colspan="3" class="text-center py-5 text-muted">
+                                <div class="d-flex flex-column align-items-center justify-content-center">
+                                    <span class="spinner-border text-navy mb-2" role="status" aria-hidden="true" style="width: 2rem; height: 2rem;"></span>
+                                    <span>Cargando reporte...</span>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else if (!ProductosOrdenados.Any())
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center py-4 text-muted">
+                                <em>No se encontraron datos.</em>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var producto in ProductosOrdenados)
+                        {
+                            <tr>
 
-                            <td class="text-start">
+                                <td class="text-start">
 
-                                <div class="d-flex align-items-center gap-2">
+                                    <div class="d-flex align-items-center gap-2">
 
-                                    <div class="summary-icon"
-                                         style="width: 36px;
-                                        height: 36px;">
+                                        <div class="summary-icon"
+                                             style="width: 36px;
+                                            height: 36px;">
 
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                             width="18"
-                                             height="18"
-                                             fill="currentColor"
-                                             viewBox="0 0 16 16">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 width="18"
+                                                 height="18"
+                                                 fill="currentColor"
+                                                 viewBox="0 0 16 16">
 
-                                            <path d="M1 2h14L9 8.8V14h3v1H4v-1h3V8.8L1 2zm2.2 1 4.8 5.4L12.8 3H3.2z" />
-                                        </svg>
+                                                <path d="M1 2h14L9 8.8V14h3v1H4v-1h3V8.8L1 2zm2.2 1 4.8 5.4L12.8 3H3.2z" />
+                                            </svg>
+
+                                        </div>
+
+                                        <span class="fw-bold text-navy">
+                                            @producto.Nombre
+                                        </span>
 
                                     </div>
 
-                                    <span class="fw-bold text-navy">
-                                        @producto.Nombre
+                                </td>
+
+                                <td class="text-center text-nowrap">
+
+                                    <span class="fw-bold text-dark">
+                                        S/ @producto.Precio.ToString("0.00")
                                     </span>
 
-                                </div>
+                                </td>
 
-                            </td>
+                                <td class="text-center text-nowrap">
 
-                            <td class="text-center text-nowrap">
+                                    <span class="fw-bold text-navy">
+                                        @producto.CantidadVendida
+                                    </span>
 
-                                <span class="fw-bold text-dark">
-                                    S/ @producto.Precio.ToString("0.00")
-                                </span>
+                                </td>
 
-                            </td>
-
-                            <td class="text-center text-nowrap">
-
-                                <span class="fw-bold text-navy">
-                                    @producto.CantidadVendida
-                                </span>
-
-                            </td>
-
-                        </tr>
+                            </tr>
+                        }
                     }
-
                 </tbody>
 
             </table>
@@ -199,9 +219,11 @@
     private string TipoOrden { get; set; } = "descendente";
 
     private List<ProductoReporte> Productos { get; set; } = new();
+    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
+        isLoading = true;
         List<Pedido> pedidos = await pedidosRS.ListarTodosAsync();
 
         Productos = pedidos
@@ -223,6 +245,7 @@
                 )
             }).ToList();
 
+        isLoading = false;
     }
 
 

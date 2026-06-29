@@ -49,11 +49,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if (!usuarios.Any())
+                            @if (isLoading)
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center py-5 text-muted">
+                                        <div class="d-flex flex-column align-items-center justify-content-center">
+                                            <span class="spinner-border text-navy mb-2" role="status" aria-hidden="true" style="width: 2rem; height: 2rem;"></span>
+                                            <span>Cargando usuarios...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            else if (!usuarios.Any())
                             {
                                 <tr>
                                     <td colspan="6" class="text-center py-4 text-muted">
-                                        <em>Cargando usuarios o no hay registros disponibles...</em>
+                                        <em>No hay registros disponibles.</em>
                                     </td>
                                 </tr>
                             }
@@ -95,11 +106,25 @@
                                             </span>
                                         </td>
                                         <td class="text-center text-nowrap d-flex justify-content-center gap-2">
-                                            <button class="btn btn-outline-custom btn-sm" @onclick="() => EditarUsuario(user)">
-                                                Modificar
+                                            <button class="btn btn-outline-custom btn-sm" disabled="@(processingItemId != null)" @onclick="() => EditarUsuario(user)">
+                                                @if (processingItemId == user.idUsuario && processingAction == "Modificar")
+                                                {
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                }
+                                                else
+                                                {
+                                                    <span>Modificar</span>
+                                                }
                                             </button>
-                                            <button class="btn btn-danger btn-sm" @onclick="() => EliminarUsuario(user)">
-                                                Eliminar
+                                            <button class="btn btn-danger btn-sm" disabled="@(processingItemId != null)" @onclick="() => EliminarUsuario(user)">
+                                                @if (processingItemId == user.idUsuario && processingAction == "Eliminar")
+                                                {
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                }
+                                                else
+                                                {
+                                                    <span>Eliminar</span>
+                                                }
                                             </button>
                                         </td>
                                     </tr>
@@ -156,12 +181,17 @@
 
 @code {
     private List<Usuario> usuarios = new();
+    private bool isLoading = true;
+    private int? processingItemId = null;
+    private string processingAction = "";
+
     [CascadingParameter]
     private Task<AuthenticationState>? AuthStateTask { get; set; }
     protected override async Task OnInitializedAsync()
     {
-
+        isLoading = true;
         await CargarUsuarios();
+        isLoading = false;
     }
 
     private async Task CargarUsuarios()
@@ -226,13 +256,21 @@
         return FilteredUsers.Skip((CurrentPage - 1) * PageSize).Take(PageSize);
     }
 
-    private void EditarUsuario(Usuario user)
+    private async Task EditarUsuario(Usuario user)
     {
+        processingItemId = user.idUsuario;
+        processingAction = "Modificar";
+        StateHasChanged();
+        await Task.Delay(150);
         Navigation.NavigateTo($"/admin/update-admin/{user.idUsuario}");
+        processingItemId = null;
+        processingAction = "";
     }
 
     private async Task EliminarUsuario(Usuario user)
     {
+        processingItemId = user.idUsuario;
+        processingAction = "Eliminar";
         try
         {
             bool exito = false;
@@ -249,6 +287,11 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Error al eliminar el usuario: {ex.Message}");
+        }
+        finally
+        {
+            processingItemId = null;
+            processingAction = "";
         }
     }
 
