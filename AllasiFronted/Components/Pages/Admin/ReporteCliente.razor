@@ -265,175 +265,446 @@
         public double TotalComprado { get; set; }
     }
 	
-	// 
-	public async Task ExportarPdf()
-	{
-		QuestPDF.Settings.License = LicenseType.Community;
+		public async Task ExportarPdf()
+    {
+        QuestPDF.Settings.License = LicenseType.Community;
 
-		List<ClienteReporte> clientesExportar =
-			ClientesOrdenados.ToList();
+        List<ClienteReporte> clientesExportar =
+            ClientesOrdenados.ToList();
 
-		double totalGeneral = clientesExportar.Sum(
-			cliente => cliente.TotalComprado
-		);
+        double totalGeneral = clientesExportar.Sum(
+            cliente => cliente.TotalComprado
+        );
 
-		byte[] pdf = Document.Create(container =>
-		{
-			container.Page(page =>
-			{
-				page.Margin(30);
+        List<ClienteReporte> clientesGrafica = clientesExportar
+            .OrderByDescending(cliente => cliente.TotalComprado)
+            .Take(10)
+            .ToList();
 
-				page.Header()
-					.Text("Reporte por Cliente")
-					.FontSize(20)
-					.Bold();
+        double compraMaxima = clientesGrafica.Count > 0
+            ? clientesGrafica.Max(cliente => cliente.TotalComprado)
+            : 1;
 
-				page.Content().Column(col =>
-				{
-					col.Spacing(10);
+        string fechaGeneracion =
+            DateTime.Now.ToString("dd/MM/yyyy HH:mm");
 
-					col.Item().Text(
-						$"Total de clientes: {clientesExportar.Count}"
-					);
+        const string azulPrincipal = "#101C45";
+        const string azulClaro = "#EEF2FF";
+        const string textoPrincipal = "#1E293B";
+        const string textoSecundario = "#64748B";
+        const string fondoAlterno = "#F8FAFC";
+        const string bordeGris = "#E2E8F0";
 
-					col.Item().Text(
-						$"Total general comprado: S/ {totalGeneral:0.00}"
-					);
+        byte[] pdf = Document.Create(document =>
+        {
+            document.Page(page =>
+            {
+                page.Size(PageSizes.A4);
+                page.Margin(30);
+                page.PageColor(Colors.White);
 
-					// PRIMERO LA TABLA
-					col.Item()
-						.PaddingTop(15)
-						.Text("Detalle de clientes")
-						.FontSize(14)
-						.Bold();
+                page.DefaultTextStyle(style => style
+                    .FontSize(9)
+                    .FontColor(textoPrincipal)
+                );
 
-					col.Item()
-						.Table(table =>
-						{
-							table.ColumnsDefinition(columns =>
-							{
-								columns.RelativeColumn();
-								columns.ConstantColumn(100);
-								columns.ConstantColumn(120);
-							});
+                /* =========================================
+                   ENCABEZADO
+                   ========================================= */
 
-							table.Header(header =>
-							{
-								header.Cell()
-									.Background(Colors.Blue.Darken3)
-									.Padding(6)
-									.Text("Cliente")
-									.FontColor(Colors.White)
-									.Bold();
+                page.Header().Column(header =>
+                {
+                    header.Item().Row(row =>
+                    {
+                        row.RelativeItem().Column(title =>
+                        {
+                            title.Item()
+                                .Text("Reporte por Cliente")
+                                .FontSize(21)
+                                .FontColor(azulPrincipal)
+                                .Bold();
 
-								header.Cell()
-									.Background(Colors.Blue.Darken3)
-									.Padding(6)
-									.Text("DNI")
-									.FontColor(Colors.White)
-									.Bold();
+                            title.Item()
+                                .PaddingTop(3)
+                                .Text(
+                                    "Resumen de compras realizadas por cada cliente"
+                                )
+                                .FontSize(9)
+                                .FontColor(textoSecundario);
+                        });
 
-								header.Cell()
-									.Background(Colors.Blue.Darken3)
-									.Padding(6)
-									.Text("Total comprado")
-									.FontColor(Colors.White)
-									.Bold();
-							});
+                        row.ConstantItem(170).Column(info =>
+                        {
+                            info.Item()
+                                .AlignRight()
+                                .Text("Fecha de generación")
+                                .FontSize(8)
+                                .FontColor(textoSecundario);
 
-							foreach (ClienteReporte cliente in clientesExportar)
-							{
-								table.Cell()
-									.BorderBottom(1)
-									.BorderColor(Colors.Grey.Lighten2)
-									.Padding(6)
-									.Text(cliente.Nombre);
+                            info.Item()
+                                .PaddingTop(3)
+                                .AlignRight()
+                                .Text(fechaGeneracion)
+                                .FontSize(9)
+                                .SemiBold();
+                        });
+                    });
 
-								table.Cell()
-									.BorderBottom(1)
-									.BorderColor(Colors.Grey.Lighten2)
-									.Padding(6)
-									.Text(cliente.Dni);
+                    header.Item()
+                        .PaddingTop(12)
+                        .LineHorizontal(2)
+                        .LineColor(azulPrincipal);
+                });
 
-								table.Cell()
-									.BorderBottom(1)
-									.BorderColor(Colors.Grey.Lighten2)
-									.Padding(6)
-									.Text($"S/ {cliente.TotalComprado:0.00}");
-							}
-						});
+                /* =========================================
+                   CONTENIDO
+                   ========================================= */
 
-					// DESPUÉS LA GRÁFICA DE BARRAS
-					List<ClienteReporte> clientesGrafica = clientesExportar
-						.OrderByDescending(cliente => cliente.TotalComprado)
-						.Take(10)
-						.ToList();
+                page.Content()
+                    .PaddingTop(18)
+                    .PaddingBottom(15)
+                    .Column(column =>
+                    {
+                        column.Spacing(14);
 
-					double compraMaxima = clientesGrafica.Any()
-						? clientesGrafica.Max(
-							cliente => cliente.TotalComprado
-						)
-						: 1;
+                        /* Tarjetas de resumen */
 
-					col.Item()
-						.PaddingTop(20)
-						.Text("Clientes con mayor total comprado")
-						.FontSize(14)
-						.Bold();
+                        column.Item().Row(row =>
+                        {
+                            row.RelativeItem()
+                                .PaddingRight(6)
+                                .Background(azulClaro)
+                                .Border(1)
+                                .BorderColor(bordeGris)
+                                .Padding(14)
+                                .Column(card =>
+                                {
+                                    card.Item()
+                                        .Text("TOTAL DE CLIENTES")
+                                        .FontSize(8)
+                                        .FontColor(textoSecundario)
+                                        .SemiBold();
 
-					foreach (ClienteReporte cliente in clientesGrafica)
-					{
-						float porcentaje = compraMaxima > 0
-							? (float)(cliente.TotalComprado /
-									  compraMaxima * 100)
-							: 0;
+                                    card.Item()
+                                        .PaddingTop(5)
+                                        .Text(clientesExportar.Count.ToString())
+                                        .FontSize(18)
+                                        .FontColor(azulPrincipal)
+                                        .Bold();
+                                });
 
-						porcentaje = Math.Max(porcentaje, 1f);
+                            row.RelativeItem()
+                                .PaddingLeft(6)
+                                .Background(azulClaro)
+                                .Border(1)
+                                .BorderColor(bordeGris)
+                                .Padding(14)
+                                .Column(card =>
+                                {
+                                    card.Item()
+                                        .Text("TOTAL GENERAL COMPRADO")
+                                        .FontSize(8)
+                                        .FontColor(textoSecundario)
+                                        .SemiBold();
 
-						float restante = Math.Max(
-							100f - porcentaje,
-							1f
-						);
+                                    card.Item()
+                                        .PaddingTop(5)
+                                        .Text($"S/ {totalGeneral:N2}")
+                                        .FontSize(18)
+                                        .FontColor(azulPrincipal)
+                                        .Bold();
+                                });
+                        });
 
-						col.Item()
-							.PaddingVertical(4)
-							.Column(grafica =>
-							{
-								grafica.Item()
-									.Text(
-										$"{cliente.Nombre}: " +
-										$"S/ {cliente.TotalComprado:0.00}"
-									);
+                        /* Título de tabla */
 
-								grafica.Item()
-									.Height(18)
-									.Row(fila =>
-									{
-										fila.RelativeItem(porcentaje)
-											.Background(Colors.Blue.Medium);
+                        column.Item()
+                            .PaddingTop(5)
+                            .Column(title =>
+                            {
+                                title.Item()
+                                    .Text("Detalle de clientes")
+                                    .FontSize(14)
+                                    .FontColor(azulPrincipal)
+                                    .Bold();
 
-										fila.RelativeItem(restante)
-											.Background(Colors.Grey.Lighten3);
-									});
-							});
-					}
-				});
+                                title.Item()
+                                    .PaddingTop(2)
+                                    .Text(
+                                        "Listado de clientes y monto total comprado"
+                                    )
+                                    .FontSize(8)
+                                    .FontColor(textoSecundario);
+                            });
 
-				page.Footer()
-					.AlignCenter()
-					.Text(text =>
-					{
-						text.Span("Página ");
-						text.CurrentPageNumber();
-					});
-			});
-		}).GeneratePdf();
+                        /* Tabla */
 
-		await JS.InvokeVoidAsync(
-			"descargarArchivo",
-			"ReporteClientes.pdf",
-			"application/pdf",
-			Convert.ToBase64String(pdf)
-		);
-	}
+                        column.Item()
+                            .Border(1)
+                            .BorderColor(bordeGris)
+                            .Table(table =>
+                            {
+                                table.ColumnsDefinition(columns =>
+                                {
+                                    columns.RelativeColumn();
+                                    columns.ConstantColumn(100);
+                                    columns.ConstantColumn(125);
+                                });
+
+                                table.Header(header =>
+                                {
+                                    header.Cell()
+                                        .Background(azulPrincipal)
+                                        .PaddingVertical(8)
+                                        .PaddingHorizontal(7)
+                                        .Text("CLIENTE")
+                                        .FontSize(8)
+                                        .FontColor(Colors.White)
+                                        .Bold();
+
+                                    header.Cell()
+                                        .Background(azulPrincipal)
+                                        .PaddingVertical(8)
+                                        .PaddingHorizontal(7)
+                                        .Text("DNI")
+                                        .FontSize(8)
+                                        .FontColor(Colors.White)
+                                        .Bold();
+
+                                    header.Cell()
+                                        .Background(azulPrincipal)
+                                        .PaddingVertical(8)
+                                        .PaddingHorizontal(7)
+                                        .AlignRight()
+                                        .Text("TOTAL COMPRADO")
+                                        .FontSize(8)
+                                        .FontColor(Colors.White)
+                                        .Bold();
+                                });
+
+                                for (
+                                    int indice = 0;
+                                    indice < clientesExportar.Count;
+                                    indice++
+                                )
+                                {
+                                    ClienteReporte cliente =
+                                        clientesExportar[indice];
+
+                                    string fondoFila = indice % 2 == 0
+                                        ? Colors.White
+                                        : fondoAlterno;
+
+                                    table.Cell()
+                                        .Background(fondoFila)
+                                        .BorderBottom(1)
+                                        .BorderColor(bordeGris)
+                                        .PaddingVertical(7)
+                                        .PaddingHorizontal(7)
+                                        .Text(cliente.Nombre ?? "");
+
+                                    table.Cell()
+                                        .Background(fondoFila)
+                                        .BorderBottom(1)
+                                        .BorderColor(bordeGris)
+                                        .PaddingVertical(7)
+                                        .PaddingHorizontal(7)
+                                        .Text($"{cliente.Dni}");
+
+                                    table.Cell()
+                                        .Background(fondoFila)
+                                        .BorderBottom(1)
+                                        .BorderColor(bordeGris)
+                                        .PaddingVertical(7)
+                                        .PaddingHorizontal(7)
+                                        .AlignRight()
+                                        .Text(
+                                            $"S/ {cliente.TotalComprado:N2}"
+                                        )
+                                        .SemiBold();
+                                }
+
+                                /* Fila total */
+
+                                table.Cell()
+                                    .ColumnSpan(2)
+                                    .Background(azulClaro)
+                                    .PaddingVertical(9)
+                                    .PaddingHorizontal(7)
+                                    .AlignRight()
+                                    .Text("TOTAL GENERAL")
+                                    .FontColor(azulPrincipal)
+                                    .Bold();
+
+                                table.Cell()
+                                    .Background(azulClaro)
+                                    .PaddingVertical(9)
+                                    .PaddingHorizontal(7)
+                                    .AlignRight()
+                                    .Text($"S/ {totalGeneral:N2}")
+                                    .FontColor(azulPrincipal)
+                                    .Bold();
+                            });
+
+                        /* Gráfica */
+
+                        if (clientesGrafica.Count > 0)
+                        {
+                            column.Item()
+                                .PaddingTop(10)
+                                .Column(title =>
+                                {
+                                    title.Item()
+                                        .Text(
+                                            "Clientes con mayor total comprado"
+                                        )
+                                        .FontSize(14)
+                                        .FontColor(azulPrincipal)
+                                        .Bold();
+
+                                    title.Item()
+                                        .PaddingTop(2)
+                                        .Text(
+                                            "Los 10 clientes con los mayores montos acumulados"
+                                        )
+                                        .FontSize(8)
+                                        .FontColor(textoSecundario);
+                                });
+
+                            column.Item()
+                                .Background(fondoAlterno)
+                                .Border(1)
+                                .BorderColor(bordeGris)
+                                .Padding(15)
+                                .Column(chart =>
+                                {
+                                    chart.Spacing(10);
+
+                                    foreach (
+                                        ClienteReporte cliente
+                                        in clientesGrafica
+                                    )
+                                    {
+                                        float porcentaje = compraMaxima > 0
+                                            ? (float)(
+                                                cliente.TotalComprado /
+                                                compraMaxima *
+                                                100
+                                            )
+                                            : 0;
+
+                                        porcentaje = Math.Clamp(
+                                            porcentaje,
+                                            1f,
+                                            100f
+                                        );
+
+                                        float restante =
+                                            Math.Max(100f - porcentaje, 0f);
+
+                                        chart.Item().Column(bar =>
+                                        {
+                                            bar.Item().Row(row =>
+                                            {
+                                                row.RelativeItem()
+                                                    .Text(
+                                                        cliente.Nombre ?? ""
+                                                    )
+                                                    .FontSize(8)
+                                                    .SemiBold();
+
+                                                row.ConstantItem(105)
+                                                    .AlignRight()
+                                                    .Text(
+                                                        $"S/ {cliente.TotalComprado:N2}"
+                                                    )
+                                                    .FontSize(8)
+                                                    .FontColor(azulPrincipal)
+                                                    .Bold();
+                                            });
+
+                                            bar.Item()
+                                                .PaddingTop(4)
+                                                .Height(13)
+                                                .Row(row =>
+                                                {
+                                                    row.RelativeItem(porcentaje)
+                                                        .Background(
+                                                            azulPrincipal
+                                                        );
+
+                                                    if (restante > 0)
+                                                    {
+                                                        row.RelativeItem(restante)
+                                                            .Background(
+                                                                "#DDE3EC"
+                                                            );
+                                                    }
+                                                });
+                                        });
+                                    }
+                                });
+                        }
+                        else
+                        {
+                            column.Item()
+                                .PaddingTop(10)
+                                .Background(fondoAlterno)
+                                .Border(1)
+                                .BorderColor(bordeGris)
+                                .Padding(15)
+                                .AlignCenter()
+                                .Text(
+                                    "No existen datos para generar la gráfica."
+                                )
+                                .FontColor(textoSecundario);
+                        }
+                    });
+
+                /* =========================================
+                   PIE DE PÁGINA
+                   ========================================= */
+
+                page.Footer().Column(footer =>
+                {
+                    footer.Item()
+                        .LineHorizontal(1)
+                        .LineColor(bordeGris);
+
+                    footer.Item()
+                        .PaddingTop(7)
+                        .Row(row =>
+                        {
+                            row.RelativeItem()
+                                .Text("Reporte por Cliente")
+                                .FontSize(8)
+                                .FontColor(textoSecundario);
+
+                            row.RelativeItem()
+                                .AlignRight()
+                                .Text(text =>
+                                {
+                                    text.DefaultTextStyle(style => style
+                                        .FontSize(8)
+                                        .FontColor(textoSecundario)
+                                    );
+
+                                    text.Span("Página ");
+                                    text.CurrentPageNumber();
+                                    text.Span(" de ");
+                                    text.TotalPages();
+                                });
+                        });
+                });
+            });
+        }).GeneratePdf();
+
+        await JS.InvokeVoidAsync(
+            "descargarArchivo",
+            $"ReporteClientes_{DateTime.Now:yyyyMMdd_HHmm}.pdf",
+            "application/pdf",
+            Convert.ToBase64String(pdf)
+        );
+    }
+
 }
