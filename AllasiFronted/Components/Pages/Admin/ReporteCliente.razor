@@ -270,7 +270,8 @@
 	{
 		QuestPDF.Settings.License = LicenseType.Community;
 
-		List<ClienteReporte> clientesExportar = ClientesOrdenados.ToList();
+		List<ClienteReporte> clientesExportar =
+			ClientesOrdenados.ToList();
 
 		double totalGeneral = clientesExportar.Sum(
 			cliente => cliente.TotalComprado
@@ -299,8 +300,14 @@
 						$"Total general comprado: S/ {totalGeneral:0.00}"
 					);
 
+					// PRIMERO LA TABLA
 					col.Item()
 						.PaddingTop(15)
+						.Text("Detalle de clientes")
+						.FontSize(14)
+						.Bold();
+
+					col.Item()
 						.Table(table =>
 						{
 							table.ColumnsDefinition(columns =>
@@ -355,6 +362,61 @@
 									.Text($"S/ {cliente.TotalComprado:0.00}");
 							}
 						});
+
+					// DESPUÉS LA GRÁFICA DE BARRAS
+					List<ClienteReporte> clientesGrafica = clientesExportar
+						.OrderByDescending(cliente => cliente.TotalComprado)
+						.Take(10)
+						.ToList();
+
+					double compraMaxima = clientesGrafica.Any()
+						? clientesGrafica.Max(
+							cliente => cliente.TotalComprado
+						)
+						: 1;
+
+					col.Item()
+						.PaddingTop(20)
+						.Text("Clientes con mayor total comprado")
+						.FontSize(14)
+						.Bold();
+
+					foreach (ClienteReporte cliente in clientesGrafica)
+					{
+						float porcentaje = compraMaxima > 0
+							? (float)(cliente.TotalComprado /
+									  compraMaxima * 100)
+							: 0;
+
+						porcentaje = Math.Max(porcentaje, 1f);
+
+						float restante = Math.Max(
+							100f - porcentaje,
+							1f
+						);
+
+						col.Item()
+							.PaddingVertical(4)
+							.Column(grafica =>
+							{
+								grafica.Item()
+									.Text(
+										$"{cliente.Nombre}: " +
+										$"S/ {cliente.TotalComprado:0.00}"
+									);
+
+								grafica.Item()
+									.Height(18)
+									.Row(fila =>
+									{
+										fila.RelativeItem(porcentaje)
+											.Background(Colors.Blue.Medium);
+
+										fila.RelativeItem(restante)
+											.Background(Colors.Grey.Lighten3);
+									});
+							});
+					}
 				});
 
 				page.Footer()
