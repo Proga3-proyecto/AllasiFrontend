@@ -16,11 +16,11 @@ builder.Services.AddRazorComponents()
         options.DetailedErrors = true;
     });
 
-
 builder.Services.ConfigureHttpClientDefaults(httpBuilder =>
 {
     httpBuilder.ConfigureHttpClient(client =>
     {
+        // cambiar a localhost cuando se desarolle en local
         client.BaseAddress = new Uri("http://54.227.134.152:8080/Servicios-1.0-SNAPSHOT/api/");
     });
 });
