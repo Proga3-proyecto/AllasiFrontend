@@ -410,6 +410,7 @@
     }
 
     private List<ImageItem> imagenes = new();
+    private List<ImageItem> imagenesToDelete = new();
     private long maxFileSize = 1024 * 1024 * 5;
 
     private RecetaViewModel recetaViewModel { get; set; } = new();
@@ -477,6 +478,7 @@
                 if (receta.imagenes != null && receta.imagenes.Any())
                 {
                     imagenes.Clear();
+                    imagenesToDelete.Clear();
                     foreach (var img in receta.imagenes)
                     {
                         imagenes.Add(new ImageItem
@@ -561,6 +563,7 @@
 
     private void RemoverImagen(ImageItem imgToRemove)
     {
+        imagenesToDelete.Add(imgToRemove);
         imagenes.Remove(imgToRemove);
         if (imgToRemove.IsPrincipal && imagenes.Count > 0)
         {
@@ -662,7 +665,7 @@
                         {
                             using var stream = new MemoryStream(img.FileContent);
                             Imagen? imagenDB = await RecetasRS.SubirImagenAsync(Id, stream, img.File!.Name, img.File!.ContentType);
-                            
+
                             if (imagenDB != null && img.IsPrincipal)
                             {
                                 await RecetasRS.SubirImagenPrincipalAsync(Id, imagenDB.id);
@@ -671,6 +674,17 @@
                         catch (Exception ex)
                         {
                             Console.WriteLine($"Error subiendo imagen {img.File!.Name}: {ex.Message}");
+                        }
+                    }
+                }
+
+                if(imagenesToDelete.Count > 0)
+                {
+                    foreach(var img in imagenesToDelete)
+                    {
+                        if(img.PreviewUrl != null && img.File == null)
+                        {
+                            await RecetasRS.EliminarImagenAsync(Id, img.Id);
                         }
                     }
                 }

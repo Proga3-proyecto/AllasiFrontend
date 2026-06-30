@@ -37,7 +37,7 @@
 
                             <div class="d-flex flex-wrap gap-2 p-2" style="border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fafafa; min-height: 150px;">
 
-                                @foreach (var img in imagenes)
+                                @foreach (var img in imagenesData)
                                 {
                                     <div class="image-card" style="width: 100px; height: 130px; border: 1px solid #ccc; border-radius: 8px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: white;">
                                         <img src="@img.PreviewUrl" style="width: 100%; height: 80px; object-fit: cover;" alt="Vista previa" />
@@ -239,7 +239,8 @@
         public byte[] FileContent { get; set; } = Array.Empty<byte>();
     }
 
-    private List<ImageItem> imagenes = new();
+    private List<ImageItem> imagenesData = new();
+    private List<ImageItem> imagenesToDeleteData = new();
     private long maxFileSize = 1024 * 1024 * 5;
 
     protected override async Task OnInitializedAsync()
@@ -248,10 +249,10 @@
         {
             marcasDisponibles = await MarcasRS.ListarTodasAsync() ?? new List<Marca>();
             categoriasDisponibles = await CategoriasRS.ListarTodasAsync() ?? new List<Categoria>();
-            
+
             var todosImpuestos = await ImpuestosRS.ListarTodosAsync() ?? new List<Impuesto>();
             impuestosActivos = todosImpuestos.Where(i => i.activo).ToList();
-            
+
             alcoholImpuestos = await AlcoholImpuestoRS.ListarTodosAsync() ?? new List<AlcoholImpuesto>();
         }
         catch (Exception ex)
@@ -286,10 +287,11 @@
 
                 if (productoOriginal.imagenes != null && productoOriginal.imagenes.Any())
                 {
-                    imagenes.Clear();
+                    imagenesData.Clear();
+                    imagenesToDeleteData.Clear();
                     foreach (var img in productoOriginal.imagenes)
                     {
-                        imagenes.Add(new ImageItem
+                        imagenesData.Add(new ImageItem
                         {
                             PreviewUrl = img.url,
                             IsPrincipal = img.principal,
@@ -325,10 +327,10 @@
                     File = file,
                     PreviewUrl = previewUrl,
                     FileContent = originalStream.ToArray(),
-                    IsPrincipal = (imagenes.Count == 0) 
+                    IsPrincipal = (imagenesData.Count == 0) 
                 };
 
-                imagenes.Add(nuevaImagen);
+                imagenesData.Add(nuevaImagen);
             }
             catch (Exception ex)
             {
@@ -339,7 +341,7 @@
 
     private void SetPrincipal(ImageItem selectedImg)
     {
-        foreach (var img in imagenes)
+        foreach (var img in imagenesData)
         {
             img.IsPrincipal = (img == selectedImg);
         }
@@ -347,10 +349,11 @@
 
     private void RemoverImagen(ImageItem imgToRemove)
     {
-        imagenes.Remove(imgToRemove);
-        if (imgToRemove.IsPrincipal && imagenes.Count > 0)
+        imagenesToDeleteData.Add(imgToRemove);
+        imagenesData.Remove(imgToRemove);
+        if (imgToRemove.IsPrincipal && imagenesData.Count > 0)
         {
-            imagenes[0].IsPrincipal = true;
+            imagenesData[0].IsPrincipal = true;
         }
     }
 
@@ -379,7 +382,7 @@
 
         double precioConImpuestos = precioBase + montoAlcohol + montoBaseTax;
         double precioFinal = precioConImpuestos - (precioConImpuestos * (descuento / 100.0));
-        
+
         return Math.Round(Math.Max(0, precioFinal), 2);
     }
 
@@ -399,16 +402,16 @@
                 porcentajeAlcohol = productViewModel.porcentajeAlcohol ?? 0,
                 descuento = productViewModel.descuento ?? 0,
                 marca = new Marca { nombre = productViewModel.marcaTemporal },
-                categorias = new List<Categoria> { new Categoria { nombre = productViewModel.categoriaTemporal } }
+                categorias = new List<Categoria> { new Categoria { nombre = productViewModel.categoriaTemporal } },
             };
 
             bool exitoso = await ProductosRS.ActualizarAsync(productoActualizado);
 
             if (exitoso)
             {
-                if (imagenes.Count > 0)
+                if (imagenesData.Count > 0)
                 {
-                    foreach (var img in imagenes)
+                    foreach (var img in imagenesData)
                     {
                         if (img.IsExisting)
                         {
@@ -445,6 +448,14 @@
                     }
                 }
 
+                if(imagenesToDeleteData.Count > 0){
+                    foreach (var img in imagenesToDeleteData){
+                        if (img.PreviewUrl != null && img.File == null)
+                        {
+                            await ProductosRS.EliminarImagenAsync(Id,img.Id);
+                        }
+                    }
+                }
                 Navigation.NavigateTo("/admin/product-list");
             }
             else

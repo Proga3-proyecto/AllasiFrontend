@@ -1,117 +1,288 @@
 @page "/receta/{id:int}"
+
 @using Progra3_Frontend.Model
+
 @using AllasiFrontend.Components.Shared
+
 @using Progra3_Frontend.Services
+
+
 @inject NavigationManager NavigationManager
+
 @inject RecetasRS RecetasService
+
 @inject CarritoStateService CarritoService
+
 @inject ToastService ToastService
+
 @inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Receta - Allasi Licores</PageTitle>
-
 <div class="recipe-detail-container">
+
     <button class="btn-back" @onclick="GoBack">
+
         <i class="bi bi-arrow-left"></i> Regresar a recetas
+
     </button>
 
+
+
     @if (receta == null)
+
     {
+
         <p>Cargando receta...</p>
+
     }
+
     else
+
     {
+
         <div class="detail-grid">
-            <div class="image-section">
-                <img src="@(receta.imagenes.Any() ? receta.imagenes[0].url : "/assets/placeholder-bottle.png")" alt="@receta.nombre" class="recipe-image" />
-            </div>
 
-            <div class="recipe-info">
-                <h1 class="recipe-title">@receta.nombre</h1>
-                <p class="recipe-price">S/. @receta.precioFinal.ToString("0.00")</p>
-
-                <p class="recipe-description">
-                    @(string.IsNullOrEmpty(receta.descripcion) ? "El cóctel bandera del Perú, equilibrado, cítrico y con su clásica espuma de clara de huevo." : receta.descripcion)
-                </p>
-
-                <div class="recipe-ingredients">
-                    <h3>Ingredientes:</h3>
-                    <ul>
-                        @if (receta.elementos != null && receta.elementos.Any())
-                        {
-                            foreach (var item in receta.elementos)
-                            {
-                                <li><strong>@item.cantidad L</strong> de @item.producto?.nombre</li>
-                            }
-                        }
-                        else
-                        {
-                            <li><strong>0.06 oz</strong> de Bombay Sapphire</li>
-                            <li><strong>0.01 oz</strong> de Amaretto Disaronno</li>
-                        }
-                    </ul>
-                </div>
-
-                <div class="recipe-actions">
-                    <button class="btn-primary" @onclick="GoToPreparation">Preparación</button>
-                    <button class="btn-outline" @onclick="AddToCart">
-                        <i class="bi bi-cart"></i> Añadir al carrito
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="recipe-products-section">
-            <h2 class="section-title">PRODUCTOS EN ESTA RECETA</h2>
-            <div class="products-grid">
-                @if (receta.elementos != null && receta.elementos.Any())
+            <div class="image-gallery">
+                @if (receta.imagenes != null && receta.imagenes.Count > 0)
                 {
-                    foreach (var elemento in receta.elementos.Take(4))
-                    {
-                        if (elemento.producto != null)
+                    <div class="main-image-container">
+                        <button class="nav-btn prev-btn" @onclick="PrevImage">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <img src="@receta.imagenes[currentImage].url" alt="@receta.nombre" class="main-image" />
+                        <button class="nav-btn next-btn" @onclick="NextImage">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="thumbnails">
+                        @foreach (var imagen in receta.imagenes)
                         {
-                            <ProductCard ProductoItem="@elemento.producto" />
+                            <div class="thumbnail @(imagen.id == currentImageId ? "active" : "")" @onclick="() => SelectImage(imagen.id)">
+                                <img src="@imagen.url" alt="@receta.nombre" />
+                            </div>
                         }
-                    }
+                    </div>
+                }
+                else
+                {
+                    <div class="main-image-container">
+                        <div style="padding: 2rem; text-align: center; color: #666; background: #f9f9f9; border-radius: 8px;">
+                            Sin imagen disponible
+                        </div>
+                    </div>
                 }
             </div>
+
+
+            <div class="recipe-info">
+
+                <h1 class="recipe-title">@receta.nombre</h1>
+
+                <p class="recipe-price">S/. @receta.precioFinal.ToString("0.00")</p>
+
+
+
+                <p class="recipe-description">
+
+                    @(string.IsNullOrEmpty(receta.descripcion) ? "El cóctel bandera del Perú, equilibrado, cítrico y con su clásica espuma de clara de huevo." : receta.descripcion)
+
+                </p>
+
+
+
+                <div class="recipe-ingredients">
+
+                    <h3>Ingredientes:</h3>
+
+                    <ul>
+
+                        @if (receta.elementos != null && receta.elementos.Any())
+
+                        {
+
+                            foreach (var item in receta.elementos)
+
+                            {
+
+                                <li><strong>@item.cantidad L</strong> de @item.producto?.nombre</li>
+
+                            }
+
+                        }
+
+                        else
+
+                        {
+
+                            <li><strong>0.06 oz</strong> de Bombay Sapphire</li>
+
+                            <li><strong>0.01 oz</strong> de Amaretto Disaronno</li>
+
+                        }
+
+                    </ul>
+
+                </div>
+
+
+
+                <div class="recipe-actions">
+
+                    <button class="btn-primary" @onclick="GoToPreparation">Preparación</button>
+
+                    <button class="btn-outline" @onclick="AddToCart">
+
+                        <i class="bi bi-cart"></i> Añadir al carrito
+
+                    </button>
+
+                </div>
+
+            </div>
+
         </div>
+
+
+
+        <div class="recipe-products-section">
+
+            <h2 class="section-title">PRODUCTOS EN ESTA RECETA</h2>
+
+            <div class="products-grid">
+
+                @if (receta.elementos != null && receta.elementos.Any())
+
+                {
+
+                    foreach (var elemento in receta.elementos.Take(4))
+
+                    {
+
+                        if (elemento.producto != null)
+
+                        {
+
+                            <ProductCard ProductoItem="@elemento.producto" />
+
+                        }
+
+                    }
+
+                }
+
+            </div>
+
+        </div>
+
     }
 </div>
 
+
+
 @code {
+
     [Parameter]
+
     public int id { get; set; }
 
+
+
     private Receta? receta;
+    private List<Imagen> imagenes = new();
+    private int currentImage = 0;
+    private int? currentImageId = null;
 
     protected override async Task OnInitializedAsync()
+
     {
+
         receta = await RecetasService.ObtenerPorIdAsync(id);
+        if (receta != null && receta.imagenes != null && receta.imagenes.Count > 0)
+        {
+            imagenes = receta.imagenes;
+            imagenes.Sort((a, b) => a.principal ? 0 : 1);
+            currentImageId = imagenes[0].id;
+        }
     }
+
+    private void NextImage()
+    {
+        if (imagenes == null || imagenes.Count == 0) return;
+        currentImage = (currentImage + 1) % imagenes.Count;
+        currentImageId = imagenes[currentImage].id;
+    }
+
+    private void PrevImage()
+    {
+        if (imagenes == null || imagenes.Count == 0) return;
+        currentImage--;
+        if (currentImage < 0)
+        {
+            currentImage = imagenes.Count - 1;
+        }
+        currentImageId = imagenes[currentImage].id;
+    }
+
+    private void SelectImage(int id)
+    {
+        for (int i = 0; i < imagenes.Count; i++)
+        {
+            if (imagenes[i].id == id)
+            {
+                currentImageId = id;
+                currentImage = i;
+                break;
+            }
+        }
+    }
+
 
     private void GoBack()
+
     {
+
         NavigationManager.NavigateTo("/recetas");
+
     }
+
+
 
     private void GoToPreparation()
+
     {
+
         NavigationManager.NavigateTo($"/receta/{id}/preparacion");
+
     }
+
+
 
     private async Task AddToCart()
+
     {
+
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+
         if (authState.User.Identity == null || !authState.User.Identity.IsAuthenticated)
+
         {
+
             ToastService.ShowToast("No se puede agregar al carrito si no estás registrado.", "warning");
+
             return;
+
         }
 
+
+
         if (receta != null)
+
         {
+
             CarritoService.AgregarReceta(receta, 1);
+
         }
+
     }
+
 }

@@ -210,3 +210,75 @@
         grid-template-columns: 1fr;
     }
 }
+/* AGREGA ESTO A TU RECIPE CSS */
+.image-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.main-image-container {
+    border: 1px solid var(--color-border-light, #e5e7eb);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 400px;
+    position: relative;
+    background-color: #fff;
+}
+
+.main-image {
+    max-height: 100%;
+    max-width: 80%;
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+.nav-btn {
+    background: transparent;
+    border: 1px solid var(--color-border-light, #e5e7eb);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-text-muted, #7a859b);
+    transition: all 0.2s;
+}
+
+    .nav-btn:hover {
+        background-color: var(--color-bg-body, #f8f9fc);
+        color: var(--color-primary, #101c45);
+    }
+
+.thumbnails {
+    display: flex;
+    gap: 10px;
+}
+
+.thumbnail {
+    width: 80px;
+    height: 80px;
+    border: 1px solid var(--color-border-light, #e5e7eb);
+    border-radius: 8px;
+    padding: 5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .thumbnail.active {
+        border-color: var(--color-primary, #101c45);
+        border-width: 2px;
+    }
+
+    .thumbnail img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
