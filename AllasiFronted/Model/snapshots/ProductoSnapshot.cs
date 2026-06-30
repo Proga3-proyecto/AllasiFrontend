@@ -55,7 +55,6 @@ namespace Progra3_Frontend.Model
 
                 if (producto.impuestoAlcohol != null)
                 {
-                    this.porcentajePrecioAlcoholHistorico = producto.impuestoAlcohol.porcentajePrecio;
                     this.valorImpuestoAlcoholHistorico = producto.impuestoAlcohol.valor;
                 }
                 else

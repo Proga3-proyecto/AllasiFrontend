@@ -183,8 +183,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>RANGO (Grados)</th>
-                                                    <th class="text-center">% PRECIO</th>
-                                                    <th class="text-center">VALOR (S/.)</th>
+                                                    <th class="text-center">VALOR (S/.) / Litro</th>
                                                     <th class="text-center">ACCIÓN</th>
                                                 </tr>
                                             </thead>
@@ -198,9 +197,6 @@
                                                                 <span class="text-muted">-</span>
                                                                 <input type="number" class="form-control form-control-sm text-center" @bind="newAlcMax" style="width: 75px;" min="0" />
                                                             </div>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <input type="number" class="form-control form-control-sm mx-auto text-center" style="max-width: 70px;" @bind="newAlcPorcentaje" min="0" />
                                                         </td>
                                                         <td class="text-center">
                                                             <input type="number" class="form-control form-control-sm mx-auto text-center" style="max-width: 80px;" @bind="newAlcValor" step="0.01" min="0" />
@@ -237,16 +233,6 @@
                                                             else
                                                             {
                                                                 <span>@alc.minimo° - @alc.maximo°</span>
-                                                            }
-                                                        </td>
-                                                        <td class="text-center">
-                                                            @if (editingAlcoholId == alc.id)
-                                                            {
-                                                                <input type="number" class="form-control form-control-sm mx-auto text-center" style="max-width: 70px;" @bind="editAlcPorcentaje" min="0" />
-                                                            }
-                                                            else
-                                                            {
-                                                                <span>@alc.porcentajePrecio%</span>
                                                             }
                                                         </td>
                                                         <td class="text-center">
@@ -329,7 +315,6 @@
     private int? editingAlcoholId = null;
     private int editAlcMin;
     private int editAlcMax;
-    private int editAlcPorcentaje;
     private double editAlcValor;
 
     // Estados de Carga / Agregar Nuevo
@@ -340,7 +325,6 @@
     private bool isAddingAlcohol = false;
     private int newAlcMin;
     private int newAlcMax;
-    private int newAlcPorcentaje;
     private double newAlcValor;
 
     private bool isAddingImpuesto = false;
@@ -435,7 +419,6 @@
         editingAlcoholId = alc.id;
         editAlcMin = alc.minimo;
         editAlcMax = alc.maximo;
-        editAlcPorcentaje = alc.porcentajePrecio;
         editAlcValor = alc.valor;
         editingImpuestoId = null;
         isAddingAlcohol = false;
@@ -449,7 +432,7 @@
 
     private async Task GuardarAlcohol(AlcoholImpuesto alc)
     {
-        if (editAlcMin < 0 || editAlcMax < 0 || editAlcPorcentaje < 0 || editAlcValor < 0) return;
+        if (editAlcMin < 0 || editAlcMax < 0 || editAlcValor < 0) return;
         bool confirmed = await DialogService.ConfirmAsync("Confirmar Actualización", "¿Seguro que deseas actualizar este impuesto?");
         if (!confirmed) return;
 
@@ -459,7 +442,6 @@
 
         alc.minimo = editAlcMin;
         alc.maximo = editAlcMax;
-        alc.porcentajePrecio = editAlcPorcentaje;
         alc.valor = editAlcValor;
         
         bool success = await AlcoholImpuestoRS.ActualizarAsync(alc);
@@ -499,7 +481,6 @@
         isAddingAlcohol = true;
         newAlcMin = 0;
         newAlcMax = 0;
-        newAlcPorcentaje = 0;
         newAlcValor = 0;
         
         editingAlcoholId = null;
@@ -514,7 +495,7 @@
 
     private async Task GuardarNuevoAlcohol()
     {
-        if (newAlcMin < 0 || newAlcMax < 0 || newAlcPorcentaje < 0 || newAlcValor < 0) return;
+        if (newAlcMin < 0 || newAlcMax < 0 || newAlcValor < 0) return;
         bool confirmed = await DialogService.ConfirmAsync("Confirmar Creación", "¿Seguro que deseas crear este nuevo impuesto?");
         if (!confirmed) return;
 
@@ -526,7 +507,6 @@
         {
             minimo = newAlcMin,
             maximo = newAlcMax,
-            porcentajePrecio = newAlcPorcentaje,
             valor = newAlcValor
         };
         
