@@ -1,3 +1,4 @@
+@using Microsoft.AspNetCore.Components.Authorization
 @using Progra3_Frontend.Model
 @using Progra3_Frontend.Services
 @inject NavigationManager NavigationManager
@@ -32,8 +33,18 @@
         }
         <div class="product-bottom">
             <span class="product-price">S/ @GetPrice().ToString("0.00")</span>
-            <button class="cart-button" title="Añadir al carrito" @onclick="AddToCart" @onclick:stopPropagation><i class="bi bi-cart"></i></button>
+
+            @if (isAdmin)
+            {
+                <button class="cart-button" title="Editar" @onclick="Edit" @onclick:stopPropagation><i class="bi bi-pencil"></i></button>
+            }
+            else
+            {
+                <button class="cart-button" title="Añadir al carrito" @onclick="AddToCart" @onclick:stopPropagation><i class="bi bi-cart"></i></button>
+            }
         </div>
+
+        
     </div>
 </div>
 
@@ -41,6 +52,28 @@
     [Parameter] public int Rank { get; set; }
     [Parameter] public Producto? ProductoItem { get; set; }
     [Parameter] public Receta? RecetaItem { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
+
+    public bool isAdmin = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (AuthStateTask is null) return;
+
+        var state = await AuthStateTask;
+        var user = state.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            isAdmin = user.IsInRole("ADMIN") || user.IsInRole("MASTER");
+        }
+        else
+        {
+            isAdmin = false;
+        }
+    }
 
     private void NavigateToDetail()
     {
@@ -56,8 +89,8 @@
 
     private string GetImageUrl()
     {
-        if (ProductoItem != null && ProductoItem.imagenes != null && ProductoItem.imagenes.Any()) return  ProductoItem.imagenes.Find(i=>i.principal)?.url ?? "";
-        if (RecetaItem != null && RecetaItem.imagenes != null && RecetaItem.imagenes.Any()) return RecetaItem.imagenes.Find(i=>i.principal)?.url ?? "";
+        if (ProductoItem != null && ProductoItem.imagenes != null && ProductoItem.imagenes.Any()) return ProductoItem.imagenes.Find(i => i.principal)?.url ?? "";
+        if (RecetaItem != null && RecetaItem.imagenes != null && RecetaItem.imagenes.Any()) return RecetaItem.imagenes.Find(i => i.principal)?.url ?? "";
         return "/assets/placeholder-bottle.png"; // Fallback image
     }
 
@@ -104,7 +137,7 @@
                 ToastService.ShowToast("Este producto se encuentra agotado.", "warning", 1500);
                 return;
             }
-            
+
             var itemInCart = CarritoService.Productos.FirstOrDefault(p => p.producto.id == ProductoItem.id);
             if (itemInCart != null && itemInCart.cantidad >= ProductoItem.stock)
             {
@@ -117,6 +150,19 @@
         else if (RecetaItem != null)
         {
             CarritoService.AgregarReceta(RecetaItem, 1);
+        }
+    }
+
+    public void Edit()
+    {
+        if (RecetaItem != null)
+        {
+            NavigationManager.NavigateTo($"/admin/update-recipe/{RecetaItem.id}");
+        }
+
+        if (ProductoItem != null)
+        {
+            NavigationManager.NavigateTo($"/admin/update-product/{ProductoItem.id}");
         }
     }
 }
