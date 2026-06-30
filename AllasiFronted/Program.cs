@@ -21,7 +21,7 @@ builder.Services.ConfigureHttpClientDefaults(httpBuilder =>
 {
     httpBuilder.ConfigureHttpClient(client =>
     {
-        client.BaseAddress = new Uri("http://localhost:8080/Servicios-1.0-SNAPSHOT/api/");
+        client.BaseAddress = new Uri("http://54.227.134.152:8080/Servicios-1.0-SNAPSHOT/api/");
     });
 });
 
